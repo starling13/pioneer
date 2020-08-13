@@ -665,7 +665,7 @@ static int l_body_get_atmospheric_state(lua_State *l)
 	double center_dist = pos.Length();
 	if (b->IsType(Object::PLANET)) {
 		double pressure, density;
-		static_cast<Planet *>(b)->GetAtmosphericState(center_dist, &pressure, &density);
+		static_cast<Planet *>(b)->GetAtmosphericState(center_dist, pressure, density);
 		lua_pushnumber(l, pressure);
 		lua_pushnumber(l, density);
 		return 2;

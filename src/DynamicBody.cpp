@@ -196,7 +196,7 @@ double DynamicBody::CalcAtmosphericDrag(double velSqr, double area, double coeff
 		return 0.0;
 	Planet *planet = static_cast<Planet *>(body);
 	double pressure, density;
-	planet->GetAtmosphericState(GetPosition().Length(), &pressure, &density);
+	planet->GetAtmosphericState(GetPosition().Length(), pressure, density);
 
 	// Simplified calculation of atmospheric drag/lift force.
 	return 0.5 * density * velSqr * area * coeff;

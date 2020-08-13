@@ -155,7 +155,7 @@ void AmbientSounds::Update()
 			if (astro->IsType(Object::PLANET)) {
 				const double dist = Pi::player->GetPosition().Length();
 				double pressure, density;
-				static_cast<const Planet *>(astro)->GetAtmosphericState(dist, &pressure, &density);
+				static_cast<const Planet *>(astro)->GetAtmosphericState(dist, pressure, density);
 				if (pressure < 0.001) {
 					// Stop playing surface noise once out of the atmosphere
 					s_planetSurfaceNoise.Stop();
@@ -233,7 +233,7 @@ void AmbientSounds::Update()
 		if (astro && playerFrame->IsRotFrame() && (astro->IsType(Object::PLANET))) {
 			double dist = Pi::player->GetPosition().Length();
 			double pressure, density;
-			static_cast<const Planet *>(astro)->GetAtmosphericState(dist, &pressure, &density);
+			static_cast<const Planet *>(astro)->GetAtmosphericState(dist, pressure, density);
 			// maximum volume at around 2km/sec at earth density, pressure
 			const float pressureVolume = float(density * Pi::player->GetVelocity().Length() * 0.0005);
 			//volume = Clamp(volume, 0.0f, 1.0f) * v_env;

@@ -24,7 +24,7 @@ public:
 
 	virtual void SubRender(Graphics::Renderer *r, const matrix4x4d &viewTran, const vector3d &camPos) override;
 
-	void GetAtmosphericState(double dist, double *outPressure, double *outDensity) const;
+	void GetAtmosphericState(double dist, double &outPressure, double &outDensity) const;
 	double GetAtmosphereRadius() const { return m_atmosphereRadius; }
 
 	friend class ObjectViewerView;
