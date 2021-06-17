@@ -664,8 +664,8 @@ static int l_body_get_atmospheric_state(lua_State *l)
 	vector3d pos = Pi::player->GetPosition();
 	double center_dist = pos.Length();
 	if (b->IsType(Object::PLANET)) {
-		double pressure, density;
-		static_cast<Planet *>(b)->GetAtmosphericState(center_dist, &pressure, &density);
+		double pressure, density, temperature;
+		static_cast<Planet *>(b)->GetAtmosphericState(center_dist, pressure, density, temperature);
 		lua_pushnumber(l, pressure);
 		lua_pushnumber(l, density);
 		return 2;

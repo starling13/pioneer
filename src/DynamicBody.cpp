@@ -105,8 +105,9 @@ void DynamicBody::GetCurrentAtmosphericState(double &pressure, double &density) 
 		pressure = density = 0;
 		return;
 	}
+	double temperature;
 	Planet *planet = static_cast<Planet *>(body);
-	planet->GetAtmosphericState(GetPosition().Length(), &pressure, &density);
+	planet->GetAtmosphericState(GetPosition().Length(), pressure, density, temperature);
 }
 
 void DynamicBody::PostLoadFixup(Space *space)

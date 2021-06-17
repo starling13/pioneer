@@ -311,8 +311,8 @@ void ModelBody::CalcLighting(double &ambient, double &direct, const Camera *came
 	const double dist = std::max(planetRadius, upDir.Length());
 	upDir = upDir.Normalized();
 
-	double pressure, density;
-	planet->GetAtmosphericState(dist, &pressure, &density);
+	double pressure, density, temperature;
+	planet->GetAtmosphericState(dist, pressure, density, temperature);
 	double surfaceDensity;
 	Color cl;
 	planet->GetSystemBody()->GetAtmosphereFlavor(&cl, &surfaceDensity);

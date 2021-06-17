@@ -1226,8 +1226,8 @@ void Ship::StaticUpdate(const float timeStep)
 		if (astro && astro->IsType(Object::PLANET)) {
 			Planet *p = static_cast<Planet *>(astro);
 			double dist = GetPosition().Length();
-			double pressure, density;
-			p->GetAtmosphericState(dist, &pressure, &density);
+			double pressure, density, temperature;
+			p->GetAtmosphericState(dist, pressure, density, temperature);
 
 			int atmo_shield_cap = 0;
 			const_cast<Ship *>(this)->Properties().Get("atmo_shield_cap", atmo_shield_cap);
@@ -1251,8 +1251,8 @@ void Ship::StaticUpdate(const float timeStep)
 			Planet *p = static_cast<Planet *>(astro);
 			if (p->GetSystemBody()->IsScoopable()) {
 				const double dist = GetPosition().Length();
-				double pressure, density;
-				p->GetAtmosphericState(dist, &pressure, &density);
+				double pressure, density, temperature;
+				p->GetAtmosphericState(dist, pressure, density, temperature);
 
 				const double speed = GetVelocity().Length();
 				const vector3d vdir = GetVelocity().Normalized();

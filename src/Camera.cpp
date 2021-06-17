@@ -243,8 +243,8 @@ void Camera::Draw(const Body *excludeBody)
 			Planet *planet = static_cast<Planet *>(camParentBody);
 			const vector3f relpos(planet->GetInterpPositionRelTo(camFrameId));
 			double altitude(relpos.Length());
-			double pressure, density;
-			planet->GetAtmosphericState(altitude, &pressure, &density);
+			double pressure, density, temperature;
+			planet->GetAtmosphericState(altitude, pressure, density, temperature);
 			if (pressure >= 0.001) {
 				//go through all lights to calculate something resembling light intensity
 				float intensity = 0.f;

@@ -87,6 +87,22 @@ void Planet::InitParams(const SystemBody *sbody)
 	} else {
 		SetClipRadius(GetPhysRadius());
 	}
+
+#if 1
+	Output("{\n\t\"name\" : \"%s\","
+	       "\n\t\"parameters\" : [", sbody->GetName().c_str());
+	for (double hh = 0; hh <= h; hh += 1000.0) {
+		double p = 0.0, d = 0.0, t = 0.0;
+		GetAtmosphericState(hh+this->GetSystemBody()->GetRadius(), p, d, t);
+		Output("\n\t\t{\n\t\t\"height\" : %f,\n\t\t\"pressure\" : %f,"
+		       "\n\t\t\"dencity\" : %f,"
+		       "\n\t\t\"temperature\" : %f\n\t}", hh, p, d, t);
+		if (hh <= (h-1000.0))
+			Output(",\n\t");
+		Output("\n");
+	}
+	Output("\n\t]\n}");
+#endif
 }
 
 /*
@@ -95,26 +111,14 @@ void Planet::InitParams(const SystemBody *sbody)
  * function is slightly different from the isothermal earth-based approximation used in shaders,
  * but it isn't visually noticeable.
  */
-void Planet::GetAtmosphericState(double dist, double *outPressure, double *outDensity) const
+void Planet::GetAtmosphericState(double dist, double &outPressure, double &outDensity, double &temperature) const
 {
 	PROFILE_SCOPED()
-#if 0
-	static bool atmosphereTableShown = false;
-	if (!atmosphereTableShown) {
-		atmosphereTableShown = true;
-		for (double h = -1000; h <= 100000; h = h+1000.0) {
-			double p = 0.0, d = 0.0;
-			GetAtmosphericState(h+this->GetSystemBody()->GetRadius(),&p,&d);
-			Output("height(m): %f, pressure(hpa): %f, density: %f\n", h, p*101325.0/100.0, d);
-		}
-	}
-#endif
 
 	// This model has no atmosphere beyond the adiabetic limit
 	// Note: some code duplicated in InitParams(). Check if changing.
 	if (dist >= m_atmosphereRadius) {
-		*outDensity = 0.0;
-		*outPressure = 0.0;
+		outDensity = outPressure = 0.0;
 		return;
 	}
 
@@ -151,18 +155,18 @@ void Planet::GetAtmosphericState(double dist, double *outPressure, double *outDe
 
 	// height below zero should not occur
 	if (height_h < 0.0) {
-		*outPressure = surfaceP_p0;
-		*outDensity = surfaceDensity * gasMolarMass;
+		outPressure = surfaceP_p0;
+		outDensity = surfaceDensity * gasMolarMass;
 		return;
 	}
 
 	//*outPressure = p0*(1-l*h/T0)^(g*M/(R*L);
-	*outPressure = surfaceP_p0 * pow((1 - lapseRate_L * height_h / surfaceTemperature_T0), (m_surfaceGravity_g * gasMolarMass / (GAS_CONSTANT * lapseRate_L))); // in ATM since p0 was in ATM
+	outPressure = surfaceP_p0 * pow((1 - lapseRate_L * height_h / surfaceTemperature_T0), (m_surfaceGravity_g * gasMolarMass / (GAS_CONSTANT * lapseRate_L))); // in ATM since p0 was in ATM
 	//                                                                               ^^g used is abs(g)
 	// temperature at height
-	double temp = surfaceTemperature_T0 - lapseRate_L * height_h;
+	temperature = surfaceTemperature_T0 - lapseRate_L * height_h;
 
-	*outDensity = (*outPressure / (PA_2_ATMOS * GAS_CONSTANT * temp)) * gasMolarMass;
+	outDensity = (outPressure / (PA_2_ATMOS * GAS_CONSTANT * temperature)) * gasMolarMass;
 }
 
 void Planet::GenerateRings(Graphics::Renderer *renderer)
