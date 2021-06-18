@@ -103,10 +103,6 @@
     "description": "",
     "message": "Bruine dwerg, sub-stellair object"
   },
-  "BUTTON": {
-    "description": "",
-    "message": "\" Knop \""
-  },
   "CAMERA_BOTTOM_VIEW": {
     "description": "",
     "message": "Onderste camera"
@@ -174,22 +170,6 @@
   "CH4_ATMOSPHERE": {
     "description": "",
     "message": "\" methaan atmosfeer\""
-  },
-  "CLEARANCE_ALREADY_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Permissie al gegeven. Vervolg naar baai %bay."
-  },
-  "CLEARANCE_DENIED_NO_BAYS": {
-    "description": "",
-    "message": "Permissie geweigerd. Er zijn geen vrije baaien beschikbaar."
-  },
-  "CLEARANCE_DENIED_TOO_FAR": {
-    "description": "Shown if player requests docking too far away from station",
-    "message": "Geen toegang. Uw schip is te ver weg voor ID-controle."
-  },
-  "CLEARANCE_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Permissie gegeven. Vervolg naar baai %bay."
   },
   "CO2_ATMOSPHERE": {
     "description": "",
@@ -327,10 +307,6 @@
     "description": "",
     "message": "Bestemming"
   },
-  "DIRECTION": {
-    "description": "Direction",
-    "message": "\" Richting \""
-  },
   "DISTANCE_LY": {
     "description": "",
     "message": "Afstand: %distance{f.2} lj"
@@ -342,10 +318,6 @@
   "DOCKING": {
     "description": "",
     "message": "Aanmerend"
-  },
-  "DOCKING_CLEARANCE_EXPIRED": {
-    "description": "",
-    "message": "Aanmeer-permissie verlopen. Als u wil aanmeren moet u uw verzoek opnieuw indienen."
   },
   "DOWNGRADING_ALERT_STATUS": {
     "description": "",
@@ -362,10 +334,6 @@
   "DRAW_VERTICAL_LINES": {
     "description": "",
     "message": "Teken verticale lijnen"
-  },
-  "EARTH": {
-    "description": "",
-    "message": "Aardse"
   },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
@@ -494,10 +462,6 @@
   "HARD_CAPITALIST": {
     "description": "",
     "message": "Volkomen kapitalistisch - geen overheids-gesubsidieerde welzijnsvoorzieningen"
-  },
-  "HAT": {
-    "description": "Hat switch: Is the top button on a joystick",
-    "message": "\" Hoed\""
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
@@ -651,10 +615,6 @@
     "description": "",
     "message": "Joystick invoer"
   },
-  "JOY_AXIS": {
-    "description": "Regarding joystick",
-    "message": "%{sign}%joyname %axis Axis"
-  },
   "L4L5_DISPLAY_MODE_TOGGLE": {
     "description": "Either show L4/L5 points or don't",
     "message": "Wissel tussen Lagrange L4/L5-punt afbeeldingswijze"
@@ -750,70 +710,6 @@
   "MANUAL_CONTROL_MODE": {
     "description": "",
     "message": "Handmatige besturingsmode"
-  },
-  "MAP_LOCK_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Leg hyperruimtebestemming vast"
-  },
-  "MAP_TOGGLE_INFO_PANEL": {
-    "description": "",
-    "message": "Wissel Info-paneel"
-  },
-  "MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
-    "description": "",
-    "message": "Wissel Selectie-Volgt-Zicht"
-  },
-  "MAP_VIEW_ROTATE_DOWN": {
-    "description": "",
-    "message": "Draai zicht naar beneden"
-  },
-  "MAP_VIEW_ROTATE_LEFT": {
-    "description": "",
-    "message": "Draai zicht naar links"
-  },
-  "MAP_VIEW_ROTATE_RIGHT": {
-    "description": "",
-    "message": "Draai zicht naar rechts"
-  },
-  "MAP_VIEW_ROTATE_UP": {
-    "description": "",
-    "message": "Draai zicht naar boven"
-  },
-  "MAP_VIEW_SHIFT_BACKWARD": {
-    "description": "",
-    "message": "Verplaats uitzicht naar achteren"
-  },
-  "MAP_VIEW_SHIFT_DOWN": {
-    "description": "",
-    "message": "verplaats uitzicht naar beneden"
-  },
-  "MAP_VIEW_SHIFT_FORWARD": {
-    "description": "",
-    "message": "Verplaats uitzicht naar voren"
-  },
-  "MAP_VIEW_SHIFT_LEFT": {
-    "description": "",
-    "message": "verplaats uitzicht naar links"
-  },
-  "MAP_VIEW_SHIFT_RIGHT": {
-    "description": "",
-    "message": "verplaats uitzicht naar rechts"
-  },
-  "MAP_VIEW_SHIFT_UP": {
-    "description": "",
-    "message": "verplaats uitzicht naar boven"
-  },
-  "MAP_WARP_TO_CURRENT_SYSTEM": {
-    "description": "",
-    "message": "Spring naar huidig systeem"
-  },
-  "MAP_WARP_TO_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Spring naar hyperspace-bestemming"
-  },
-  "MAP_WARP_TO_SELECTED_SYSTEM": {
-    "description": "",
-    "message": "Spring naar geselecteerd systeem"
   },
   "MASS": {
     "description": "",
@@ -1065,15 +961,23 @@
   },
   "N_EARTH_DAYS": {
     "description": "",
-    "message": "%days{f.1} aardse dagen"
+    "message": "%days{f.1} Earth days"
   },
-  "N_WHATEVER_MASSES": {
+  "N_EARTH_MASSES": {
     "description": "",
-    "message": "%mass{f.3} %units massa"
+    "message": "%mass{f.3} Earth masses"
   },
-  "N_WHATEVER_RADII": {
+  "N_EARTH_RADII": {
+    "description": "Used in system info view. E.g.: \"0.17 Earth radii (118235 km)\"",
+    "message": "%radius{f.3} Earth radii (%radkm{f.0} km)"
+  },
+  "N_SOLAR_MASSES": {
+    "description": "",
+    "message": "%mass{f.3} Solar masses"
+  },
+  "N_SOLAR_RADII": {
     "description": "Used in system info view. E.g. for Barnard's star: \"0.17 Solar radii (118235 km)\"",
-    "message": "%radius{f.3} %units radii (%radkm{f.0} km)"
+    "message": "%radius{f.3} Solar radii (%radkm{f.0} km)"
   },
   "N_YEARS": {
     "description": "",
@@ -1230,10 +1134,6 @@
   "RESET": {
     "description": "",
     "message": "Reset"
-  },
-  "RESET_ORIENTATION_AND_ZOOM": {
-    "description": "",
-    "message": "Herinstellen Oriëntatie en Zoom"
   },
   "ROBOTS": {
     "description": "",
@@ -1438,10 +1338,6 @@
   "SOCIAL_DEMOCRACY": {
     "description": "",
     "message": "Sociale democratie"
-  },
-  "SOLAR": {
-    "description": "",
-    "message": "Zonne-"
   },
   "SOME_ESTABLISHED_MINING": {
     "description": "",
@@ -1707,10 +1603,6 @@
     "description": "",
     "message": "Schakel tussen HUD modes"
   },
-  "TOGGLE_LUA_CONSOLE": {
-    "description": "",
-    "message": "Schakel Lua console"
-  },
   "TOGGLE_RADAR_MODE": {
     "description": "",
     "message": "Wissel radarmodus"
@@ -1759,6 +1651,10 @@
     "description": "Duration unit: one 24-hour day",
     "message": "d"
   },
+  "UNIT_EARTH_GRAVITY": {
+    "description": "Acceleration unit: one earth gravity (g)",
+    "message": "g"
+  },
   "UNIT_HOURS": {
     "description": "Duration unit: one 60-minute hour",
     "message": "u"
@@ -1794,6 +1690,10 @@
   "UNIT_MINUTES": {
     "description": "Duration unit: one 60-second minute",
     "message": "m"
+  },
+  "UNIT_PRESSURE_ATMOSPHERES": {
+    "description": "Pressure unit: one earth atmosphere (atm)",
+    "message": "atm"
   },
   "UNIT_SECONDS": {
     "description": "Duration unit: one second",
@@ -1871,14 +1771,6 @@
     "description": "",
     "message": "\" zonder significante atmosfeer\""
   },
-  "X": {
-    "description": "keybinding: x axis",
-    "message": "X"
-  },
-  "Y": {
-    "description": "keybinding: y axis",
-    "message": "Y"
-  },
   "YAW": {
     "description": "",
     "message": "Gier"
@@ -1894,10 +1786,6 @@
   "YOUNG_FARMING_COLONY": {
     "description": "",
     "message": "Jonge agrarische kolonie."
-  },
-  "Z": {
-    "description": "keybinding: z axis",
-    "message": "Z"
   },
   "ZOOM_IN": {
     "description": "",

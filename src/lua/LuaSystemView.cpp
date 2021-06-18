@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "EnumStrings.h"
@@ -218,7 +218,7 @@ static int l_systemview_get_projected_grouped(lua_State *l)
 					touchedGroups.push_back(&group);
 			//now select the nearest group (if have)
 			if (touchedGroups.size()) {
-				GroupInfo *nearest;
+				GroupInfo *nearest = nullptr;
 				double min_length = 1e64;
 				for (GroupInfo *&g : touchedGroups) {
 					double this_length = (g->m_mainObject.screenpos - special_object[object_type]->screenpos).Length();
@@ -340,11 +340,11 @@ static int l_systemview_transfer_planner_get(lua_State *l)
 
 	TransferPlanner *planner = sv->GetTransferPlanner();
 	if (key == "prograde") {
-		LuaPush<double>(l, planner->GetDv(BurnDirection::PROGRADE));
+		LuaPush<double>(l, planner->GetDv(TransferPlanner::PROGRADE));
 	} else if (key == "normal") {
-		LuaPush<double>(l, planner->GetDv(BurnDirection::NORMAL));
+		LuaPush<double>(l, planner->GetDv(TransferPlanner::NORMAL));
 	} else if (key == "radial") {
-		LuaPush<double>(l, planner->GetDv(BurnDirection::RADIAL));
+		LuaPush<double>(l, planner->GetDv(TransferPlanner::RADIAL));
 	} else if (key == "starttime") {
 		LuaPush<double>(l, planner->GetStartTime());
 	} else if (key == "factor") {
@@ -364,11 +364,11 @@ static int l_systemview_transfer_planner_add(lua_State *l)
 
 	TransferPlanner *planner = sv->GetTransferPlanner();
 	if (key == "prograde") {
-		planner->AddDv(BurnDirection::PROGRADE, delta);
+		planner->AddDv(TransferPlanner::PROGRADE, delta);
 	} else if (key == "normal") {
-		planner->AddDv(BurnDirection::NORMAL, delta);
+		planner->AddDv(TransferPlanner::NORMAL, delta);
 	} else if (key == "radial") {
-		planner->AddDv(BurnDirection::RADIAL, delta);
+		planner->AddDv(TransferPlanner::RADIAL, delta);
 	} else if (key == "starttime") {
 		planner->AddStartTime(delta);
 	} else if (key == "factor") {
@@ -389,11 +389,11 @@ static int l_systemview_transfer_planner_reset(lua_State *l)
 
 	TransferPlanner *planner = sv->GetTransferPlanner();
 	if (key == "prograde") {
-		planner->ResetDv(BurnDirection::PROGRADE);
+		planner->ResetDv(TransferPlanner::PROGRADE);
 	} else if (key == "normal") {
-		planner->ResetDv(BurnDirection::NORMAL);
+		planner->ResetDv(TransferPlanner::NORMAL);
 	} else if (key == "radial") {
-		planner->ResetDv(BurnDirection::RADIAL);
+		planner->ResetDv(TransferPlanner::RADIAL);
 	} else if (key == "starttime") {
 		planner->ResetStartTime();
 	} else if (key == "factor") {
@@ -422,7 +422,7 @@ void LuaObject<SystemView>::RegisterClass()
 		{ "SetVisibility", l_systemview_set_visibility },
 		{ "SetColor", l_systemview_set_color },
 		{ "SetRotateMode", l_systemview_set_rotate_mode },
-		{ "SetZoomMode" , l_systemview_set_zoom_mode },
+		{ "SetZoomMode", l_systemview_set_zoom_mode },
 
 		{ "TransferPlannerAdd", l_systemview_transfer_planner_add },
 		{ "TransferPlannerGet", l_systemview_transfer_planner_get },

@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -7,7 +7,7 @@ local Game = require 'Game'
 local Space = require 'Space'
 
 local CommodityWidget = require 'pigui.libs.commodity-market'
-local Face = require 'ui.PiguiFace'
+local Face = require 'pigui.libs.face'
 
 local ui = require 'pigui'
 local colors = ui.theme.colors
@@ -105,7 +105,9 @@ function ChatForm:render ()
 
 		self.navButton()
 
-		if ui.coloredSelectedButton(l.HANG_UP, self.style.buttonSize, false, colors.buttonBlue, nil, true) then self:Close() end
+		if ui.coloredSelectedButton(l.HANG_UP, self.style.buttonSize, false, colors.buttonBlue, nil, true) or ui.escapeKeyReleased(true) then
+			self:Close()
+		end
 	end)
 end
 
@@ -171,7 +173,8 @@ function ChatForm:AddNavButton (target)
 					ui.playSfx("OK")
 				end
 			elseif not Game.InHyperspace() then
-				Game.sectorView:SwitchToPath(target:GetStarSystem().path)
+				-- if a specific systembody is given, set the sector map to the correct star (if the system is multiple)
+				Game.sectorView:SwitchToPath(target:IsBodyPath() and target:GetSystemBody().nearestJumpable.path or target:GetStarSystem().path)
 				ui.playBoinkNoise()
 			end
 		end

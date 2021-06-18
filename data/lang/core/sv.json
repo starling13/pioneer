@@ -53,23 +53,23 @@
   },
   "AUTOPILOT_DOCK_WITH_STATION": {
     "description": "",
-    "message": "Autopilot: Dock with {target}"
+    "message": "Autopilot: Docka med {target}"
   },
   "AUTOPILOT_ENTER_HIGH_ORBIT_AROUND": {
     "description": "",
-    "message": "Autopilot: Enter high orbit around {target}"
+    "message": "Autopilot: Kretsa i högt omlopp runt {target}"
   },
   "AUTOPILOT_ENTER_LOW_ORBIT_AROUND": {
     "description": "",
-    "message": "Autopilot: Enter low orbit around {target}"
+    "message": "Autopilot: Kretsa i lågt omlopp kring {target}"
   },
   "AUTOPILOT_ENTER_MEDIUM_ORBIT_AROUND": {
     "description": "",
-    "message": "Autopilot: Enter medium orbit around {target}"
+    "message": "Autopilot: Kretsa i medel-högt omlopp kring {target}"
   },
   "AUTOPILOT_FLY_TO_VICINITY_OF": {
     "description": "",
-    "message": "Autopilot: Fly to vicinity of {target}"
+    "message": "Autopilot: Flyg till närheten av {target}"
   },
   "AUTOPILOT_ON": {
     "description": "",
@@ -102,10 +102,6 @@
   "BROWN_DWARF": {
     "description": "",
     "message": "Brunt dvärgstjärnobjekt"
-  },
-  "BUTTON": {
-    "description": "",
-    "message": "\" Knapp \""
   },
   "CAMERA_BOTTOM_VIEW": {
     "description": "",
@@ -169,27 +165,11 @@
   },
   "CENTER": {
     "description": "",
-    "message": "Center"
+    "message": "Centrera"
   },
   "CH4_ATMOSPHERE": {
     "description": "",
     "message": "\" Metanatmosfär\""
-  },
-  "CLEARANCE_ALREADY_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Tillstånd redan medgivet. Fortsätt till landingsplats %bay."
-  },
-  "CLEARANCE_DENIED_NO_BAYS": {
-    "description": "",
-    "message": "Landningstillstånd nekat: Det finns inga lediga landningsplatser."
-  },
-  "CLEARANCE_DENIED_TOO_FAR": {
-    "description": "Shown if player requests docking too far away from station",
-    "message": "Clearance denied. Your ship is too far away for ID verification."
-  },
-  "CLEARANCE_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Landningstillstånd godkänt. Fortsätt till landningsplats %bay."
   },
   "CO2_ATMOSPHERE": {
     "description": "",
@@ -327,10 +307,6 @@
     "description": "",
     "message": "Destination"
   },
-  "DIRECTION": {
-    "description": "Direction",
-    "message": "\" Dir \""
-  },
   "DISTANCE_LY": {
     "description": "",
     "message": "Distans: %distance{f.2} ly"
@@ -342,10 +318,6 @@
   "DOCKING": {
     "description": "",
     "message": "Dockar"
-  },
-  "DOCKING_CLEARANCE_EXPIRED": {
-    "description": "",
-    "message": "Landningstillståndet har gått ut. Om du vill landa måste du upprepa din förfrågan."
   },
   "DOWNGRADING_ALERT_STATUS": {
     "description": "",
@@ -362,10 +334,6 @@
   "DRAW_VERTICAL_LINES": {
     "description": "",
     "message": "Rita vertikala linjer"
-  },
-  "EARTH": {
-    "description": "",
-    "message": "Jorden"
   },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
@@ -485,7 +453,7 @@
   },
   "GRID_DISPLAY_MODE_TOGGLE": {
     "description": "Switch show no grid",
-    "message": "Switch between grid display modes."
+    "message": "Byt mellan rutvisningslägen"
   },
   "HAND_WEAPONS": {
     "description": "",
@@ -494,10 +462,6 @@
   "HARD_CAPITALIST": {
     "description": "",
     "message": "Helt kapitalistiskt - ingen välfärd tillhandahållen från regeringen"
-  },
-  "HAT": {
-    "description": "Hat switch: Is the top button on a joystick",
-    "message": "\" Hatt\""
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
@@ -651,10 +615,6 @@
     "description": "",
     "message": "Joystickinmatning"
   },
-  "JOY_AXIS": {
-    "description": "Regarding joystick",
-    "message": "%{sign}%joyname %axis Axis"
-  },
   "L4L5_DISPLAY_MODE_TOGGLE": {
     "description": "Either show L4/L5 points or don't",
     "message": "Byt visningstyp mellan L4/L5 Lagrange punkter"
@@ -751,70 +711,6 @@
     "description": "",
     "message": "Manuellt kontrolläge"
   },
-  "MAP_LOCK_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Lås hyperrymdsmål"
-  },
-  "MAP_TOGGLE_INFO_PANEL": {
-    "description": "",
-    "message": "Växla mellan infopanel"
-  },
-  "MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
-    "description": "",
-    "message": "Växla mellan vald följande vy"
-  },
-  "MAP_VIEW_ROTATE_DOWN": {
-    "description": "",
-    "message": "Rotera vy neråt"
-  },
-  "MAP_VIEW_ROTATE_LEFT": {
-    "description": "",
-    "message": "Rotera vy vänster"
-  },
-  "MAP_VIEW_ROTATE_RIGHT": {
-    "description": "",
-    "message": "Rotera vy höger"
-  },
-  "MAP_VIEW_ROTATE_UP": {
-    "description": "",
-    "message": "Rotera vy uppåt"
-  },
-  "MAP_VIEW_SHIFT_BACKWARD": {
-    "description": "",
-    "message": "Byt till vy bakåt"
-  },
-  "MAP_VIEW_SHIFT_DOWN": {
-    "description": "",
-    "message": "Byt till vy neråt"
-  },
-  "MAP_VIEW_SHIFT_FORWARD": {
-    "description": "",
-    "message": "Byt till vy framåt"
-  },
-  "MAP_VIEW_SHIFT_LEFT": {
-    "description": "",
-    "message": "Byt till vy vänster"
-  },
-  "MAP_VIEW_SHIFT_RIGHT": {
-    "description": "",
-    "message": "Byt till vy höger"
-  },
-  "MAP_VIEW_SHIFT_UP": {
-    "description": "",
-    "message": "Byt till vy uppåt"
-  },
-  "MAP_WARP_TO_CURRENT_SYSTEM": {
-    "description": "",
-    "message": "Warpa till nuvarande system"
-  },
-  "MAP_WARP_TO_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Warpa till hyperrymdsmål"
-  },
-  "MAP_WARP_TO_SELECTED_SYSTEM": {
-    "description": "",
-    "message": "Warpa till valt system"
-  },
   "MASS": {
     "description": "",
     "message": "Massa"
@@ -893,7 +789,7 @@
   },
   "MISSILE_DETECTED": {
     "description": "",
-    "message": "Missile launch detected."
+    "message": "Upptäckt missilavfyrning."
   },
   "MIXED_ECONOMY": {
     "description": "",
@@ -989,7 +885,7 @@
   },
   "NO_AUTOPILOT_INSTALLED": {
     "description": "",
-    "message": "Autopilot not installed on ship, cannot enable autopilot"
+    "message": "Autopilot inte monterad, kan inte initiera autopilot"
   },
   "NO_CENTRAL_GOVERNANCE": {
     "description": "",
@@ -1065,15 +961,23 @@
   },
   "N_EARTH_DAYS": {
     "description": "",
-    "message": "%days{f.1} jorddagar"
+    "message": "%days{f.1} Earth days"
   },
-  "N_WHATEVER_MASSES": {
+  "N_EARTH_MASSES": {
     "description": "",
-    "message": "%mass{f.3} %units massor"
+    "message": "%mass{f.3} Earth masses"
   },
-  "N_WHATEVER_RADII": {
+  "N_EARTH_RADII": {
+    "description": "Used in system info view. E.g.: \"0.17 Earth radii (118235 km)\"",
+    "message": "%radius{f.3} Earth radii (%radkm{f.0} km)"
+  },
+  "N_SOLAR_MASSES": {
+    "description": "",
+    "message": "%mass{f.3} Solar masses"
+  },
+  "N_SOLAR_RADII": {
     "description": "Used in system info view. E.g. for Barnard's star: \"0.17 Solar radii (118235 km)\"",
-    "message": "%radius{f.3} %units radie (%radkm{f.0} km)"
+    "message": "%radius{f.3} Solar radii (%radkm{f.0} km)"
   },
   "N_YEARS": {
     "description": "",
@@ -1085,7 +989,7 @@
   },
   "OBJECT_INFO": {
     "description": "Originally for use as a window title and a button tooltip in the system map",
-    "message": "Object info"
+    "message": "Objektinfo"
   },
   "OCEANICWORLD": {
     "description": "",
@@ -1101,7 +1005,7 @@
   },
   "ORBIT_PLANNER": {
     "description": "",
-    "message": "Orbit planner"
+    "message": "Omloppsplanerare"
   },
   "OUTDOOR_AGRICULTURAL_WORLD": {
     "description": "",
@@ -1225,15 +1129,11 @@
   },
   "REQUEST_DOCKING_CLEARANCE": {
     "description": "",
-    "message": "Request docking clearance from {target}"
+    "message": "Begär dockningstillstånd från {target}"
   },
   "RESET": {
     "description": "",
     "message": "Återställ"
-  },
-  "RESET_ORIENTATION_AND_ZOOM": {
-    "description": "",
-    "message": "Återställ orientering och zoom"
   },
   "ROBOTS": {
     "description": "",
@@ -1337,7 +1237,7 @@
   },
   "SET_AS_COMBAT_TARGET": {
     "description": "",
-    "message": "Set as combat target"
+    "message": "Välj som stridsmål"
   },
   "SET_AS_TARGET": {
     "description": "",
@@ -1438,10 +1338,6 @@
   "SOCIAL_DEMOCRACY": {
     "description": "",
     "message": "Socialdemokrati"
-  },
-  "SOLAR": {
-    "description": "",
-    "message": "Sol"
   },
   "SOME_ESTABLISHED_MINING": {
     "description": "",
@@ -1707,10 +1603,6 @@
     "description": "",
     "message": "Växla HUD läge"
   },
-  "TOGGLE_LUA_CONSOLE": {
-    "description": "",
-    "message": "Växla mellan Lua konsoll"
-  },
   "TOGGLE_RADAR_MODE": {
     "description": "",
     "message": "Växla radar-läge"
@@ -1759,6 +1651,10 @@
     "description": "Duration unit: one 24-hour day",
     "message": "d"
   },
+  "UNIT_EARTH_GRAVITY": {
+    "description": "Acceleration unit: one earth gravity (g)",
+    "message": "g"
+  },
   "UNIT_HOURS": {
     "description": "Duration unit: one 60-minute hour",
     "message": "h"
@@ -1794,6 +1690,10 @@
   "UNIT_MINUTES": {
     "description": "Duration unit: one 60-second minute",
     "message": "m"
+  },
+  "UNIT_PRESSURE_ATMOSPHERES": {
+    "description": "Pressure unit: one earth atmosphere (atm)",
+    "message": "atm"
   },
   "UNIT_SECONDS": {
     "description": "Duration unit: one second",
@@ -1871,14 +1771,6 @@
     "description": "",
     "message": "\" utan någon nämnbar atmosfär\""
   },
-  "X": {
-    "description": "keybinding: x axis",
-    "message": "X"
-  },
-  "Y": {
-    "description": "keybinding: y axis",
-    "message": "Y"
-  },
   "YAW": {
     "description": "",
     "message": "Gira"
@@ -1894,10 +1786,6 @@
   "YOUNG_FARMING_COLONY": {
     "description": "",
     "message": "Ung jordbrukskoloni."
-  },
-  "Z": {
-    "description": "keybinding: z axis",
-    "message": "Z"
   },
   "ZOOM_IN": {
     "description": "",

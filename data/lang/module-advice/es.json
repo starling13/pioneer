@@ -83,6 +83,14 @@
     "description": "Headline starts with this pre-headline",
     "message": "RUMOR"
   },
+  "RUMOUR_1_BODYTEXT": {
+    "description": "",
+    "message": "Alguien de la Armada Federal me contó que un día una de sus corvetas saltó accidentalmente a un puesto de sistema Haber llamado Rondel, a unos 50 años luz del Sol; causando casi un conflicto abierto. Al parecer no hay mucha gente que sepa del incidente fuera de la armada, pero algunos dicen que desde entonces, la admistración de Rondel se ha mostrado más agresiva con los visitantes, y pilotos de transporte han empezado a evitar el sistema."
+  },
+  "RUMOUR_1_HEADLINE": {
+    "description": "",
+    "message": "El Incidente Rondel"
+  },
   "TALE_1_BODYTEXT": {
     "description": "",
     "message": "No te pierdas el precioso eclipse de New Hope mientras Hades tapa la luz de Epsilon Eridani."

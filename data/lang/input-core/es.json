@@ -1,4 +1,8 @@
 {
+  "AXIS": {
+    "description": "Cardinal name used to compose Joystick <X> Button <Y>",
+    "message": "Ejes"
+  },
   "BIND_AXIS_PITCH": {
     "description": "Descriptive name for the Pitch axis.",
     "message": "Cabeceo"
@@ -71,6 +75,10 @@
     "description": "Descriptive name for the Freelook Yaw axis.",
     "message": "Guiñada Cámara Libre"
   },
+  "BIND_MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
+    "description": "Descriptive name for the MapToggleSelectionFollowView action.",
+    "message": "Alternar vista de Seguimiento"
+  },
   "BIND_MAP_VIEW_MOVE_FORWARD": {
     "description": "Axis binding",
     "message": "Mover el Mapa longitudinalmente"
@@ -91,6 +99,14 @@
     "description": "Axis binding",
     "message": "Guiñada del Mapa"
   },
+  "BIND_MAP_WARP_TO_CURRENT_SYSTEM": {
+    "description": "Descriptive name for the MapWarpToCurrentSystem action.",
+    "message": "Centrar el sistema actual"
+  },
+  "BIND_MAP_WARP_TO_SELECTED_SYSTEM": {
+    "description": "Descriptive name for the MapWarpToSelectedSystem action.",
+    "message": "Centrar el sistema seleccionado"
+  },
   "BIND_PRIMARY_FIRE": {
     "description": "Descriptive name for the PrimaryFire action.",
     "message": "Fuego Principal"
@@ -103,6 +119,10 @@
     "description": "Descriptive name for the ResetCamera action.",
     "message": "Cámara por Defecto"
   },
+  "BIND_RESET_ORIENTATION_AND_ZOOM": {
+    "description": "Descriptive name for the ResetOrientationAndZoom action.",
+    "message": "Reiniciar orientación y zoom"
+  },
   "BIND_RIGHT_CAMERA": {
     "description": "Descriptive name for the RightCamera action.",
     "message": "Cambiar a Cámara Derecha"
@@ -113,7 +133,7 @@
   },
   "BIND_SPEED_CONTROL": {
     "description": "Descriptive name for the SpeedControl axis.",
-    "message": "Ajustar Velocidad de Objetivo"
+    "message": "Ajustar Velocidad al Objetivo"
   },
   "BIND_TARGET_OBJECT": {
     "description": "Descriptive name for the TargetObject action.",
@@ -126,6 +146,10 @@
   "BIND_TOGGLE_HUD_MODE": {
     "description": "Descriptive name for the ToggleHudMode action.",
     "message": "Modo de HUD"
+  },
+  "BIND_TOGGLE_LUA_CONSOLE": {
+    "description": "Descriptive name for the ToggleLuaConsole action.",
+    "message": "Consola Lua"
   },
   "BIND_TOGGLE_ROTATION_DAMPING": {
     "description": "Descriptive name for the ToggleRotationDamping action.",
@@ -142,6 +166,14 @@
   "BIND_VIEW_ZOOM": {
     "description": "Descriptive name for the View Zoom axis",
     "message": "Zoom"
+  },
+  "BUTTON": {
+    "description": "",
+    "message": "\" Botón \""
+  },
+  "DIRECTION": {
+    "description": "Direction",
+    "message": "\" Dir \""
   },
   "GROUP_GENERAL_VIEW_CONTROLS": {
     "description": "Header for the GeneralViewControls input group.",
@@ -169,6 +201,26 @@
   "GROUP_WEAPONS": {
     "description": "Header for the Weapons input group.",
     "message": "Armamento"
+  },
+  "HAT": {
+    "description": "Hat switch: Is the top button on a joystick",
+    "message": "\" Seta\""
+  },
+  "MOUSE": {
+    "description": "A computer mouse, used to create the name for a mouse button binding",
+    "message": "Ratón"
+  },
+  "MOUSE_LMB": {
+    "description": "An acronym for the left mouse button",
+    "message": "Botón Izquierdo"
+  },
+  "MOUSE_MMB": {
+    "description": "An acronym for the middle mouse button",
+    "message": "Botón central"
+  },
+  "MOUSE_RMB": {
+    "description": "An acronym for the right mouse button",
+    "message": "Botón derecho"
   },
   "PAGE_GENERAL": {
     "description": "Header for the General input page.",
@@ -217,5 +269,17 @@
   "TEXT_KEY_POSITIVE": {
     "description": "Indicates the positive half of a key-binding pair.",
     "message": "Positivo:"
+  },
+  "X": {
+    "description": "keybinding: x axis",
+    "message": "X"
+  },
+  "Y": {
+    "description": "keybinding: y axis",
+    "message": "Y"
+  },
+  "Z": {
+    "description": "keybinding: z axis",
+    "message": "Z"
   }
 }

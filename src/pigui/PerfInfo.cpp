@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "PerfInfo.h"
@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <fstream>
 #include <functional>
+#include <sstream>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -34,6 +35,7 @@ using PerfInfo = PiGui::PerfInfo;
 struct PerfInfo::ImGuiState {
 	bool perfWindowOpen = true;
 	bool updatePause = false;
+	bool metricsWindowOpen = false;
 	uint32_t playerModelDebugFlags = 0;
 
 	bool textureCacheViewerOpen = false;
@@ -187,6 +189,9 @@ void PerfInfo::Draw()
 	if (m_state->hasSelectedTexture &&
 		Pi::renderer->GetCachedTexture(m_state->selectedTexture.first, m_state->selectedTexture.second))
 		DrawTextureInspector();
+
+	if (m_state->metricsWindowOpen)
+		ImGui::ShowMetricsWindow(&m_state->metricsWindowOpen);
 }
 
 void PerfInfo::DrawPerfWindow()
@@ -203,37 +208,32 @@ void PerfInfo::DrawPerfWindow()
 			ImGui::Text("%.1f MB process memory usage (%.1f MB peak)", (process_mem.currentMemSize * 1e-3), (process_mem.peakMemSize * 1e-3));
 		ImGui::Text("%.3f MB Lua memory usage", double(lua_mem) / scale_MB);
 		ImGui::Spacing();
-	}
 
-	if (ImGui::BeginTabBar("PerfInfoTabs")) {
-		if (ImGui::BeginTabItem("ImGui")) {
-			DrawImGuiStats();
-			ImGui::EndTabItem();
-		}
-
-		if (ImGui::BeginTabItem("Renderer")) {
-			DrawRendererStats();
-			ImGui::EndTabItem();
-		}
-
-		if (Pi::game) {
-			if (Pi::player->GetFlightState() != Ship::HYPERSPACE && ImGui::BeginTabItem("WorldView")) {
-				DrawWorldViewStats();
+		if (ImGui::BeginTabBar("PerfInfoTabs")) {
+			if (ImGui::BeginTabItem("Renderer")) {
+				DrawRendererStats();
+				DrawImGuiStats();
 				ImGui::EndTabItem();
 			}
 
-			if (Pi::game->GetGalaxy() && ImGui::BeginTabItem("Galaxy Stats")) {
-				auto &stats = Pi::game->GetGalaxy()->GetStats();
-				stats.FlushFrame();
-				DrawStatList(stats.GetFrameStats());
+			if (false && ImGui::BeginTabItem("Input")) {
+				DrawInputDebug();
 				ImGui::EndTabItem();
 			}
+
+			if (Pi::game) {
+				if (Pi::player->GetFlightState() != Ship::HYPERSPACE && ImGui::BeginTabItem("WorldView")) {
+					DrawWorldViewStats();
+					ImGui::EndTabItem();
+				}
+			}
+
+			PiGui::RunHandler(Pi::GetFrameTime(), "debug-tabs");
+
+			ImGui::EndTabBar();
 		}
-
-		PiGui::RunHandler(Pi::GetFrameTime(), "debug-tabs");
-
-		ImGui::EndTabBar();
 	}
+
 	ImGui::End();
 
 	PiGui::RunHandler(Pi::GetFrameTime(), "debug");
@@ -351,15 +351,78 @@ void PerfInfo::DrawWorldViewStats()
 		Pi::player->GetModel()->SetDebugFlags(m_state->playerModelDebugFlags);
 	}
 	/* clang-format on */
+
+	if (Pi::player->GetNavTarget() && Pi::player->GetNavTarget()->GetSystemBody()) {
+		const auto *sbody = Pi::player->GetNavTarget()->GetSystemBody();
+		ImGui::TextUnformatted(fmt::format("Name: {}, Population: {}", sbody->GetName(), sbody->GetPopulation() * 1e9).c_str());
+	}
+}
+
+void PerfInfo::DrawInputDebug()
+{
+	std::ostringstream output;
+	auto frameList = Pi::input->GetInputFrames();
+	uint32_t index = 0;
+	for (const auto *frame : frameList) {
+		ImGui::Text("InputFrame %d: modal=%d", index, frame->modal);
+		ImGui::Indent();
+		uint32_t actionNum = 0;
+		for (const auto *action : frame->actions) {
+			ImGui::Text("Action %d: active=%d (%d, %d)", actionNum, action->m_active, action->binding.m_active, action->binding2.m_active);
+			if (action->binding.Enabled()) {
+				output << action->binding;
+				ImGui::TextUnformatted(output.str().c_str());
+				output.str("");
+			}
+			if (action->binding2.Enabled()) {
+				output << action->binding2;
+				ImGui::TextUnformatted(output.str().c_str());
+				output.str("");
+			}
+
+			ImGui::Separator();
+			actionNum++;
+		}
+
+		ImGui::Spacing();
+
+		actionNum = 0;
+		for (const auto *axis : frame->axes) {
+			ImGui::Text("Axis %d: value=%.2f (%d, %d)", actionNum, axis->m_value, axis->positive.m_active, axis->negative.m_active);
+			if (axis->positive.Enabled()) {
+				output << axis->positive;
+				ImGui::TextUnformatted(output.str().c_str());
+				output.str("");
+			}
+
+			if (axis->negative.Enabled()) {
+				output << axis->negative;
+				ImGui::TextUnformatted(output.str().c_str());
+				output.str("");
+			}
+
+			ImGui::Separator();
+			actionNum++;
+		}
+		ImGui::Unindent();
+
+		ImGui::Spacing();
+		index++;
+	}
 }
 
 void PerfInfo::DrawImGuiStats()
 {
+	ImGui::NewLine();
 	auto &io = ImGui::GetIO();
 	ImGui::Text("ImGui stats:");
 	ImGui::Text("%d verts, %d tris", io.MetricsRenderVertices, io.MetricsRenderIndices / 3);
 	ImGui::Text("%d active windows (%d visible)", io.MetricsActiveWindows, io.MetricsRenderWindows);
 	ImGui::Text("%d current allocations", io.MetricsActiveAllocations);
+
+	if (ImGui::Button("Toggle Metrics Window")) {
+		m_state->metricsWindowOpen = !m_state->metricsWindowOpen;
+	}
 }
 
 void PerfInfo::DrawStatList(const Perf::Stats::FrameInfo &fi)

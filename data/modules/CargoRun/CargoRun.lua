@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -16,14 +16,9 @@ local ShipDef = require 'ShipDef'
 local Ship = require 'Ship'
 local utils = require 'utils'
 
-local InfoFace = import("ui/InfoFace")
-local NavButton = import("ui/NavButton")
-
 local l = Lang.GetResource("module-cargorun")
 local l_ui_core = Lang.GetResource("ui-core")
-
--- Get the UI class
-local ui = Engine.ui
+local lc = Lang.GetResource 'core'
 
 -- don't produce missions for further than this many light years away
 local max_delivery_dist = 15
@@ -33,6 +28,8 @@ local typical_travel_time = (2.5 * max_delivery_dist + 8) * 24 * 60 * 60
 local typical_reward = 35 * max_delivery_dist
 -- typical reward for local delivery
 local typical_reward_local = 35
+-- Minimum amount paid for very close deliveries
+local min_local_dist_pay = 10
 -- max cargo per trip
 local max_cargo = 10
 local max_cargo_wholesaler = 100
@@ -43,126 +40,147 @@ local max_price = 300
 
 -- the custom cargo
 local aluminium_tubes = Equipment.EquipType.New({
+	name = "aluminium_tubes",
 	l10n_key = 'ALUMINIUM_TUBES', slots="cargo", price=50,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local art_objects = Equipment.EquipType.New({
+	name = "art_objects",
 	l10n_key = 'ART_OBJECTS', slots="cargo", price=200,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local clus = Equipment.EquipType.New({
+	name = "clus",
 	l10n_key = 'CLUS', slots="cargo", price=20,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local diamonds = Equipment.EquipType.New({
+	name = "diamonds",
 	l10n_key = 'DIAMONDS', slots="cargo", price=300,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local digesters = Equipment.EquipType.New({
+	name = "digesters",
 	l10n_key = 'DIGESTERS', slots="cargo", price=10,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local electrical_appliances = Equipment.EquipType.New({
+	name = "electrical_appliances",
 	l10n_key = 'ELECTRICAL_APPLIANCES', slots="cargo", price=150,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local explosives = Equipment.EquipType.New({
+	name = "explosives",
 	l10n_key = 'EXPLOSIVES', slots="cargo", price=50,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local furniture = Equipment.EquipType.New({
+	name = "furniture",
 	l10n_key = 'FURNITURE', slots="cargo", price=15,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local greenhouses = Equipment.EquipType.New({
+	name = "greenhouses",
 	l10n_key = 'GREENHOUSES', slots="cargo", price=20,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local hazardous_substances = Equipment.EquipType.New({
+	name = "hazardous_substances",
 	l10n_key = 'HAZARDOUS_SUBSTANCES', slots="cargo", price=100,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local machine_tools = Equipment.EquipType.New({
+	name = "machine_tools",
 	l10n_key = 'MACHINE_TOOLS', slots="cargo", price=10,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local neptunium = Equipment.EquipType.New({
+	name = "neptunium",
 	l10n_key = 'NEPTUNIUM', slots="cargo", price=200,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local plutonium = Equipment.EquipType.New({
+	name = "plutonium",
 	l10n_key = 'PLUTONIUM', slots="cargo", price=200,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local semi_finished_products = Equipment.EquipType.New({
+	name = "semi_finished_products",
 	l10n_key = 'SEMI_FINISHED_PRODUCTS', slots="cargo", price=10,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local spaceship_parts = Equipment.EquipType.New({
+	name = "spaceship_parts",
 	l10n_key = 'SPACESHIP_PARTS', slots="cargo", price=250,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local titanium = Equipment.EquipType.New({
+	name = "titanium",
 	l10n_key = 'TITANIUM', slots="cargo", price=150,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local tungsten = Equipment.EquipType.New({
+	name = "tungsten",
 	l10n_key = 'TUNGSTEN', slots="cargo", price=125,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local uranium = Equipment.EquipType.New({
+	name = "uranium",
 	l10n_key = 'URANIUM', slots="cargo", price=175,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local quibbles = Equipment.EquipType.New({
+	name = "quibbles",
 	l10n_key = 'QUIBBLES', slots="cargo", price=1,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local wedding_dresses = Equipment.EquipType.New({
+	name = "wedding_dresses",
 	l10n_key = 'WEDDING_DRESSES', slots="cargo", price=15,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
 	l10n_resource="module-cargorun"
 })
 local stem_bolts = Equipment.EquipType.New({
+	name = "stem_bolts",
 	l10n_key = 'STEM_BOLTS', slots="cargo", price=143,
 	capabilities={mass=1},
 	purchasable=false, icon_name="Default",
@@ -286,7 +304,27 @@ local getNumberOfFlavours = function (str)
 	return num - 1
 end
 
-local onChat = function (form, ref, option)
+local getRiskMsg = function (mission)
+	if mission.localdelivery then
+		return l.RISK_1 -- very low risk -> no specific text to give no confusing answer
+	else
+		local branch
+		if mission.wholesaler then branch = "WHOLESALER" else branch = mission.branch end
+		return l:get("RISK_" .. branch .. "_" .. math.floor(mission.risk * (getNumberOfFlavours("RISK_" .. branch) - 1)) + 1)
+			or l["RISK_" .. math.floor(mission.risk * (getNumberOfFlavours("RISK") - 1)) + 1]
+	end
+end
+
+local onDelete = function (ref)
+	ads[ref] = nil
+end
+
+local isEnabled = function (ref)
+	return ads[ref] ~= nil and isQualifiedFor(Character.persistent.player.reputation, ads[ref])
+end
+
+local onChat
+onChat = function (form, ref, option)
 	local ad = ads[ref]
 
 	form:Clear()
@@ -305,12 +343,25 @@ local onChat = function (form, ref, option)
 		return
 	end
 
+	-- check if we already have a deal
+	for _, m in pairs(missions) do
+		if ad.client == m.client then
+			form:SetMessage(l["DENY_AGAIN_" .. Engine.rand:Integer(1, getNumberOfFlavours("DENY_AGAIN"))])
+			return
+		end
+	end
+
 	form:AddNavButton(ad.location)
+
+	if ad.negotiated_amount == nil then
+		ad.negotiated_amount = ad.amount
+		ad.negotiated_reward = ad.reward
+	end
 
 	if option == 0 then
 		local introtext  = string.interp(ad.introtext, {
 			name         = ad.client.name,
-			cash         = Format.Money(ad.reward,false),
+			cash         = Format.Money(ad.negotiated_reward,false),
 			cargoname    = ad.cargotype:GetName(),
 			starport     = ad.location:GetSystemBody().name,
 			system       = ad.location:GetStarSystem().name,
@@ -338,31 +389,51 @@ local onChat = function (form, ref, option)
 
 	elseif option == 2 then
 		local howmuch
-		if ad.wholesaler then
-			howmuch = string.interp(l["HOWMUCH_WHOLESALER_" .. Engine.rand:Integer(1, getNumberOfFlavours("HOWMUCH_WHOLESALER"))], {
-				amount    = ad.amount,
-				cargoname = ad.cargotype:GetName()})
-		else
-			if ad.amount > 1 then
+		if ad.amount == 1 then
+			howmuch = string.interp(l["HOWMUCH_SINGULAR_" .. Engine.rand:Integer(1,getNumberOfFlavours("HOWMUCH_SINGULAR"))],
+				{amount = ad.amount})
+		elseif ad.negotiable then
+			if ad.wholesaler then
+				howmuch = string.interp(l["HOWMUCH_WHOLESALER_" .. Engine.rand:Integer(1, getNumberOfFlavours("HOWMUCH_WHOLESALER"))], {
+					amount    = ad.amount,
+					cargoname = ad.cargotype:GetName()})
+			else
 				howmuch = string.interp(l["HOWMUCH_" .. Engine.rand:Integer(1,getNumberOfFlavours("HOWMUCH"))],
 					{amount = ad.amount})
-			else
-				howmuch = string.interp(l["HOWMUCH_SINGULAR_" .. Engine.rand:Integer(1,getNumberOfFlavours("HOWMUCH_SINGULAR"))],
-					{amount = ad.amount})
 			end
+
+			local amount = {}
+			local button = 2
+
+			amount[1] = ad.wholesaler and max_cargo or 1
+			for i = 2, 5 do
+				local val = math.ceil(i^2/25 * ad.amount)
+				if val > amount[button-1] then
+					amount[button] = val
+					button = button + 1
+				end
+			end
+			for i, val in pairs(amount) do
+				form:AddOption(string.interp(l.OFFER, { amount = val, reward = Format.Money(math.ceil(ad.reward * val/ad.amount), false) }), 10+val)
+			end
+		else
+			howmuch = string.interp(l["HOWMUCH_NO_" .. Engine.rand:Integer(1,getNumberOfFlavours("HOWMUCH_NO"))],
+				{amount = ad.amount})
 		end
 		form:SetMessage(howmuch)
+		form:RemoveNavButton()
+		form:AddOption(l.GO_BACK, 0)
 
 	elseif option == 3 then
-		if (not ad.pickup and Game.player.freeCapacity < ad.amount) or
-			(ad.pickup and Game.player.totalCargo < ad.amount) then
+		if not ad.pickup and (Game.player.totalCargo - Game.player.usedCargo) < ad.negotiated_amount or
+			Game.player.totalCargo < ad.negotiated_amount then
 			form:SetMessage(l.YOU_DO_NOT_HAVE_ENOUGH_CARGO_SPACE_ON_YOUR_SHIP)
 			form:RemoveNavButton()
 			return
 		end
 		local cargo_picked_up
 		if not ad.pickup then
-			Game.player:AddEquip(ad.cargotype, ad.amount, "cargo")
+			Game.player:AddEquip(ad.cargotype, ad.negotiated_amount, "cargo")
 			cargo_picked_up = true
 		else
 			cargo_picked_up = false
@@ -380,13 +451,37 @@ local onChat = function (form, ref, option)
 			cargo_picked_up	= cargo_picked_up,
 			introtext       = ad.introtext,
 			risk            = ad.risk,
-			reward          = ad.reward,
+			reward          = ad.negotiated_reward,
 			due             = ad.due,
-			amount          = ad.amount,
+			amount          = ad.negotiated_amount,
 			branch          = ad.branch,
 			cargotype       = ad.cargotype,
 		}
 		table.insert(missions,Mission.New(mission))
+
+		if ad.amount ~= ad.negotiated_amount then
+			-- recreate advert with the rest of the cargo
+			ad.amount = ad.amount - ad.negotiated_amount
+			ad.reward = ad.reward - ad.negotiated_reward
+			ad.negotiated_amount = ad.amount
+			ad.negotiated_reward = ad.reward
+
+			ad.desc = string.interp(ad.adtext, {
+				system   = ad.location:GetStarSystem().name,
+				cash     = Format.Money(ad.reward,false),
+				starport = ad.location:GetSystemBody().name,
+			})
+
+			local new = ad.station:AddAdvert({
+				description = ad.desc,
+				icon        = ad.urgency >=  0.8 and "haul_fast" or "haul",
+				onChat      = onChat,
+				onDelete    = onDelete,
+				isEnabled   = isEnabled
+			})
+			ads[new] = ad
+		end
+
 		if ad.pickup then
 			form:SetMessage(l["ACCEPTED_PICKUP_" .. Engine.rand:Integer(1, getNumberOfFlavours("ACCEPTED_PICKUP"))])
 		else
@@ -399,37 +494,30 @@ local onChat = function (form, ref, option)
 			or l["URGENCY_" .. math.floor(ad.urgency * (getNumberOfFlavours("URGENCY") - 1)) + 1], { date = Format.Date(ad.due) }))
 
 	elseif option == 5 then
-		if ad.localdelivery then -- very low risk -> no specific text to give no confusing answer
-			form:SetMessage(l.RISK_1)
-		else
-			local branch
-			if ad.wholesaler then branch = "WHOLESALER" else branch = ad.branch end
-			form:SetMessage(l:get("RISK_" .. branch .. "_" .. math.floor(ad.risk * (getNumberOfFlavours("RISK_" .. branch) - 1)) + 1) or l["RISK_" .. math.floor(ad.risk * (getNumberOfFlavours("RISK") - 1)) + 1])
-		end
+		form:SetMessage(getRiskMsg(ad))
+
+	elseif option > 10 then
+		ad.negotiated_amount = option - 10
+		ad.negotiated_reward = math.ceil(ad.reward * ad.negotiated_amount/ad.amount)
+		form:SetMessage(string.interp(l.OK_WE_AGREE, { amount = ad.negotiated_amount, reward = Format.Money(ad.negotiated_reward, false) }))
 	end
 
-	form:AddOption(l.WHY_SO_MUCH_MONEY, 1)
-	form:AddOption(l.HOW_MUCH_MASS, 2)
-	form:AddOption(l.HOW_SOON_MUST_IT_BE_DELIVERED, 4)
-	form:AddOption(l.WILL_I_BE_IN_ANY_DANGER, 5)
-	form:AddOption(l.COULD_YOU_REPEAT_THE_ORIGINAL_REQUEST, 0)
-	form:AddOption(l.OK_AGREED, 3)
+	if option ~= 2 then
+		form:AddOption(l.WHY_SO_MUCH_MONEY, 1)
+		form:AddOption(l.HOW_MUCH_MASS, 2)
+		form:AddOption(l.HOW_SOON_MUST_IT_BE_DELIVERED, 4)
+		form:AddOption(l.WILL_I_BE_IN_ANY_DANGER, 5)
+		form:AddOption(l.COULD_YOU_REPEAT_THE_ORIGINAL_REQUEST, 0)
+		form:AddOption(l.OK_AGREED, 3)
+	end
 end
 
-local onDelete = function (ref)
-	ads[ref] = nil
-end
-
-local isEnabled = function (ref)
-	return ads[ref] ~= nil and isQualifiedFor(Character.persistent.player.reputation, ads[ref])
-end
-
-local findNearbyStations = function (station, minDist)
+local findNearbyStations = function (station, minDist, maxDist)
 	local nearbystations = {}
 	for _,s in ipairs(Game.system:GetStationPaths()) do
 		if s ~= station.path then
 			local dist = station:DistanceTo(Space.GetBody(s.bodyIndex))
-			if dist >= minDist then
+			if dist >= minDist and dist <= maxDist then
 				table.insert(nearbystations, { s, dist })
 			end
 		end
@@ -460,18 +548,20 @@ local makeAdvert = function (station)
 	local client = Character.New()
 	local urgency = Engine.rand:Number(0, 1)
 	local localdelivery = Engine.rand:Number(0, 1) > 0.5 and true or false
+	local negotiable = Engine.rand:Number(0, 1) > 0.25 and true or false
 
 	branch, cargotype = randomCargo()
 	if localdelivery then
 		nearbysystem = Game.system
-		nearbystations = findNearbyStations(station, 1000)
+		-- discard stations closer than 1000m and further than 20AU
+		nearbystations = findNearbyStations(station, 1000, 1.4960e11 * 20)
 		if #nearbystations == 0 then return nil end
 		amount = Engine.rand:Integer(1, max_cargo)
 		risk = 0 -- no risk for local delivery
 		wholesaler = false -- no local wholesaler delivery
 		pickup = Engine.rand:Number(0, 1) > 0.75 and true or false
 		location, dist = table.unpack(nearbystations[Engine.rand:Integer(1,#nearbystations)])
-		reward = typical_reward_local + (math.sqrt(dist) / 15000) * (1+urgency) * (1+amount/max_cargo)
+		reward = typical_reward_local + math.max(math.sqrt(dist) / 15000, min_local_dist_pay) * (1.5+urgency) * (1+amount/max_cargo)
 		due = (4*24*60*60) + (24*60*60 * (dist / (1.49*10^11))) * (1.5 - urgency)
 		if pickup then
 			missiontype = "PICKUP_LOCAL"
@@ -514,7 +604,7 @@ local makeAdvert = function (station)
 			due = due + Game.time
 		end
 	end
-	reward = math.ceil(reward)
+	reward = utils.round(reward, 25)
 
 	local n = getNumberOfFlavours("INTROTEXT_" .. missiontype)
 	local introtext
@@ -535,6 +625,7 @@ local makeAdvert = function (station)
 		dist          = dist,
 		due           = due,
 		amount        = amount,
+		negotiable    = negotiable,
 		branch        = branch,
 		cargotype     = cargotype,
 		risk          = risk,
@@ -550,6 +641,7 @@ local makeAdvert = function (station)
 	else
 		adtext = l["ADTEXT_" .. Engine.rand:Integer(1, getNumberOfFlavours("ADTEXT"))]
 	end
+	ad.adtext = adtext -- save for recreation
 	ad.desc = string.interp(adtext, {
 		system   = nearbysystem.name,
 		cash     = Format.Money(ad.reward,false),
@@ -827,12 +919,22 @@ local onShipDocked = function (player, station)
 	-- Now we have space pick up cargo as well
 	for ref,mission in pairs(missions) do
 		if mission.location == station.path and mission.pickup and not mission.cargo_picked_up then
-			if Game.player.freeCapacity < mission.amount then
-				Comms.ImportantMessage(l.YOU_DO_NOT_HAVE_ENOUGH_EMPTY_CARGO_SPACE, mission.client.name)
+			if Game.time < mission.due then
+				if (player.totalCargo - player.usedCargo) < mission.amount then
+					Comms.ImportantMessage(l.YOU_DO_NOT_HAVE_ENOUGH_EMPTY_CARGO_SPACE, mission.client.name)
+				else
+					Game.player:AddEquip(mission.cargotype, mission.amount, "cargo")
+					mission.cargo_picked_up = true
+					Comms.ImportantMessage(l.WE_HAVE_LOADED_UP_THE_CARGO_ON_YOUR_SHIP, mission.client.name)
+				end
 			else
-				Game.player:AddEquip(mission.cargotype, mission.amount, "cargo")
-				mission.cargo_picked_up = true
-				Comms.ImportantMessage(l.WE_HAVE_LOADED_UP_THE_CARGO_ON_YOUR_SHIP, mission.client.name)
+				local oldReputation = Character.persistent.player.reputation
+				Character.persistent.player.reputation = Character.persistent.player.reputation - (mission.localdelivery and 1 or 1.5)
+				Comms.ImportantMessage(l.TOO_LATE_TO_PICK_UP, mission.client.name)
+				Event.Queue("onReputationChanged", oldReputation, Character.persistent.player.killcount,
+					Character.persistent.player.reputation, Character.persistent.player.killcount)
+				mission:Remove()
+				missions[ref] = nil
 			end
 		end
 	end
@@ -878,263 +980,68 @@ local onGameEnd = function ()
 	escort_ships = {}
 end
 
-local onClick = function (mission)
-	local danger
+local buildMissionDescription = function(mission)
+	local ui = require 'pigui'
+	local desc = {}
 	local dist = Game.system and string.format("%.2f", Game.system:DistanceTo(mission.location)) or "???"
-	if mission.localdelivery then
-		danger = l.RISK_1
+	local danger = getRiskMsg(mission)
+
+	desc.description = mission.introtext:interp({
+		name = mission.client.name,
+		cargoname = mission.cargotype:GetName(),
+		starport = mission.location:GetSystemBody().name,
+		system = mission.location:GetStarSystem().name,
+		sectorx = mission.location.sectorX,
+		sectory = mission.location.sectorY,
+		sectorz = mission.location.sectorZ,
+		dom_starport = mission.domicile:GetSystemBody().name,
+		dom_system = mission.domicile:GetStarSystem().name,
+		dom_sectorx = mission.domicile.sectorX,
+		dom_sectory = mission.domicile.sectorY,
+		dom_sectorz = mission.domicile.sectorZ,
+		cash = ui.Format.Money(mission.reward,false),
+		dist = dist
+	})
+
+	desc.location = mission.location
+	desc.client = mission.client
+
+	if not mission.pickup then
+		desc.details = {
+			l.DELIVER_TO,
+			{ l.SPACEPORT,	mission.location:GetSystemBody().name },
+			{ l.SYSTEM,		ui.Format.SystemPath(mission.location) },
+			{ l.DISTANCE,	dist.." "..lc.UNIT_LY },
+			false,
+			{ l.DEADLINE,	ui.Format.Date(mission.due) },
+			{ l.CARGO,		mission.cargotype:GetName() },
+			{ l.AMOUNT,		mission.amount.."t " },
+			{ l.DANGER,		danger },
+		}
 	else
-		local branch
-		if mission.wholesaler then branch = "WHOLESALER" else branch = mission.branch end
-		danger = (l:get("RISK_" .. branch .. "_" .. math.floor(mission.risk * (getNumberOfFlavours("RISK_" .. branch) - 1)) + 1)
-			or l["RISK_" .. math.floor(mission.risk * (getNumberOfFlavours("RISK") - 1)) + 1])
+		local domicileDist = Game.system and string.format("%.2f", Game.system:DistanceTo(mission.domicile)) or "???"
+		local is_cargo_loaded = mission.cargo_picked_up and l.CARGO_IS_LOADED or l.CARGO_IS_NOT_LOADED
+
+		desc.details = {
+			l.PICKUP_FROM,
+			{ l.SPACEPORT,	mission.location:GetSystemBody().name },
+			{ l.SYSTEM,		ui.Format.SystemPath(mission.location) },
+			{ l.DISTANCE,	dist.." "..lc.UNIT_LY },
+			l.DELIVER_TO,
+			{ l.SPACEPORT,	mission.domicile:GetSystemBody().name },
+			{ l.SYSTEM,		ui.Format.SystemPath(mission.domicile) },
+			{ l.DISTANCE,	domicileDist.. " " .. lc.UNIT_LY },
+			false,
+			{ l.DEADLINE,	ui.Format.Date(mission.due) },
+			{ l.CARGO,		mission.cargotype:GetName() },
+			{ l.AMOUNT,		mission.amount.."t "..is_cargo_loaded },
+			{ l.DANGER,		danger },
+		}
+
+		desc.returnLocation = mission.domicile
 	end
 
-	if not mission.pickup then return ui:Grid(2,1)
-		:SetColumn(0,{ui:VBox(10):PackEnd({ui:MultiLineText((mission.introtext):interp({name = mission.client.name,
-											cargoname = mission.cargotype:GetName(),
-											starport = mission.location:GetSystemBody().name,
-											system = mission.location:GetStarSystem().name,
-											sectorx = mission.location.sectorX,
-											sectory = mission.location.sectorY,
-											sectorz = mission.location.sectorZ,
-											cash = Format.Money(mission.reward,false),
-											dist = dist})
-										),
-										ui:Margin(10),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SPACEPORT)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.location:GetSystemBody().name)
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SYSTEM)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.location:GetStarSystem().name.." ("..mission.location.sectorX..","..mission.location.sectorY..","..mission.location.sectorZ..")")
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DISTANCE)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(dist.." "..l.LY)
-												})
-											}),
-										NavButton.New(l.SET_AS_TARGET, mission.location),
-										ui:Margin(5),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DEADLINE)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(Format.Date(mission.due))
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.CARGO)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(mission.cargotype:GetName())
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.AMOUNT)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(mission.amount.."t")
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DANGER)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(danger)
-												})
-											}),
-		})})
-		:SetColumn(1, {
-			ui:VBox(10):PackEnd(InfoFace.New(mission.client))
-		})
-	else
-		local is_cargo_loaded
-
-		if mission.cargo_picked_up then
-			is_cargo_loaded = l.CARGO_IS_LOADED
-		else
-			is_cargo_loaded = l.CARGO_IS_NOT_LOADED
-		end
-		return ui:Grid(2,1)
-		:SetColumn(0,{ui:VBox():PackEnd({ui:MultiLineText((mission.introtext):interp({name = mission.client.name,
-											cargoname = mission.cargotype:GetName(),
-											starport = mission.location:GetSystemBody().name,
-											system = mission.location:GetStarSystem().name,
-											sectorx = mission.location.sectorX,
-											sectory = mission.location.sectorY,
-											sectorz = mission.location.sectorZ,
-											dom_starport = mission.domicile:GetSystemBody().name,
-											dom_system = mission.domicile:GetStarSystem().name,
-											dom_sectorx = mission.domicile.sectorX,
-											dom_sectory = mission.domicile.sectorY,
-											dom_sectorz = mission.domicile.sectorZ,
-											cash = Format.Money(mission.reward,false),
-											dist = dist})
-										),
-										ui:Margin(10),
-										ui:VBox():PackEnd({
-											ui:Label(l.PICKUP_FROM)
-										}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SPACEPORT)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.location:GetSystemBody().name)
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SYSTEM)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.location:GetStarSystem().name.." ("..mission.location.sectorX..","..mission.location.sectorY..","..mission.location.sectorZ..")")
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DISTANCE)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(dist.." "..l.LY)
-												})
-											}),
-										NavButton.New(l.SET_AS_TARGET, mission.location),
-										ui:Margin(5),
-										ui:VBox():PackEnd({
-											ui:Label(l.DELIVER_TO)
-										}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SPACEPORT)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.domicile:GetSystemBody().name)
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SYSTEM)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.domicile:GetStarSystem().name.." ("..mission.domicile.sectorX..","..mission.domicile.sectorY..","..mission.domicile.sectorZ..")")
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DISTANCE)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label((string.format("%.2f", Game.system:DistanceTo(mission.domicile)) or "???") .. " " .. l.LY)
-												})
-											}),
-										NavButton.New(l.SET_RETURN_ROUTE, mission.domicile),
-										ui:Margin(5),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DEADLINE)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(Format.Date(mission.due))
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.CARGO)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(mission.cargotype:GetName())
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.AMOUNT)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(mission.amount.."t "..is_cargo_loaded)
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DANGER)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(danger)
-												})
-											}),
-		})})
-		:SetColumn(1, {
-			ui:VBox(10):PackEnd(InfoFace.New(mission.client))
-		})
-	end
+	return desc
 end
 
 local serialize = function ()
@@ -1157,6 +1064,6 @@ Event.Register("onGameStart", onGameStart)
 Event.Register("onGameEnd", onGameEnd)
 Event.Register("onReputationChanged", onReputationChanged)
 
-Mission.RegisterType('CargoRun',l.CARGORUN,onClick)
+Mission.RegisterType('CargoRun',l.CARGORUN, buildMissionDescription)
 
 Serializer:Register("CargoRun", serialize, unserialize)

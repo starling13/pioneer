@@ -1,10 +1,9 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
 local Lang = require 'Lang'
 local Game = require 'Game'
-local Comms = require 'Comms'
 local Character = require 'Character'
 local Event = require 'Event'
 local Serializer = require 'Serializer'
@@ -23,8 +22,10 @@ end
 local ads = {}
 
 
-local addReputation = function (money)
-	local curRep = Character.persistent.player.reputation
+local addReputation = function (money, character)
+	local test = istest or false
+	local char = character or Character.persistent.player
+	local curRep = char.reputation
 	local newRep
 
 	if curRep >= 1 then
@@ -33,45 +34,63 @@ local addReputation = function (money)
 	else
 		newRep = curRep + 2^(math.log(money)/math.log(10))
 	end
-	Character.persistent.player.reputation = newRep
+	char.reputation = newRep
+	return newRep
+end
+
+
+local computeReputation = function (ad)
+	-- compute money to get to next level of reputation
+
+	local current_reputation = 	Character.persistent.player:GetReputationRating()
+	print("\n\nCURRENT:", current_reputation)
+
+	for i=0,5,1 do
+		local donate = math.floor(10^i)
+		local clone = Character.persistent.player:Clone()
+		addReputation(donate * ad.modifier, clone)
+		local new_reputation = clone:GetReputationRating()
+		if new_reputation ~= current_reputation then
+			return donate
+		end
+	end
+	-- aught not come here unless player has maxed out reputation
+	return 0
 end
 
 
 local onChat = function (form, ref, option)
 	local ad = ads[ref]
+	form:Clear()
 
-	if option == 0 then
-		form:Clear()
-
-		form:SetTitle(ad.title)
-		form:SetFace({ seed = ad.faceseed })
-		form:SetMessage(ad.message)
-
-		form:AddOption(Format.Money(1,false), 1)
-		form:AddOption(Format.Money(10,false), 10)
-		form:AddOption(Format.Money(100,false), 100)
-		form:AddOption(Format.Money(1000,false), 1000)
-		form:AddOption(Format.Money(10000,false), 10000)
-		form:AddOption(Format.Money(100000,false), 100000)
-
-		return
-	end
+	form:SetTitle(ad.title)
+	form:SetFace(ad.character)
 
 	if option == -1 then
 		form:Close()
 		return
 	end
 
-	if Game.player:GetMoney() < option then
-		Comms.Message(l.YOU_DO_NOT_HAVE_ENOUGH_MONEY)
+	if option == 0 then
+		form:SetMessage(ad.message .. "\n\n" .. string.interp(
+			l.SALES_PITCH, {cash = Format.Money(computeReputation(ad), false)}))
+
+	elseif Game.player:GetMoney() < option then
+		form:SetMessage(l.YOU_DO_NOT_HAVE_ENOUGH_MONEY)
 	else
 		if option >= 10000 then
-			Comms.Message(l.WOW_THAT_WAS_VERY_GENEROUS)
+			form:SetMessage(l.WOW_THAT_WAS_VERY_GENEROUS)
 		else
-			Comms.Message(l.THANK_YOU_ALL_DONATIONS_ARE_WELCOME)
+			form:SetMessage(l.THANK_YOU_ALL_DONATIONS_ARE_WELCOME)
 		end
 		Game.player:AddMoney(-option)
 		addReputation(option * ad.modifier)
+	end
+
+	-- Draw buttons donation button options
+	for i=0,5,1 do
+		donate = math.floor(10^i)
+		form:AddOption(Format.Money(donate, false), donate)
 	end
 end
 
@@ -82,12 +101,17 @@ end
 local onCreateBB = function (station)
 	local n = Engine.rand:Integer(1, #flavours)
 
+	-- FOSS is rare, (kind of an easter egg), skip advert
+	if n == 6 and Engine.rand:Integer(0, 5) > 1 then
+		return
+	end
+
 	local ad = {
 		modifier = n == 6 and 1.5 or 1.0, -- donating to FOSS is twice as good
 		title    = flavours[n].title,
 		message  = flavours[n].message,
 		station  = station,
-		faceseed = Engine.rand:Integer()
+		character = Character.New({armour=false}),
 	}
 
 	local ref = station:AddAdvert({

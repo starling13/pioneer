@@ -5,7 +5,7 @@
   },
   "AU": {
     "description": "",
-    "message": "AU"
+    "message": "UA"
   },
   "BOARDED_PASSENGER": {
     "description": "",
@@ -434,10 +434,6 @@
   "LON": {
     "description": "",
     "message": "Lon:"
-  },
-  "LY": {
-    "description": "",
-    "message": "ly"
   },
   "MISSING_COMM": {
     "description": "",

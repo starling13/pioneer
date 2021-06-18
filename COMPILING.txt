@@ -24,17 +24,18 @@ Table of Contents
 
 Pioneer is known to build on the following platforms and build systems:
 
-Linux: CMake with GCC or Clang
+Linux: CMake with GCC 4.9+ or Clang 6+
 Windows: Microsoft Visual C++ 2019 (Community or Pro)
          CMake with MSYS2 (and MinGW-w64)
 OS X: XCode 4 or Homebrew or CMake
 
 There is an additional repository called pioneer-thirdparty that contains
-various files that may assist with building. If the instructions for your
-platforms indicates you may need it, then read the section below for details.
+various files that may assist with building. This is intended for Windows
+builds and is otherwise not actively maintained. Read the section below for
+details on using it for your platform.
 
 If you're having trouble compiling, please ask in #pioneer on
-irc.freenode.net. Most users are available to answer during CET daytime, but
+irc.libera.chat. Most users are available to answer during CET daytime, but
 questions are welcome anytime.
 
 
@@ -120,15 +121,14 @@ questions are welcome anytime.
 
 3. Go to File->Open->CMake and select pioneer/CMakeLists.txt
 
-4. If a Release build is desired, select 'Manage Configurations' under the build type,
-   which will default to x64-Debug and add x64-Release.
+4. Select the appropriate build type (x64-Debug or x64-Release) under the configuration
+   drop down on the main toolbar, located next to the run button. 
 
-5. Select the appropriate build type.
+5. Build the project (Build->Build All).
 
-6. Buid the project (Build->Build All).
-
-7. Pioneer can be run and debugged by selecting 'pioneer.exe' on the 
-   'Select Startup Item' toolbar button, and then clicking run.
+6. Pioneer can be run and debugged by selecting 'pioneer.exe' on the 
+   'Select Startup Item' menu (click the small down arrow on the run button), and then clicking run.
+   Be sure to select 'pioneer.exe' and not 'pioneer.exe (install)'.
 
 
 1.5 OS X - Homebrew
@@ -176,13 +176,14 @@ To get it, clone git://github.com/pioneerspacesim/pioneer-thirdparty.git.
 2.1 Linux - Autotools and CMake
 ---------------------
 
-1. Clone the thirdparty repo to './pioneer-thirdparty' and 'cd' into it.
+1. Clone the thirdparty repo to './pioneer-thirdparty' inside the pioneer
+   repository and 'cd' into it.
 
 2. Run 'autoconf' to generate configuration files, then run './configure' to
    configure the build.
 
 3. Run make <package> to compile and prepare the named package for use with
-   Pioneer, or just run make alone to build everything.
+   Pioneer, or just run make without a target to build everything.
 
 4. From the pioneer directory, run `./bootstrap thirdparty` to generate a CMake
    configuration that builds with the thirdparty libraries.
@@ -261,7 +262,7 @@ visualizing inheritance as graphs. To enable LaTeX output, set GENERATE_LATEX
 --------------------------
 
 Long startup times for pioneer this can be alleviated by precompiling all
-models into *.sgm files. This uses the modelcompiler located in src/. From the
-pioneer root directory the following will batch compile all models
+models into *.sgm files. This uses the modelcompiler, invoked through CMake.
+From the pioneer root directory the following will batch compile all models:
 
-1. ./src/modelcompiler -b inplace
+1. make -C build/ build-data

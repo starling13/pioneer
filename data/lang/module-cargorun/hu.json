@@ -327,10 +327,6 @@
     "description": "",
     "message": "I'm taking damage. I need help."
   },
-  "LY": {
-    "description": "",
-    "message": "fé"
-  },
   "MACHINE_TOOLS": {
     "description": "custom cargo",
     "message": "Szerszámgépek"
@@ -502,6 +498,10 @@
   "TITANIUM": {
     "description": "custom cargo",
     "message": "Titánium"
+  },
+  "TOO_LATE_TO_PICK_UP": {
+    "description": "",
+    "message": "Túl sokat késett! Olyan rossz teljesítményt nyújt, hogy felmondom a szerződését."
   },
   "TUNGSTEN": {
     "description": "custom cargo",

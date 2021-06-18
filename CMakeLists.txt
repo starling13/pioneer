@@ -10,12 +10,6 @@ if(POLICY CMP0072)
 	cmake_policy(SET CMP0072 NEW)
 endif()
 
-set(IS_TRAVIS $ENV{TRAVIS})
-
-if (IS_TRAVIS)
-    set(CMAKE_COLOR_MAKEFILE false)
-endif()
-
 include(GNUInstallDirs)
 
 if (MINGW)
@@ -40,8 +34,11 @@ if (MSVC)
 	# Use M_PI/M_E macros from math.h
 	add_definitions(-D_USE_MATH_DEFINES -DHAVE_M_PI)
 
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+    # Disable warning C4506 so that src/lua/LuaObject.h: template <> void LuaObject<SystemPath>::PushToLua(const SystemPath &o);
+    # doesn't spew multiple warnings
+
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP /wd4506")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /wd4506")
 endif (MSVC)
 
 if (APPLE)
@@ -49,13 +46,10 @@ if (APPLE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-gnu")
 endif(APPLE)
 
+option(USE_LLD_LINKER "Use the LLVM lld linker instead of gcc's linker" OFF)
 if (CMAKE_COMPILER_IS_GNUCXX)
-    if (NOT IS_TRAVIS)
-        add_compile_options(
-			-fdiagnostics-color
-		)
-	endif()
 	add_compile_options(
+		-fdiagnostics-color
 		-Wall
 		-Wextra
 		-Wno-unused-parameter
@@ -63,6 +57,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 		-Wno-implicit-fallthrough
 	)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
+	if (USE_LLD_LINKER)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=lld")
+	endif(USE_LLD_LINKER)
 	set(CMAKE_CXX_FLAGS_DEBUG "-g -Og")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
@@ -121,7 +118,6 @@ list(APPEND SRC_FOLDERS
 	src/
 	src/collider
 	src/galaxy
-	src/gameui
 	src/graphics
 	src/graphics/dummy
 	src/graphics/opengl
@@ -132,7 +128,6 @@ list(APPEND SRC_FOLDERS
 	src/sound
 	src/terrain
 	src/text
-	src/ui
 )
 
 macro(add_source_folders TARGET SRC_FOLDERS)
@@ -173,15 +168,14 @@ endif (WIN32)
 configure_file(buildopts.h.cmakein buildopts.h @ONLY)
 
 LIST(APPEND PIONEER_CXX_FILES ${FILESYSTEM_CXX_FILES})
-if (MSVC)
-	option(USE_PIONEER_THIRDPARTY "Use pioneer's thirdparty library repository." ON)
-	if (USE_PIONEER_THIRDPARTY)
-		list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/pioneer-thirdparty/usr)
-		include_directories(${CMAKE_SOURCE_DIR}/pioneer-thirdparty/usr/include)
-		link_directories(${CMAKE_SOURCE_DIR}/pioneer-thirdparty/usr/lib)
-		find_package(Threads)
-	endif()
-endif (MSVC)
+
+option(USE_PIONEER_THIRDPARTY "Use pioneer's thirdparty library repository." OFF)
+if (USE_PIONEER_THIRDPARTY)
+	list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/pioneer-thirdparty/usr)
+	include_directories(${CMAKE_SOURCE_DIR}/pioneer-thirdparty/usr/include)
+	link_directories(${CMAKE_SOURCE_DIR}/pioneer-thirdparty/usr/lib)
+	find_package(Threads)
+endif()
 
 if (USE_SYSTEM_LIBGLEW)
 	add_library(GLEW::GLEW INTERFACE IMPORTED)
@@ -204,9 +198,9 @@ if (WIN32)
 	add_definitions(-DPSAPI_VERSION=1)
 endif (WIN32)
 
-macro(set_cxx11_properties)
+macro(set_cxx_properties)
 	set_target_properties(${ARGN} PROPERTIES
-		CXX_STANDARD 11
+		CXX_STANDARD 17
 		CXX_STANDARD_REQUIRED ON
 		CXX_EXTENSIONS ON
 	)
@@ -214,7 +208,7 @@ endmacro()
 
 macro(define_pioneer_library library_name _src _header)
 	add_library(${library_name} STATIC ${${_src}} ${${_header}})
-	set_cxx11_properties(${library_name})
+	set_cxx_properties(${library_name})
 endmacro()
 
 if (MSVC)
@@ -252,6 +246,9 @@ include_directories(
 	${VORBISFILE_INCLUDE_DIRS}
 	${GLEW_INCLUDE_DIRS}
 )
+
+# We don't want/need the GLU dependency
+add_definitions(-DGLEW_NO_GLU)
 
 if (NOT USE_SYSTEM_LIBGLEW)
 	add_subdirectory(contrib/glew)
@@ -294,8 +291,8 @@ link_directories(
 )
 
 add_executable(${PROJECT_NAME} WIN32 src/main.cpp ${RESOURCES})
-add_executable(modelcompiler WIN32 src/modelcompiler.cpp)
-add_executable(savegamedump WIN32
+add_executable(modelcompiler src/modelcompiler.cpp)
+add_executable(savegamedump
 	src/savegamedump.cpp
 	src/JsonUtils.cpp
 	src/FileSystem.cpp
@@ -346,11 +343,11 @@ target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${pioneerLibs} ${winLibs})
 target_link_libraries(modelcompiler LINK_PRIVATE ${pioneerLibs} ${winLibs})
 target_link_libraries(savegamedump LINK_PRIVATE pioneer-core ${SDL2_IMAGE_LIBRARIES} ${winLibs})
 
-set_cxx11_properties(${PROJECT_NAME} modelcompiler savegamedump)
+set_cxx_properties(${PROJECT_NAME} modelcompiler savegamedump)
 
 if(MSVC)
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-		COMMAND xcopy ..\\pioneer-thirdparty\\win32\\bin\\x64\\vs2017\\*.dll ${TargetDir}*.dll /Y /C
+		COMMAND xcopy ..\\pioneer-thirdparty\\win32\\bin\\${MSVC_ARCH}\\vs2019\\*.dll ${TargetDir}*.dll /Y /C
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 		COMMENT "copy the dlls into the directory"
 		VERBATIM
@@ -370,7 +367,8 @@ if (MODELCOMPILER)
 	# This really shouldn't be done inside the source tree...
 	if (NOT MSVC)
 		add_custom_target(build-models
-			COMMAND ${CMAKE_COMMAND} -E env SDL_VIDEODRIVER=dummy ${MODELCOMPILER} -b inplace
+			COMMAND ${CMAKE_COMMAND} -E env SDL_VIDEODRIVER=dummy PIONEER_LOCAL_DATA_ONLY=1
+			${MODELCOMPILER} -b inplace
 			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 			COMMENT "Optimizing models" VERBATIM
 		)
@@ -397,10 +395,13 @@ install(DIRECTORY data/models/
 
 if (WIN32)
 	configure_file(pioneer.iss.cmakein pioneer.iss @ONLY)
-
-	install(CODE "include(BundleUtilities)
-	fixup_bundle(\"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/pioneer.exe\" \"\" \"${CMAKE_PROGRAM_PATH}\")"
-	COMPONENT Runtime)
+	configure_file(CI/appveyor/msvc/publish.cmd.cmakein publish.cmd @ONLY)
+	file(GLOB win_libs ../pioneer-thirdparty/win32/bin/${MSVC_ARCH}/vs2019/*.dll)
+	install(FILES ${win_libs} DESTINATION ${CMAKE_INSTALL_PREFIX})
+	if(NOT ISCC)
+		set(ISCC "C:/Program Files (x86)/Inno Setup 6/ISCC.exe")
+	endif(NOT ISCC)
+	add_custom_target(win-installer COMMAND ${ISCC} /Q pioneer.iss)
 endif (WIN32)
 
 if (UNIX)

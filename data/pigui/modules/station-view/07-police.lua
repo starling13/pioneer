@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require "Game"
@@ -8,7 +8,7 @@ local StationView = require 'pigui.views.station-view'
 local Lang = require 'Lang'
 local Legal = require "Legal"
 local utils = require "utils"
-local InfoFace = require 'ui/PiguiFace'
+local PiGuiFace = require 'pigui.libs.face'
 local Format = require "Format"
 local Character = require "Character"
 local l = Lang.GetResource("ui-core")
@@ -153,8 +153,8 @@ StationView:registerView({
 			if (stationSeed ~= station.seed) then
 				stationSeed = station.seed
 				local rand = Rand.New(station.seed .. "-police")
-				face = InfoFace.New(Character.New({ title = l.CONSTABLE, armour=true }, rand),
-					{windowPadding = widgetSizes.windowPadding, itemSpacing = widgetSizes.itemSpacing, size = widgetSizes.faceSize})
+				face = PiGuiFace.New(Character.New({ title = l.CONSTABLE, armour=true }, rand),
+					{itemSpacing = widgetSizes.itemSpacing})
 			end
 		end
 	end,

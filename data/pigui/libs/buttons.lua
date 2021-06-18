@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 local Engine = require 'Engine'
 local ui = require 'pigui.baseui'
@@ -11,7 +11,7 @@ local pigui = Engine.pigui
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -20,7 +20,7 @@ local pigui = Engine.pigui
 --   frame_padding - number
 --   bg_color      - Color, for background
 --   fg_color      - Color, for forground
---   tint_color    - Color, 
+--   tint_color    - Color,
 --   tooltip       - string, mouseover text, will be used as ID, must be unique, append "##uniqueID" if needed
 --
 -- Returns:
@@ -28,9 +28,10 @@ local pigui = Engine.pigui
 --   boolean - true if button was clicked
 --
 function ui.imageButton(icon, size, frame_padding, bg_color, tint_color, tooltip)
-	local uv0, uv1 = get_icon_tex_coords(icon)
+	local uv0, uv1 = ui.get_icon_tex_coords(icon)
+	local res = nil
 	ui.withID(tooltip, function()
-		local res = pigui.ImageButton(ui.icons_texture, size, uv0, uv1, frame_padding, bg_color, tint_color)
+		res = pigui.ImageButton(ui.get_icons_texture(size), size, uv0, uv1, frame_padding, bg_color, tint_color)
 	end)
 	return res
 end
@@ -39,25 +40,27 @@ end
 --
 -- Function: ui.coloredSelectedButton
 --
--- ui.coloredSelectedButton(label, thesize, is_selected, bg_color, tooltip, enabled)
+-- > clicked = ui.coloredSelectedIconButton(label, button_size, is_selected,
+-- >               bg_color, tooltip, enabled)
+--
 --
 -- Example:
 --
--- > 
+-- > clicked = ui.coloredSelectedButton("Click me", Vector2(100,0), false,
+-- >               ui.theme.colors.buttonBlue, "Does the thing", true)
 --
 -- Parameters:
 --
---   label       - string,
---   thesize     - Vector2,
---   is_selected - boolean,
---   bg_color    - Color, for background
---   fg_color    - Color, for forground
---   tint_color  - Color, 
---   tooltip     - string, mouseover text, will be used as ID, must be unique, append "##uniqueID" if needed
+--   label - string, text rendered on the button, must be unique, can append with "##..."
+--   thesize - Vector2 object, giving size of button
+--   is_selected - boolean, if false, uses a darker tint of the button
+--   bg_color - Color(R,G,B), for background
+--   tooltip - string, mouseover text
+--   enabled - enable tootip text and highlight of button when mouse over
 --
 -- Returns:
 --
---   boolean - true if button was clicked
+--   clicked - true if button was clicked, (note: is_selected and enabled does not affect this)
 --
 function ui.coloredSelectedButton(label, thesize, is_selected, bg_color, tooltip, enabled)
 	if is_selected then
@@ -92,7 +95,7 @@ end
 --
 -- Function: ui.coloredSelectedIconButton
 --
--- > clicked = ui.coloredSelectedIconButton(icon, button_size, is_selected,
+-- > clicked = ui.coloredSelectedIconButton(icon, thesize, is_selected,
 -- >               frame_padding, bg_color, fg_color, tooltip, img_size)
 --
 --
@@ -104,7 +107,7 @@ end
 -- Parameters:
 --
 --   icon - image to place on button, e.g. from ui.theme.icons
---   button_size - size of button, Vector2
+--   thesize - size of button, Vector2
 --   is_selected - bool
 --   frame_padding - number
 --   bg_color - Color(R,G,B), for background
@@ -128,7 +131,7 @@ ui.coloredSelectedIconButton = function(icon, thesize, is_selected, frame_paddin
 	end
 	local uv0,uv1 = ui.get_icon_tex_coords(icon)
 	pigui.PushID(tooltipID)
-	local res = pigui.ButtonImageSized(ui.icons_texture, thesize, img_size or Vector2(0,0), uv0, uv1, frame_padding, ui.theme.colors.lightBlueBackground, fg_color)
+	local res = pigui.ButtonImageSized(ui.get_icons_texture(thesize), thesize, img_size or Vector2(0,0), uv0, uv1, frame_padding, ui.theme.colors.lightBlueBackground, fg_color)
 	pigui.PopID()
 	pigui.PopStyleColor(3)
 	local pos = tooltipID:find("##") -- get position for id tag start

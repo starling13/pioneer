@@ -43,6 +43,10 @@
     "description": "Used in ShipInfo view, followed by a yes/no depending on if the ship can carry atmospheric shields",
     "message": "Boucliers Thermiques"
   },
+  "ATMO_PRESS_LIMIT": {
+    "description": "Base external pressure limit of a ship (without atmo shield)",
+    "message": "Limite Pression Atmos."
+  },
   "ATTEMPT_TO_REPAIR_HULL": {
     "description": "",
     "message": "Tentative de réparation de la coque."
@@ -187,6 +191,10 @@
     "description": "",
     "message": "Bourse d'échange"
   },
+  "COMMODITY_TRADE_ANALYSIS": {
+    "description": "",
+    "message": "Analyse du marché pour le produit:"
+  },
   "COMPACT_RADAR": {
     "description": "Game settings option",
     "message": "Radar compact"
@@ -219,6 +227,10 @@
     "description": "",
     "message": "Continuer la partie"
   },
+  "CONTRACT_FRAUD": {
+    "description": "Crime committed by intentionally breaking a contract",
+    "message": "Fraude contractuelle"
+  },
   "CONTROLS": {
     "description": "",
     "message": "Controles"
@@ -246,6 +258,10 @@
   "CREW_ROSTER": {
     "description": "",
     "message": "Liste d'équipage"
+  },
+  "CRIMINAL": {
+    "description": "Legal status of player",
+    "message": "Criminel"
   },
   "CRIMINAL_RECORD": {
     "description": "Past crimes / crime history of character",
@@ -515,6 +531,10 @@
     "description": "Hyperjump planner, referring to star system target",
     "message": "Destination finale:"
   },
+  "FINANCE": {
+    "description": "Financial statement of player, e.g. cash",
+    "message": "Finance"
+  },
   "FLIGHTLOG_DOCKING": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is a station name",
     "message": "Arrimage à {primary_info}"
@@ -595,6 +615,10 @@
     "description": "",
     "message": " Poid Carb. "
   },
+  "FUGITIVE": {
+    "description": "Legal status of player",
+    "message": "Fugitif"
+  },
   "FULL_SCREEN": {
     "description": "",
     "message": "Plein Ecran"
@@ -614,6 +638,10 @@
   "GOOD_RIDDANCE_TO_YOU_TOO": {
     "description": "",
     "message": "Bon vent a toi, aussi."
+  },
+  "GO_BACK": {
+    "description": "",
+    "message": "Retour"
   },
   "GPU_JOBS": {
     "description": "",
@@ -1019,6 +1047,10 @@
     "description": "",
     "message": "Portée Hyperspaciale"
   },
+  "ILLEGAL_IN_SYSTEM": {
+    "description": "An illegal action or commodity",
+    "message": "Illégal dans le système"
+  },
   "ILLEGAL_JUMP": {
     "description": "A finable crime",
     "message": "Saut hyper-espace imprudent enregistré"
@@ -1111,6 +1143,18 @@
     "description": "",
     "message": "Décollage non autorisé : vous avez des amendes impayées."
   },
+  "LAUNCH_PERMISSION_GRANTED": {
+    "description": "",
+    "message": "Permission de lancement accordée."
+  },
+  "LAUNCH_PERMISSION_GRANTED_DEPART_QUICK": {
+    "description": "",
+    "message": "Permission accordée. Décollez rapidement afin de ne pas encombrer pas la zone d'atterrissage, s'il vous plait."
+  },
+  "LAUNCH_PERMISSION_GRANTED_WATCH_TRAFFIC": {
+    "description": "",
+    "message": "Permission accordée. Faites attention au traffic lors de votre départ."
+  },
   "LEGAL_STATUS": {
     "description": "",
     "message": "Casier judiciaire"
@@ -1187,9 +1231,17 @@
     "description": "Light year",
     "message": "al"
   },
+  "MAJOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "Exportation majeure"
+  },
   "MAJOR_EXPORTS_ITEM": {
     "description": "",
     "message": "Exportations majeures"
+  },
+  "MAJOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "Importation majeure"
   },
   "MAJOR_IMPORTS_ITEM": {
     "description": "",
@@ -1267,13 +1319,25 @@
     "description": "",
     "message": "Militaire"
   },
+  "MINIMAL_TRADE": {
+    "description": "Indicates a system does not have a significant amount of trade in a commodity.",
+    "message": "Commerce minimal"
+  },
   "MINIMUM_CREW": {
     "description": "",
     "message": "Equipage mini."
   },
+  "MINOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "Exportation mineure"
+  },
   "MINOR_EXPORTS_ITEM": {
     "description": "",
     "message": "Exportations mineures"
+  },
+  "MINOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "Importation mineure"
   },
   "MINOR_IMPORTS_ITEM": {
     "description": "",
@@ -1423,6 +1487,10 @@
     "description": "",
     "message": "Off"
   },
+  "OFFENDER": {
+    "description": "Legal status of player",
+    "message": "Délinquant"
+  },
   "OK": {
     "description": "",
     "message": "Ok"
@@ -1450,6 +1518,10 @@
   "OUTER_ARM": {
     "description": "Arm of the Milky Way galaxy",
     "message": "Bras externe"
+  },
+  "OUTLAW": {
+    "description": "Legal status of player",
+    "message": "Hors-la-loi"
   },
   "OUTSTANDING_FINES": {
     "description": "Unpaid fines for crimes committed",
@@ -1535,6 +1607,10 @@
     "description": "For player reputation",
     "message": "Professionel"
   },
+  "PROFITABLE_TRADE": {
+    "description": "Indicates a profitable trade route.",
+    "message": "Commerce profitable"
+  },
   "PUMP_DOWN": {
     "description": "Drain the fuel tank",
     "message": "Vidange"
@@ -1615,6 +1691,10 @@
     "description": "",
     "message": "Reset"
   },
+  "RESET_ORIENTATION_AND_ZOOM": {
+    "description": "",
+    "message": "Réinitialise l'orientation et le zoom"
+  },
   "RETURN_TO_GAME": {
     "description": "",
     "message": "Reprendre la partie"
@@ -1636,8 +1716,8 @@
     "message": "Récompense"
   },
   "ROTATE_VIEW": {
-    "description": "",
-    "message": "Tourner la vue"
+    "description": "Indicates that the button must be kept pressed down, to rotate camera view with mouse",
+    "message": "Laissez appuyé pour tourner la vue"
   },
   "ROUTE_INFO": {
     "description": "For hyperjump planner",
@@ -1702,6 +1782,10 @@
   "SET_AS_TARGET": {
     "description": "",
     "message": "Régler la destination comme cible de navigation."
+  },
+  "SET_RETURN_ROUTE": {
+    "description": "",
+    "message": "Définir le trajet de retour"
   },
   "SHIP": {
     "description": "",
@@ -1807,6 +1891,14 @@
     "description": "Information shown in the station lobby, for total number of docking pads",
     "message": "Notre capacité totale est de {total_docking_pads} stations d'arrimages."
   },
+  "STATION_LOCAL_GRAVITY": {
+    "description": "",
+    "message": "La gravité locale est de %.2f g."
+  },
+  "STATION_LOCAL_GRAVITY_PRESSURE": {
+    "description": "",
+    "message": "La gravité locale est de %.2f g, et la pression atmosphérique est de %.2f atm."
+  },
   "STATION_MANAGER": {
     "description": "",
     "message": "Gestionnaire de station"
@@ -1855,6 +1947,10 @@
     "description": "Arm of the Milky Way galaxy",
     "message": "Bras de la voie lactée 3kpc"
   },
+  "TOGGLE_FULL_COMMS_WINDOW": {
+    "description": "on world view / main screen",
+    "message": "Toggle full comms window"
+  },
   "TOGGLE_MALE_FEMALE": {
     "description": "player gender",
     "message": "basculer mâle/femelle"
@@ -1899,9 +1995,17 @@
     "description": "",
     "message": "Masse totale"
   },
+  "TRADING_FROM": {
+    "description": "Indicates the source system of a commodity trade.",
+    "message": "De (système):"
+  },
   "TRADING_ILLEGAL_GOODS": {
     "description": "",
     "message": "Contrebande de produits illégaux"
+  },
+  "TRADING_TO": {
+    "description": "Indicates the destination system of a commodity trade.",
+    "message": "Vers (système):"
   },
   "TRUSTWORTHY": {
     "description": "For player reputation",
@@ -1914,6 +2018,10 @@
   "UNLAWFUL_WEAPONS_DISCHARGE": {
     "description": "",
     "message": "Utilisation illégale d'armes"
+  },
+  "UNPROFITABLE_TRADE": {
+    "description": "Indicates an unprofitable trade route.",
+    "message": "Commerce non-profitable"
   },
   "UNRELIABLE": {
     "description": "",

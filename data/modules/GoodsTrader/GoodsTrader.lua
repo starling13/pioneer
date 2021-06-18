@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Lang = require 'Lang'
@@ -110,8 +110,8 @@ end
 
 local onCreateBB = function (station)
 	local has_illegal_goods = false
-	for i,e in pairs(Equipment.cargo) do
-		if not Game.system:IsCommodityLegal(e) then
+	for key in pairs(Equipment.cargo) do
+		if not Game.system:IsCommodityLegal(key) then
 			has_illegal_goods = true
 		end
 	end
@@ -131,12 +131,10 @@ local onCreateBB = function (station)
 
 		-- if too many fake police, don't place the ad
 		if not ispolice or numPolice < maxPolice then
+			local r = ispolice and rand_police or rand
 
 			if ispolice then
 				numPolice = numPolice + 1
-				r = rand_police
-			else
-				r = rand
 			end
 
 			local flavour = string.interp(l["GOODS_TRADER_"..r:Integer(1, num_names)-1], {name = NameGen.Surname(r)})
@@ -152,8 +150,8 @@ local onCreateBB = function (station)
 
 			ad.stock = {}
 			ad.price = {}
-			for _,e in pairs(Equipment.cargo) do
-				if not Game.system:IsCommodityLegal(e) then
+			for key, e in pairs(Equipment.cargo) do
+				if not Game.system:IsCommodityLegal(key) then
 					ad.stock[e] = Engine.rand:Integer(1,50)
 					-- going rate on the black market will be twice normal
 					ad.price[e] = ad.station:GetEquipmentPrice(e) * 2

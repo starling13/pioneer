@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -70,11 +70,13 @@ local function button_undock()
 	if player:IsLanded() then
 		ui.sameLine()
 		if mainMenuButton(icons.autopilot_blastoff, false, lui.HUD_BUTTON_BLASTOFF) or (ui.noModifierHeld() and ui.isKeyReleased(ui.keys.f5)) then
+			Game.SetTimeAcceleration("1x")
 			player:BlastOff()
 		end
 	elseif player:IsDocked() then
 		ui.sameLine()
 		if mainMenuButton(icons.autopilot_undock, false, lui.HUD_BUTTON_UNDOCK) or (ui.noModifierHeld() and ui.isKeyReleased(ui.keys.f5)) then
+			Game.SetTimeAcceleration("1x")
 			player:Undock()
 		end
 	end

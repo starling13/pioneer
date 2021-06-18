@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "DeathView.h"
@@ -8,7 +8,6 @@
 #include "GameConfig.h"
 #include "Pi.h"
 #include "Player.h"
-#include "ShipCpanel.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 
@@ -42,7 +41,6 @@ void DeathView::Init()
 
 void DeathView::OnSwitchTo()
 {
-	m_game->GetCpan()->HideAll();
 }
 
 void DeathView::Update()

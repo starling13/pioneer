@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local ui = require 'pigui'
@@ -276,10 +276,10 @@ end
 local function displayDetailButtons(radius, navTarget, combatTarget)
 	local uiPos = ui.pointOnClock(center, radius, 3.6)
 	local mouse_position = ui.getMousePos()
-	local size = 24
+	local size = 20
 	if combatTarget or navTarget then
 		local color = reticuleTarget == "frame" and colors.reticuleCircle or colors.reticuleCircleDark
-		ui.addIcon(uiPos, icons.display_frame, color, Vector2(size, size), ui.anchor.left, ui.anchor.bottom, lui.HUD_SHOW_FRAME)
+		ui.addIcon(uiPos, icons.moon, color, Vector2(size, size), ui.anchor.left, ui.anchor.bottom, lui.HUD_SHOW_FRAME)
 		if ui.isMouseClicked(0) and (mouse_position - (uiPos + Vector2(size/2, -size/2))):length() < size/2 then
 			reticuleTarget = "frame"
 		end
@@ -287,7 +287,7 @@ local function displayDetailButtons(radius, navTarget, combatTarget)
 	end
 	if navTarget then
 		local color = reticuleTarget == "navTarget" and colors.reticuleCircle or colors.reticuleCircleDark
-		ui.addIcon(uiPos, icons.display_navtarget, color, Vector2(size, size), ui.anchor.left, ui.anchor.bottom, lui.HUD_SHOW_NAV_TARGET)
+		ui.addIcon(uiPos, icons.navtarget, color, Vector2(size, size), ui.anchor.left, ui.anchor.bottom, lui.HUD_SHOW_NAV_TARGET)
 		if ui.isMouseClicked(0) and (mouse_position - (uiPos + Vector2(size/2, -size/2))):length() < size/2 then
 			reticuleTarget = "navTarget"
 		end
@@ -295,7 +295,7 @@ local function displayDetailButtons(radius, navTarget, combatTarget)
 	end
 	if combatTarget then
 		local color = reticuleTarget == "combatTarget" and colors.reticuleCircle or colors.reticuleCircleDark
-		ui.addIcon(uiPos, icons.display_combattarget, color, Vector2(size, size), ui.anchor.left, ui.anchor.bottom, lui.HUD_SHOW_COMBAT_TARGET)
+		ui.addIcon(uiPos, icons.combattarget, color, Vector2(size, size), ui.anchor.left, ui.anchor.bottom, lui.HUD_SHOW_COMBAT_TARGET)
 		if ui.isMouseClicked(0) and (mouse_position - (uiPos + Vector2(size/2, -size/2))):length() < size/2 then
 			reticuleTarget = "combatTarget"
 		end
@@ -403,7 +403,7 @@ local function displayManeuverData(radius)
 	local maneuverVelocity = player:GetManeuverVelocity()
 	local maneuverSpeed = maneuverVelocity:length()
 	if maneuverSpeed > 0 and not (player:IsDocked() or player:IsLanded()) then
-		local onscreen,position,direction = Engine.RelSpaceToScreenSpace(maneuverVelocity)
+		local onscreen,position,direction = Engine.ProjectRelDirection(maneuverVelocity)
 		gameView.displayIndicator(onscreen, position, direction, icons.bullseye, colors.maneuver, true, lui.HUD_INDICATOR_MANEUVER_PROGRADE)
 		local uiPos = ui.pointOnClock(center, radius, 6)
 		local speed, speed_unit = ui.Format.Speed(maneuverSpeed)

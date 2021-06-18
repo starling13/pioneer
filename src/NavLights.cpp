@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "NavLights.h"
@@ -223,7 +223,6 @@ void NavLights::Render(Graphics::Renderer *renderer)
 
 void NavLights::SetColor(unsigned int group, LightColor c)
 {
-	PROFILE_SCOPED();
 	if (!m_groupLights.count(group)) return;
 	for (LightBulb &light : m_groupLights[group]) {
 		if (light.group != group || light.color == c) continue;
@@ -236,7 +235,6 @@ void NavLights::SetColor(unsigned int group, LightColor c)
 
 void NavLights::SetMask(unsigned int group, uint8_t mask)
 {
-	PROFILE_SCOPED()
 	if (!m_groupLights.count(group)) return;
 	for (LightBulb &light : m_groupLights[group]) {
 		light.mask = mask;

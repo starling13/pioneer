@@ -17,11 +17,11 @@
   },
   "DENY_0": {
     "description": "",
-    "message": "Съжалявам, не мога да Ви имам доверие за тази доставка."
+    "message": "Съжалявам, не мога да ти имам доверие за тази доставка."
   },
   "DENY_1": {
     "description": "",
-    "message": "Върнете се, когато натрупате нужния опит."
+    "message": "Върни се, когато натрупаш нужния опит."
   },
   "DENY_2": {
     "description": "",
@@ -37,7 +37,7 @@
   },
   "DENY_5": {
     "description": "",
-    "message": "Неопитен си, няма да се справиш с толкова важна задача."
+    "message": "Нямаш опит, няма да се справиш с толкова важна задача."
   },
   "DENY_6": {
     "description": "",
@@ -65,7 +65,7 @@
   },
   "FLAVOUR_0_INTROTEXT": {
     "description": "",
-    "message": "Здрасти, аз съм {name}. Ще ти платя {cash}, ако доставиш малък пакет в {starport}, намираща се в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг."
+    "message": "Здрасти, аз съм {name}. Ще ти платя {cash}, ако доставиш малък пакет в {starport}, в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг."
   },
   "FLAVOUR_0_SUCCESSMSG": {
     "description": "",
@@ -73,11 +73,11 @@
   },
   "FLAVOUR_0_WHYSOMUCHTEXT": {
     "description": "",
-    "message": "Когато една приятелка ме посети, тя си забрави някакви дрехи и стари книги. Искам да ѝ ги върнеш."
+    "message": "Когато една приятелка ме посети, тя си забрави няколко дрехи и стари книги. Искам да ѝ ги върнеш."
   },
   "FLAVOUR_1_ADTEXT": {
     "description": "",
-    "message": "ТЪРСИ СЕ. Доставка на пакет до системата {system}."
+    "message": "ТЪРСИ СЕ: Доставка на пакет до системата {system}."
   },
   "FLAVOUR_1_FAILUREMSG": {
     "description": "",
@@ -85,7 +85,7 @@
   },
   "FLAVOUR_1_INTROTEXT": {
     "description": "",
-    "message": "Здрасти, аз съм {name}. Склонен съм да платя {cash} за кораб, който да достави пакет в {starport}, намираща се в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг. "
+    "message": "Здрасти, аз съм {name}. Мога да платя {cash} за кораб, който да достави пакет в {starport}, в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг. "
   },
   "FLAVOUR_1_SUCCESSMSG": {
     "description": "",
@@ -105,7 +105,7 @@
   },
   "FLAVOUR_2_INTROTEXT": {
     "description": "",
-    "message": "Здрасти, аз съм {name}. Склонен съм да платя {cash} за кораб, който да достави пакет в {starport}, намираща се в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг. "
+    "message": "Здрасти, аз съм {name}. Мога да платя {cash} за кораб, който да достави пакет в {starport}, в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг. "
   },
   "FLAVOUR_2_SUCCESSMSG": {
     "description": "",
@@ -117,7 +117,7 @@
   },
   "FLAVOUR_3_ADTEXT": {
     "description": "",
-    "message": "ДОСТАВКА. Документи до системата {system}. {cash} за пилот с опит."
+    "message": "ДОСТАВКА: Документи до системата {system}. {cash} за пилот с опит."
   },
   "FLAVOUR_3_FAILUREMSG": {
     "description": "",
@@ -125,7 +125,7 @@
   },
   "FLAVOUR_3_INTROTEXT": {
     "description": "",
-    "message": "Здрасти, аз съм {name}. Склонен съм да платя {cash} за кораб, който да достави пакет в {starport}, намираща се в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг. "
+    "message": "Здрасти, аз съм {name}. Мога да платя {cash} за кораб, който да достави пакет в {starport}, в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг. "
   },
   "FLAVOUR_3_SUCCESSMSG": {
     "description": "",
@@ -137,7 +137,7 @@
   },
   "FLAVOUR_4_ADTEXT": {
     "description": "",
-    "message": "ПОЩЕНСКА УСЛУГА. Нуждаем се от доставчик до системата {system}."
+    "message": "ПОЩЕНСКА УСЛУГА: Нуждаем се от доставчик до системата {system}."
   },
   "FLAVOUR_4_FAILUREMSG": {
     "description": "",
@@ -145,7 +145,7 @@
   },
   "FLAVOUR_4_INTROTEXT": {
     "description": "",
-    "message": "Поздрави. Това е автоматично съобщение от Куриерски Услуги Бедфорд и {name}. Плащаме {cash} за доставка до {starport}, намираща се в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг."
+    "message": "Поздрави. Това е автоматично съобщение от Куриерски Услуги Бедфорд и {name}. Плащаме {cash} за доставка до {starport}, в системата {system} ({sectorx}, {sectory}, {sectorz}), на разстояние от {dist} сг."
   },
   "FLAVOUR_4_SUCCESSMSG": {
     "description": "",
@@ -153,11 +153,11 @@
   },
   "FLAVOUR_4_WHYSOMUCHTEXT": {
     "description": "",
-    "message": "Ще се радваме да Ви платим по-малко пари."
+    "message": "Ще се радваме да ти платим по-малко пари."
   },
   "FLAVOUR_5_ADTEXT": {
     "description": "",
-    "message": "ПРЕМЕСТВАНЕ. Преместване на железария до {starport} от склада."
+    "message": "ПРЕМЕСТВАНЕ: Преместване на железария до {starport} от склада."
   },
   "FLAVOUR_5_FAILUREMSG": {
     "description": "",
@@ -173,11 +173,11 @@
   },
   "FLAVOUR_5_WHYSOMUCHTEXT": {
     "description": "",
-    "message": "Много ли е? Да преосмисля ли офертата си!"
+    "message": "Много ли е? Да преосмисля ли офертата си?"
   },
   "FLAVOUR_6_ADTEXT": {
     "description": "",
-    "message": "КУРИЕР ЗА ЕДИН МИГ. Доставка на малък пакет до {starport}."
+    "message": "КУРИЕР ЗА ЕДИН МИГ: Доставка на малък пакет до {starport}."
   },
   "FLAVOUR_6_FAILUREMSG": {
     "description": "",
@@ -197,7 +197,7 @@
   },
   "FLAVOUR_7_ADTEXT": {
     "description": "",
-    "message": "МЕЖДУПЛАНЕТЕН НОСАЧ. Превоз на локален товар до {starport}."
+    "message": "МЕЖДУПЛАНЕТЕН НОСАЧ: Превоз на местен товар до {starport}."
   },
   "FLAVOUR_7_FAILUREMSG": {
     "description": "",
@@ -217,11 +217,11 @@
   },
   "FLAVOUR_8_ADTEXT": {
     "description": "",
-    "message": "БЛИЗКА ДОСТАВКА. Нуждая се от бърза доставка на артикул до {starport}."
+    "message": "БЛИЗКА ДОСТАВКА: Нуждая се от бърза доставка на артикул до {starport}."
   },
   "FLAVOUR_8_FAILUREMSG": {
     "description": "",
-    "message": "Имаш премия за бързата доставка! Отказвам да ти платя."
+    "message": "Имаше премия за бърза доставка! Отказвам да ти платя."
   },
   "FLAVOUR_8_INTROTEXT": {
     "description": "",
@@ -237,7 +237,7 @@
   },
   "FLAVOUR_9_ADTEXT": {
     "description": "",
-    "message": "ОСТАВЯНЕ НА ПАКЕТ. Спешно изпращане на нетрайни стоки до {starport}."
+    "message": "ОСТАВЯНЕ НА ПАКЕТ: Спешно изпращане на нетрайни стоки до {starport}."
   },
   "FLAVOUR_9_FAILUREMSG": {
     "description": "",
@@ -261,7 +261,7 @@
   },
   "IT_COULD_BE_DANGEROUS_YOU_SHOULD_MAKE_SURE_YOURE_ADEQUATELY_PREPARED": {
     "description": "",
-    "message": "Може да е опасно, трябва да сте сигурни, че сте подготвени адекватно."
+    "message": "Може да е опасно, трябва да се внимава."
   },
   "IT_MUST_BE_DELIVERED_BY": {
     "description": "",
@@ -271,25 +271,21 @@
     "description": "",
     "message": "Силно се съмнявам."
   },
-  "LY": {
-    "description": "",
-    "message": "сг"
-  },
   "NOT_ANY_MORE_THAN_USUAL": {
     "description": "",
     "message": "Не повече от обичайното."
   },
   "OK_AGREED": {
     "description": "",
-    "message": "ОК, съгласен."
+    "message": "ОК, става."
   },
   "PIRATE_TAUNTS_0": {
     "description": "",
-    "message": "Ще съжалваш, че се занимаваш с {client}"
+    "message": "Ще съжаляваш, че се занимаваш с {client}"
   },
   "PIRATE_TAUNTS_1": {
     "description": "",
-    "message": "Изглежда, че надника ми пристигна!"
+    "message": "Изглежда, че надникът ми пристигна!"
   },
   "PIRATE_TAUNTS_2": {
     "description": "",
@@ -325,11 +321,11 @@
   },
   "SET_AS_TARGET": {
     "description": "",
-    "message": "Задайте за навигационна цел"
+    "message": "Задаване за навигационна цел"
   },
   "SPACEPORT": {
     "description": "",
-    "message": "Космическа станция:"
+    "message": "Космодрум:"
   },
   "SYSTEM": {
     "description": "",
@@ -337,15 +333,15 @@
   },
   "THIS_IS_A_VALUABLE_PACKAGE_YOU_SHOULD_KEEP_YOUR_EYES_OPEN": {
     "description": "",
-    "message": "Това е ценен пакет, отваряйте си очите на четири."
+    "message": "Това е ценен пакет, отваряй си очите на четири."
   },
   "THIS_IS_VERY_RISKY_YOU_WILL_ALMOST_CERTAINLY_RUN_INTO_RESISTANCE": {
     "description": "",
-    "message": "Това е много рисковано, най-вероятно ще срещнете съпротива."
+    "message": "Това е много рисковано, най-вероятно ще срещнеш съпротива."
   },
   "WHY_SO_MUCH_MONEY": {
     "description": "",
-    "message": "Защо толкова много пари?"
+    "message": "Възнаграждението не е ли много голямо?"
   },
   "WILL_I_BE_IN_ANY_DANGER": {
     "description": "",

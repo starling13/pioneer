@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Lang = require 'Lang'
@@ -9,7 +9,7 @@ local StationView = require 'pigui.views.station-view'
 local Table = require 'pigui.libs.table'
 local ChatForm = require 'pigui.libs.chat-form'
 local ModalWindow = require 'pigui.libs.modal-win'
-local PiImage = require 'ui.PiImage'
+local PiImage = require 'pigui.libs.image'
 
 local ui = require 'pigui'
 local pionillium = ui.fonts.pionillium

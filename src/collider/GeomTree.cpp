@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "GeomTree.h"
@@ -6,6 +6,8 @@
 #include "BVHTree.h"
 #include "Weld.h"
 #include "scenegraph/Serializer.h"
+
+#pragma GCC optimize("O3")
 
 GeomTree::~GeomTree()
 {
@@ -224,7 +226,7 @@ GeomTree::GeomTree(Serializer::Reader &rd)
 
 static bool SlabsRayAabbTest(const BVHNode *n, const vector3f &start, const vector3f &invDir, isect_t *isect)
 {
-	PROFILE_SCOPED()
+	// PROFILE_SCOPED()
 	float
 		l1 = (n->aabb.min.x - start.x) * invDir.x,
 		l2 = (n->aabb.max.x - start.x) * invDir.x,
@@ -281,7 +283,7 @@ void GeomTree::TraceRay(const BVHNode *currnode, const vector3f &a_origin, const
 
 void GeomTree::RayTriIntersect(int numRays, const vector3f &origin, const vector3f *dirs, int triIdx, isect_t *isects) const
 {
-	PROFILE_SCOPED()
+	// PROFILE_SCOPED()
 	const vector3f a(m_vertices[m_indices[triIdx + 0]]);
 	const vector3f b(m_vertices[m_indices[triIdx + 1]]);
 	const vector3f c(m_vertices[m_indices[triIdx + 2]]);

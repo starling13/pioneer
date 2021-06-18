@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
@@ -64,7 +64,7 @@ gauges.registerGauge(0, {
 		else return nil end
 	end,
 	icon = icons.forward, color = colors.gaugeWeapon,
-	tooltop = lui.HUD_FORWARD_GUN_TEMPERATURE
+	tooltip = lui.HUD_FORWARD_GUN_TEMPERATURE
 })
 
 gauges.registerGauge(1, {
@@ -81,7 +81,7 @@ gauges.registerGauge(2, {
 	value = function ()
 		local frame = Game.player.frameBody
 		if frame then
-			local pressure, density = frame:GetAtmosphericState()
+			local pressure, density = frame:GetAtmosphericState(Game.player)
 			return pressure
 		else return nil end
 	end,

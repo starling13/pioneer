@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 -- Stuff from the C++ side that we want available directly in Lua
@@ -6,9 +6,11 @@
 local Engine = require 'Engine'
 local pigui = Engine.pigui
 
-local ui = {} 
+local ui = {}
 
 ui.calcTextAlignment = pigui.CalcTextAlignment
+ui.alignTextToLineHeight = pigui.AlignTextToLineHeight
+ui.alignTextToFramePadding = pigui.AlignTextToFramePadding
 ui.lineOnClock = pigui.lineOnClock
 ui.pointOnClock = pigui.pointOnClock
 ui.screenWidth = pigui.screen_width
@@ -33,6 +35,7 @@ ui.setScrollHere = pigui.SetScrollHere
 ui.selectable = pigui.Selectable
 ui.progressBar = pigui.ProgressBar
 ui.plotHistogram = pigui.PlotHistogram
+ui.setTooltip = pigui.SetTooltip
 ui.calcTextSize = pigui.CalcTextSize
 ui.addCircle = pigui.AddCircle
 ui.addCircleFilled = pigui.AddCircleFilled
@@ -70,10 +73,13 @@ ui.getProjectedBodiesGrouped = pigui.GetProjectedBodiesGrouped
 ui.isMouseReleased = pigui.IsMouseReleased
 ui.isMouseHoveringRect = pigui.IsMouseHoveringRect
 ui.collapsingHeader = pigui.CollapsingHeader
+ui.treeNode = pigui.TreeNode
+ui.treePop = pigui.TreePop
 ui.beginPopupModal = pigui.BeginPopupModal
 ui.endPopup = pigui.EndPopup
 ui.openPopup = pigui.OpenPopup
 ui.closeCurrentPopup = pigui.CloseCurrentPopup
+ui.isAnyPopupOpen = pigui.IsAnyPopupOpen
 ui.shouldShowLabels = pigui.ShouldShowLabels
 ui.columns = pigui.Columns
 ui.nextColumn = pigui.NextColumn
@@ -82,7 +88,6 @@ ui.getColumnWidth = pigui.GetColumnWidth
 ui.setColumnWidth = pigui.SetColumnWidth
 ui.getScrollY = pigui.GetScrollY
 ui.keys = pigui.keys
-ui.systemInfoViewNextPage = pigui.SystemInfoViewNextPage -- deprecated
 ui.isKeyReleased = pigui.IsKeyReleased
 ui.playSfx = pigui.PlaySfx
 ui.isItemHovered = pigui.IsItemHovered
@@ -91,6 +96,7 @@ ui.isItemClicked = pigui.IsItemClicked
 ui.isWindowHovered = pigui.IsWindowHovered
 ui.vSliderInt = pigui.VSliderInt
 ui.sliderInt = pigui.SliderInt
+ui.colorEdit = pigui.ColorEdit
 ui.nextItemWidth = pigui.NextItemWidth
 ui.pushItemWidth = pigui.PushItemWidth
 ui.popItemWidth = pigui.PopItemWidth
@@ -113,4 +119,28 @@ ui.dataDirPath = pigui.DataDirPath
 ui.addImage = pigui.AddImage
 ui.image = pigui.Image
 
+--
+-- Function: ui.incrementDrag
+--
+-- ui.incrementDrag(label, value, v_min, v_max, format)
+--
+-- Create a "drag with arrows and progress bar" widget
+--
+-- Example:
+--
+-- > value = ui.incrementDrag("##mydrag", value, 0, 20, "%dt")
+--
+-- Parameters:
+--
+--   label - string, text, also used as ID
+--   value - int, set drag to this value
+--   v_min - int, lower bound
+--   v_max - int, upper bound
+--   format - optional string, format according to snprintf
+--
+-- Returns:
+--
+--   value - the value that the drag was set to
+--
+ui.incrementDrag = pigui.IncrementDrag
 return ui

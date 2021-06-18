@@ -1,11 +1,11 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local ui = require 'pigui.baseui'
 
 local gauge_show_percent = true
-ui.gauge_height = 25
-ui.gauge_width = 275
+ui.gauge_height = ui.rescaleUI(25, Vector2(1600, 900))
+ui.gauge_width = ui.rescaleUI(275, Vector2(1600, 900))
 
 --
 -- Function: ui.gauge
@@ -22,7 +22,7 @@ ui.gauge_width = 275
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --

@@ -103,10 +103,6 @@
     "description": "",
     "message": "Objeto sub-estelar anã marrom"
   },
-  "BUTTON": {
-    "description": "",
-    "message": "\" Botão \""
-  },
   "CAMERA_BOTTOM_VIEW": {
     "description": "",
     "message": "Câmera inferior"
@@ -174,22 +170,6 @@
   "CH4_ATMOSPHERE": {
     "description": "",
     "message": "\"Atmosfera de metano\""
-  },
-  "CLEARANCE_ALREADY_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Permissão já concedida. Proceder com atracação na baía %bay."
-  },
-  "CLEARANCE_DENIED_NO_BAYS": {
-    "description": "",
-    "message": "Permissão negada. Não há baías de atracação livres."
-  },
-  "CLEARANCE_DENIED_TOO_FAR": {
-    "description": "Shown if player requests docking too far away from station",
-    "message": "Clearance denied. Your ship is too far away for ID verification."
-  },
-  "CLEARANCE_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Permissão concedida. Proceda atracação na baía %bay."
   },
   "CO2_ATMOSPHERE": {
     "description": "",
@@ -327,10 +307,6 @@
     "description": "",
     "message": "Destino"
   },
-  "DIRECTION": {
-    "description": "Direction",
-    "message": "\" Dir \""
-  },
   "DISTANCE_LY": {
     "description": "",
     "message": "Distância: %distance{f.2} al"
@@ -342,10 +318,6 @@
   "DOCKING": {
     "description": "",
     "message": "Atracando"
-  },
-  "DOCKING_CLEARANCE_EXPIRED": {
-    "description": "",
-    "message": "Permissão para atracar expirada. Se deseja atracar, precisa repetir seu requerimento."
   },
   "DOWNGRADING_ALERT_STATUS": {
     "description": "",
@@ -362,10 +334,6 @@
   "DRAW_VERTICAL_LINES": {
     "description": "",
     "message": "Desenhar linhas verticais"
-  },
-  "EARTH": {
-    "description": "",
-    "message": "Terra"
   },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
@@ -494,10 +462,6 @@
   "HARD_CAPITALIST": {
     "description": "",
     "message": "Completamente Capitalista - governo não faz provisões para o bem-estar"
-  },
-  "HAT": {
-    "description": "Hat switch: Is the top button on a joystick",
-    "message": "\" Chapéu\""
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
@@ -651,10 +615,6 @@
     "description": "",
     "message": "Entrada de Joystick"
   },
-  "JOY_AXIS": {
-    "description": "Regarding joystick",
-    "message": "Eixo %{sign}%joyname %axis"
-  },
   "L4L5_DISPLAY_MODE_TOGGLE": {
     "description": "Either show L4/L5 points or don't",
     "message": "Trocar modo de display entre ponto de Lagrange L4/L5"
@@ -750,70 +710,6 @@
   "MANUAL_CONTROL_MODE": {
     "description": "",
     "message": "Modo de controle manual"
-  },
-  "MAP_LOCK_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Trancar Alvo do Hiperespaço"
-  },
-  "MAP_TOGGLE_INFO_PANEL": {
-    "description": "",
-    "message": "Alternar Painel de Informação"
-  },
-  "MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
-    "description": "",
-    "message": "Alternar Seleção da Vista Seguinte"
-  },
-  "MAP_VIEW_ROTATE_DOWN": {
-    "description": "",
-    "message": "Rotacionar Vista para Baixo"
-  },
-  "MAP_VIEW_ROTATE_LEFT": {
-    "description": "",
-    "message": "Rotacionar Vista para a Esquerda"
-  },
-  "MAP_VIEW_ROTATE_RIGHT": {
-    "description": "",
-    "message": "Rotacionar Vista para a Direita"
-  },
-  "MAP_VIEW_ROTATE_UP": {
-    "description": "",
-    "message": "Rotacionar Vista para Cima"
-  },
-  "MAP_VIEW_SHIFT_BACKWARD": {
-    "description": "",
-    "message": "Mover Vista para Trás"
-  },
-  "MAP_VIEW_SHIFT_DOWN": {
-    "description": "",
-    "message": "Mover Vista para Baixo"
-  },
-  "MAP_VIEW_SHIFT_FORWARD": {
-    "description": "",
-    "message": "Mover Vista para Frente"
-  },
-  "MAP_VIEW_SHIFT_LEFT": {
-    "description": "",
-    "message": "Mover Vista para a Esquerda"
-  },
-  "MAP_VIEW_SHIFT_RIGHT": {
-    "description": "",
-    "message": "Mover Vista para a Direita"
-  },
-  "MAP_VIEW_SHIFT_UP": {
-    "description": "",
-    "message": "Mover Vista para Cima"
-  },
-  "MAP_WARP_TO_CURRENT_SYSTEM": {
-    "description": "",
-    "message": "Transformar para o Sistema Atual"
-  },
-  "MAP_WARP_TO_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Transformar para o Alvo do Hiperespaço"
-  },
-  "MAP_WARP_TO_SELECTED_SYSTEM": {
-    "description": "",
-    "message": "Mudar para o sistema selecionado"
   },
   "MASS": {
     "description": "",
@@ -1065,15 +961,23 @@
   },
   "N_EARTH_DAYS": {
     "description": "",
-    "message": "%days{f.1} dias da terra"
+    "message": "%days{f.1} Earth days"
   },
-  "N_WHATEVER_MASSES": {
+  "N_EARTH_MASSES": {
     "description": "",
-    "message": "%mass{f.3} %units massas"
+    "message": "%mass{f.3} Earth masses"
   },
-  "N_WHATEVER_RADII": {
+  "N_EARTH_RADII": {
+    "description": "Used in system info view. E.g.: \"0.17 Earth radii (118235 km)\"",
+    "message": "%radius{f.3} Earth radii (%radkm{f.0} km)"
+  },
+  "N_SOLAR_MASSES": {
+    "description": "",
+    "message": "%mass{f.3} Solar masses"
+  },
+  "N_SOLAR_RADII": {
     "description": "Used in system info view. E.g. for Barnard's star: \"0.17 Solar radii (118235 km)\"",
-    "message": "%radius{f.3} raios %units (%radkm{f.0} km)"
+    "message": "%radius{f.3} Solar radii (%radkm{f.0} km)"
   },
   "N_YEARS": {
     "description": "",
@@ -1230,10 +1134,6 @@
   "RESET": {
     "description": "",
     "message": "Reset"
-  },
-  "RESET_ORIENTATION_AND_ZOOM": {
-    "description": "",
-    "message": "Reiniciar Orientação e Zoom"
   },
   "ROBOTS": {
     "description": "",
@@ -1438,10 +1338,6 @@
   "SOCIAL_DEMOCRACY": {
     "description": "",
     "message": "Democracia social"
-  },
-  "SOLAR": {
-    "description": "",
-    "message": "Solar"
   },
   "SOME_ESTABLISHED_MINING": {
     "description": "",
@@ -1707,10 +1603,6 @@
     "description": "",
     "message": "Alternar modo HUD"
   },
-  "TOGGLE_LUA_CONSOLE": {
-    "description": "",
-    "message": "Ativar console Lua"
-  },
   "TOGGLE_RADAR_MODE": {
     "description": "",
     "message": "Permutar modo radar"
@@ -1759,6 +1651,10 @@
     "description": "Duration unit: one 24-hour day",
     "message": "d"
   },
+  "UNIT_EARTH_GRAVITY": {
+    "description": "Acceleration unit: one earth gravity (g)",
+    "message": "g"
+  },
   "UNIT_HOURS": {
     "description": "Duration unit: one 60-minute hour",
     "message": "h"
@@ -1794,6 +1690,10 @@
   "UNIT_MINUTES": {
     "description": "Duration unit: one 60-second minute",
     "message": "m"
+  },
+  "UNIT_PRESSURE_ATMOSPHERES": {
+    "description": "Pressure unit: one earth atmosphere (atm)",
+    "message": "atm"
   },
   "UNIT_SECONDS": {
     "description": "Duration unit: one second",
@@ -1871,14 +1771,6 @@
     "description": "",
     "message": "\" sem atmosfera significativa\""
   },
-  "X": {
-    "description": "keybinding: x axis",
-    "message": "X"
-  },
-  "Y": {
-    "description": "keybinding: y axis",
-    "message": "Y"
-  },
   "YAW": {
     "description": "",
     "message": "Guinada"
@@ -1894,10 +1786,6 @@
   "YOUNG_FARMING_COLONY": {
     "description": "",
     "message": "Jovem colônia agricultora."
-  },
-  "Z": {
-    "description": "keybinding: z axis",
-    "message": "Z"
   },
   "ZOOM_IN": {
     "description": "",

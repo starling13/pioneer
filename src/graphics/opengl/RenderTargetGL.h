@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _OGL_RENDERTARGET_H
@@ -16,21 +16,6 @@ namespace Graphics {
 	class RendererOGL;
 
 	namespace OGL {
-
-		class RenderTarget;
-
-		class RenderBuffer : public RefCounted {
-		public:
-			~RenderBuffer();
-			void Bind();
-			void Unbind();
-			void Attach(GLenum attachment);
-
-		protected:
-			friend class RenderTarget;
-			RenderBuffer();
-			GLuint buffer;
-		};
 
 		class RenderTarget : public Graphics::RenderTarget {
 		public:
@@ -51,8 +36,8 @@ namespace Graphics {
 
 			bool m_active;
 			GLuint m_fbo;
+			GLuint m_depthRenderBuffer;
 
-			RefCountedPtr<RenderBuffer> m_depthRenderBuffer;
 			RefCountedPtr<Texture> m_colorTexture;
 			RefCountedPtr<Texture> m_depthTexture;
 		};

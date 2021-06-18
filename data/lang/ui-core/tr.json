@@ -43,6 +43,10 @@
     "description": "Used in ShipInfo view, followed by a yes/no depending on if the ship can carry atmospheric shields",
     "message": "Atmosfer kalkanı"
   },
+  "ATMO_PRESS_LIMIT": {
+    "description": "Base external pressure limit of a ship (without atmo shield)",
+    "message": "Atmo. basınç limiti"
+  },
   "ATTEMPT_TO_REPAIR_HULL": {
     "description": "",
     "message": "Gövdeyi tamir etmeyi dene"
@@ -187,6 +191,10 @@
     "description": "",
     "message": "Ticari Mal Pazarı"
   },
+  "COMMODITY_TRADE_ANALYSIS": {
+    "description": "",
+    "message": "Malın ticari analizi:"
+  },
   "COMPACT_RADAR": {
     "description": "Game settings option",
     "message": "Sıkıştırılmış radar"
@@ -219,6 +227,10 @@
     "description": "",
     "message": "Oyuna devam et"
   },
+  "CONTRACT_FRAUD": {
+    "description": "Crime committed by intentionally breaking a contract",
+    "message": "Sözleşme dolandırıcılığı"
+  },
   "CONTROLS": {
     "description": "",
     "message": "Kontroller"
@@ -246,6 +258,10 @@
   "CREW_ROSTER": {
     "description": "",
     "message": "Mürettebat Listesi"
+  },
+  "CRIMINAL": {
+    "description": "Legal status of player",
+    "message": "Suçlu"
   },
   "CRIMINAL_RECORD": {
     "description": "Past crimes / crime history of character",
@@ -515,6 +531,10 @@
     "description": "Hyperjump planner, referring to star system target",
     "message": "Son Hedef:"
   },
+  "FINANCE": {
+    "description": "Financial statement of player, e.g. cash",
+    "message": "Finans"
+  },
   "FLIGHTLOG_DOCKING": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is a station name",
     "message": "{primary_info} ile kenetlenirken"
@@ -595,6 +615,10 @@
     "description": "",
     "message": "Yakıt ağırlığı"
   },
+  "FUGITIVE": {
+    "description": "Legal status of player",
+    "message": "Firari"
+  },
   "FULL_SCREEN": {
     "description": "",
     "message": "Tam ekran"
@@ -614,6 +638,10 @@
   "GOOD_RIDDANCE_TO_YOU_TOO": {
     "description": "",
     "message": "Sana da iyi şanslar."
+  },
+  "GO_BACK": {
+    "description": "",
+    "message": "Geri"
   },
   "GPU_JOBS": {
     "description": "",
@@ -1019,6 +1047,10 @@
     "description": "",
     "message": "Üstuzay menzili"
   },
+  "ILLEGAL_IN_SYSTEM": {
+    "description": "An illegal action or commodity",
+    "message": "Sistemde Yasadışı"
+  },
   "ILLEGAL_JUMP": {
     "description": "A finable crime",
     "message": "Ahlaksız üstuzay atlayışı"
@@ -1111,6 +1143,18 @@
     "description": "",
     "message": "Kalkış izni reddedildi: ödenmemiş borcunuz var."
   },
+  "LAUNCH_PERMISSION_GRANTED": {
+    "description": "",
+    "message": "Kalkış izni verildi."
+  },
+  "LAUNCH_PERMISSION_GRANTED_DEPART_QUICK": {
+    "description": "",
+    "message": "İzin verildi. Lütfen iniş alanında yoğunluk oluşturmayın ve hızlıca ayrılın."
+  },
+  "LAUNCH_PERMISSION_GRANTED_WATCH_TRAFFIC": {
+    "description": "",
+    "message": "İzin verildi. Lütfen ayrılırken trafiğe dikkat edin."
+  },
   "LEGAL_STATUS": {
     "description": "",
     "message": "Yasal durum"
@@ -1187,9 +1231,17 @@
     "description": "Light year",
     "message": "ıy"
   },
+  "MAJOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "Ana İhracat"
+  },
   "MAJOR_EXPORTS_ITEM": {
     "description": "",
     "message": "Ana ihracatlar"
+  },
+  "MAJOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "Ana İthalat"
   },
   "MAJOR_IMPORTS_ITEM": {
     "description": "",
@@ -1267,13 +1319,25 @@
     "description": "",
     "message": "Askeri"
   },
+  "MINIMAL_TRADE": {
+    "description": "Indicates a system does not have a significant amount of trade in a commodity.",
+    "message": "Minimal Ticaret"
+  },
   "MINIMUM_CREW": {
     "description": "",
     "message": "En az mürettebat"
   },
+  "MINOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "İkincil İhracat"
+  },
   "MINOR_EXPORTS_ITEM": {
     "description": "",
     "message": "Yan ihracatlar"
+  },
+  "MINOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "İkincil İthalat"
   },
   "MINOR_IMPORTS_ITEM": {
     "description": "",
@@ -1423,6 +1487,10 @@
     "description": "",
     "message": "Kapalı"
   },
+  "OFFENDER": {
+    "description": "Legal status of player",
+    "message": "Sabıkalı"
+  },
   "OK": {
     "description": "",
     "message": "Tamam"
@@ -1450,6 +1518,10 @@
   "OUTER_ARM": {
     "description": "Arm of the Milky Way galaxy",
     "message": "Dış kol"
+  },
+  "OUTLAW": {
+    "description": "Legal status of player",
+    "message": "Kanun Kaçağı"
   },
   "OUTSTANDING_FINES": {
     "description": "Unpaid fines for crimes committed",
@@ -1535,6 +1607,10 @@
     "description": "For player reputation",
     "message": "Profesyonel"
   },
+  "PROFITABLE_TRADE": {
+    "description": "Indicates a profitable trade route.",
+    "message": "Kazançlı Ticaret"
+  },
   "PUMP_DOWN": {
     "description": "Drain the fuel tank",
     "message": "Geri pompala"
@@ -1615,6 +1691,10 @@
     "description": "",
     "message": "Yeniden başlat"
   },
+  "RESET_ORIENTATION_AND_ZOOM": {
+    "description": "",
+    "message": "Yönelim ve Yakınlaştırmayı Sıfırla"
+  },
   "RETURN_TO_GAME": {
     "description": "",
     "message": "Oyuna dön"
@@ -1636,8 +1716,8 @@
     "message": "Ödül"
   },
   "ROTATE_VIEW": {
-    "description": "",
-    "message": "Görünümü döndür"
+    "description": "Indicates that the button must be kept pressed down, to rotate camera view with mouse",
+    "message": "Görünümü döndürmek için basılı tutun"
   },
   "ROUTE_INFO": {
     "description": "For hyperjump planner",
@@ -1702,6 +1782,10 @@
   "SET_AS_TARGET": {
     "description": "",
     "message": "Varış noktasını navigasyon hedefi olarak seç."
+  },
+  "SET_RETURN_ROUTE": {
+    "description": "",
+    "message": "Dönüş yolunu seç"
   },
   "SHIP": {
     "description": "",
@@ -1807,6 +1891,14 @@
     "description": "Information shown in the station lobby, for total number of docking pads",
     "message": "Toplam kapasitemiz {total_docking_pads} kenetlenme platformudur."
   },
+  "STATION_LOCAL_GRAVITY": {
+    "description": "",
+    "message": "Burada yerel kütleçekimi %.2f g."
+  },
+  "STATION_LOCAL_GRAVITY_PRESSURE": {
+    "description": "",
+    "message": "Burada yerel kütleçekimi %.2f g, atmosfer basıncı %.2f atm."
+  },
   "STATION_MANAGER": {
     "description": "",
     "message": "İstasyon yöneticisi"
@@ -1855,6 +1947,10 @@
     "description": "Arm of the Milky Way galaxy",
     "message": "3kpc kolu"
   },
+  "TOGGLE_FULL_COMMS_WINDOW": {
+    "description": "on world view / main screen",
+    "message": "Toggle full comms window"
+  },
   "TOGGLE_MALE_FEMALE": {
     "description": "player gender",
     "message": "Erkek/kadın"
@@ -1899,9 +1995,17 @@
     "description": "",
     "message": "Toplam kütle"
   },
+  "TRADING_FROM": {
+    "description": "Indicates the source system of a commodity trade.",
+    "message": "Alış: {system}:"
+  },
   "TRADING_ILLEGAL_GOODS": {
     "description": "",
     "message": "Kanun dışı mal ticareti"
+  },
+  "TRADING_TO": {
+    "description": "Indicates the destination system of a commodity trade.",
+    "message": "Satış: {system}:"
   },
   "TRUSTWORTHY": {
     "description": "For player reputation",
@@ -1914,6 +2018,10 @@
   "UNLAWFUL_WEAPONS_DISCHARGE": {
     "description": "",
     "message": "Kanun dışı silah kullanımı"
+  },
+  "UNPROFITABLE_TRADE": {
+    "description": "Indicates an unprofitable trade route.",
+    "message": "Kazançsız Ticaret"
   },
   "UNRELIABLE": {
     "description": "",

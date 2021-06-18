@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -29,7 +29,11 @@ local function showItem(item)
 	elseif item.priority == 2 then
 		color = colors.alertRed
 	end
-	ui.textColored(color, item.text)
+	if item.sender and item.sender ~= "" then
+		ui.textColored(color, item.sender .. ": " .. item.text)
+	else
+		ui.textColored(color, item.text)
+	end
 end
 
 local function displayCommsLog()
@@ -39,7 +43,7 @@ local function displayCommsLog()
 		ui.setNextWindowPos(Vector2(10, 10) , "Always")
 		ui.window("CommsLogButton", {"NoTitleBar", "NoResize", "NoFocusOnAppearing", "NoBringToFrontOnFocus", "NoSavedSettings"},
 							function()
-								if ui.coloredSelectedIconButton(icons.comms, mainButtonSize, nil, mainButtonFramePadding, colors.buttonBlue, colors.white, 'Toggle full comms window') then
+								if ui.coloredSelectedIconButton(icons.comms, mainButtonSize, nil, mainButtonFramePadding, colors.buttonBlue, colors.white, lui.TOGGLE_FULL_COMMS_WINDOW) then
 									fullComms = not fullComms
 								end
 		end)
@@ -56,12 +60,12 @@ local function displayCommsLog()
 																local commsLines = Game.GetCommsLines()
 																local lines = {}
 																for k,v in pairs(commsLines) do
-																	if last and last.text == v.text then
+																	if last and last.text == v.text and last.sender == v.sender then
 																		rep = rep + 1
 																		last = v
 																	else
 																		if rep > 0 then
-																			table.insert(lines, 1, { text = last.text .. ((rep > 1) and (' x ' .. rep) or ''), priority = last.priority })
+																			table.insert(lines, 1, { sender = last.sender, text = last.text .. ((rep > 1) and (' x ' .. rep) or ''), priority = last.priority })
 																			rep = 1
 																			last = nil
 																		end
@@ -72,7 +76,7 @@ local function displayCommsLog()
 																	end
 																end
 																if last and last.time > Game.time - commsLogRetainTime then
-																	table.insert(lines, 1, { text = last.text .. ((rep > 1) and (' x ' .. rep) or ''), priority = last.priority })
+																	table.insert(lines, 1, { sender = last.sender, text = last.text .. ((rep > 1) and (' x ' .. rep) or ''), priority = last.priority })
 																end
 																ui.pushTextWrapPos(ui.screenWidth/4 - 20)
 																for k,v in pairs(utils.reverse(utils.take(lines, commsLinesToShow))) do
@@ -87,7 +91,7 @@ local function displayCommsLog()
 										ui.setNextWindowPos(aux , "Always")
 										ui.withStyleColors({ ["WindowBg"] = colors.commsWindowBackground }, function()
 												ui.withStyleVars({ ["WindowRounding"] = 0.0 }, function()
-														ui.window("CommsLog", {"NoResize"},
+														ui.window(lc.COMMS, {"NoResize"},
 																			function()
 																				local lines = Game.GetCommsLines()
 																				ui.pushTextWrapPos(ui.screenWidth/3 - 20)

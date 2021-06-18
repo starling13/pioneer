@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #pragma once
@@ -70,6 +70,7 @@ namespace Graphics {
 		virtual bool SetRenderTarget(RenderTarget *) override final;
 
 		virtual bool SetDepthRange(double znear, double zfar) override final;
+		virtual bool ResetDepthRange() override final;
 
 		virtual bool ClearScreen() override final;
 		virtual bool ClearDepthBuffer() override final;
@@ -147,9 +148,11 @@ namespace Graphics {
 		friend class OGL::BillboardMaterial;
 		std::vector<std::pair<MaterialDescriptor, OGL::Program *>> m_programs;
 		std::unordered_map<Uint32, OGL::RenderState *> m_renderStates;
+		bool m_useNVDepthRanged;
 		float m_invLogZfarPlus1;
-		OGL::RenderTarget *m_activeRenderTarget;
-		RenderState *m_activeRenderState;
+		OGL::RenderTarget *m_activeRenderTarget = nullptr;
+		OGL::RenderTarget *m_windowRenderTarget = nullptr;
+		RenderState *m_activeRenderState = nullptr;
 
 		matrix4x4f m_modelViewMat;
 		matrix4x4f m_projectionMat;

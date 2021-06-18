@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SYSTEMINFOVIEW_H
@@ -8,7 +8,7 @@
 #include "galaxy/SystemPath.h"
 #include "gui/GuiImageRadioButton.h"
 
-#include "UIView.h"
+#include "pigui/PiGuiView.h"
 #include <vector>
 
 class Game;
@@ -18,14 +18,13 @@ class SystemBody;
 namespace Graphics {
 	class Renderer;
 	class RenderState;
-}
+} // namespace Graphics
 
-class SystemInfoView : public UIView {
+class SystemInfoView : public PiGuiView {
 public:
 	SystemInfoView(Game *game);
 	virtual void Update();
 	virtual void Draw3D();
-	void NextPage();
 
 protected:
 	virtual void OnSwitchTo();
@@ -57,7 +56,6 @@ private:
 
 	RefreshType NeedsRefresh();
 	void SystemChanged(const SystemPath &path);
-	void UpdateEconomyTab();
 	void OnBodyViewed(SystemBody *b);
 	void OnBodySelected(SystemBody *b);
 	void OnClickBackground(Gui::MouseButtonEvent *e);
@@ -67,13 +65,8 @@ private:
 	Game *m_game;
 
 	Gui::VBox *m_infoBox;
-	Gui::Fixed *m_econInfo;
-	Gui::Fixed *m_econMajImport, *m_econMinImport;
-	Gui::Fixed *m_econMajExport, *m_econMinExport;
-	Gui::Fixed *m_econIllegal;
-	Gui::Fixed *m_sbodyInfoTab, *m_econInfoTab;
+	Gui::Fixed *m_sbodyInfoTab;
 
-	Gui::Label *m_commodityTradeLabel;
 	Gui::Tabbed *m_tabs;
 	RefCountedPtr<StarSystem> m_system;
 	SystemPath m_selectedBodyPath;
@@ -81,7 +74,6 @@ private:
 	//map is not enough to associate icons as each tab has their own. First element is the body index of SystemPath (names are not unique)
 	std::vector<std::pair<Uint32, BodyIcon *>> m_bodyIcons;
 	bool m_unexplored;
-	bool m_hasTradeComputer;
 };
 
 #endif /* _SYSTEMINFOVIEW_H */

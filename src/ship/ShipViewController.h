@@ -1,20 +1,17 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #pragma once
 
 #include "CameraController.h"
 #include "Input.h"
-#include "KeyBindings.h"
+#include "InputBindings.h"
 #include "ViewController.h"
 #include "utils.h"
 
 class ShipViewController : public ViewController {
 public:
-	ShipViewController(WorldView *v) :
-		ViewController(v),
-		m_camType(CAM_INTERNAL),
-		headtracker_input_priority(false) {}
+	ShipViewController(WorldView *v);
 
 	void Update() override;
 	void Activated() override;
@@ -63,9 +60,8 @@ public:
 	void LoadFromJson(const Json &jsonObj);
 	void SaveToJson(Json &jsonObj);
 
-	static struct InputBinding : public Input::InputFrame {
-		using Action = KeyBindings::ActionBinding;
-		using Axis = KeyBindings::AxisBinding;
+	struct InputBinding : public Input::InputFrame {
+		using InputFrame::InputFrame;
 
 		Axis *cameraYaw;
 		Axis *cameraPitch;
@@ -85,6 +81,6 @@ public:
 		Action *cycleCameraMode;
 		Action *resetCamera;
 
-		virtual void RegisterBindings();
+		void RegisterBindings() override;
 	} InputBindings;
 };

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _LUAPIGUI_H
@@ -6,12 +6,19 @@
 
 #include "LuaObject.h"
 #include "LuaPushPull.h"
+#include "LuaTable.h"
 
 #include "vector2.h"
 #include "vector3.h"
 
 class Body;
 struct ImGuiStyle;
+struct ImVec2;
+struct ImColor;
+
+void pi_lua_generic_push(lua_State *l, const ImVec2 &vec);
+void pi_lua_generic_pull(lua_State *l, int index, ImVec2 &vec);
+void pi_lua_generic_pull(lua_State *l, int index, ImColor &color);
 
 namespace PiGui {
 	bool first_body_is_more_important_than(Body *body, Body *other);
@@ -28,8 +35,6 @@ namespace PiGui {
 	typedef std::vector<TScreenSpace> TSS_vector;
 
 	int pushOnScreenPositionDirection(lua_State *l, vector3d position);
-	TScreenSpace lua_rel_space_to_screen_space(const vector3d &pos);
-	TScreenSpace lua_world_space_to_screen_space(const vector3d &pos);
 
 	void load_theme_from_table(LuaTable &table, ImGuiStyle &style);
 } // namespace PiGui

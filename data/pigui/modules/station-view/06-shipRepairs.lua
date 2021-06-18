@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local ui = require 'pigui'
@@ -6,7 +6,7 @@ local StationView = require 'pigui.views.station-view'
 local ShipDef = require "ShipDef"
 local Game = require "Game"
 local Rand = require "Rand"
-local InfoFace = require 'ui/PiguiFace'
+local PiGuiFace = require 'pigui.libs.face'
 local Format = require "Format"
 local Character = require "Character"
 local ModalWindow = require 'pigui.libs.modal-win'
@@ -72,7 +72,7 @@ local getRepairMessage = function (damage, price)
 end
 
 
-function round(num, numDecimalPlaces)
+local function round(num, numDecimalPlaces)
 	local mult = 10^(numDecimalPlaces or 0)
 	return math.floor(num * mult + 0.5) / mult
 end
@@ -81,6 +81,7 @@ end
 local function drawShipRepair()
 	local hullPercent = round(Game.player:GetHullPercent())
 	local damage = 100 - hullPercent
+	local shipDef = ShipDef[Game.player.shipId]
 
 	local intro = string.interp(l.YOUR_HULL_IS_AT_X_INTEGRITY, {value = string.format('%.1f', hullPercent)})
 
@@ -149,8 +150,8 @@ StationView:registerView({
 			if (stationSeed ~= station.seed) then
 				stationSeed = station.seed
 				local rand = Rand.New(station.seed .. '-repair-guy')
-				face = InfoFace.New(Character.New({ title = l.CHIEF_MECHANIC }, rand),
-							{windowPadding = widgetSizes.windowPadding, itemSpacing = widgetSizes.itemSpacing, size = widgetSizes.faceSize})
+				face = PiGuiFace.New(Character.New({ title = l.CHIEF_MECHANIC }, rand),
+							{itemSpacing = widgetSizes.itemSpacing})
 			end
 		end
 	end,

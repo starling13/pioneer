@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
@@ -15,7 +15,7 @@ local sellPriceReduction = 0.8
 local defaultFuncs = {
     -- can we display this item
     canDisplayItem = function (self, e)
-        return e.purchasable and e:IsValidSlot("cargo") and Game.system:IsCommodityLegal(e)
+        return e.purchasable and e:IsValidSlot("cargo") and Game.system:IsCommodityLegal(e.name)
     end,
 
     -- how much of this item do we have in stock?
@@ -104,11 +104,8 @@ local defaultFuncs = {
     end,
 
     -- do something when we buy this commodity
-    bought = function (self, e)
-		local count = -1
-		if self.tradeAmount ~= nil then
-			count = self.tradeAmount
-		end
+    bought = function (self, e, tradeamount)
+		local count = tradeamount or 1  -- default to 1 for e.g. equipment market
         Game.player:GetDockedWith():AddEquipmentStock(e, -count)
     end,
 
@@ -139,11 +136,8 @@ local defaultFuncs = {
     end,
 
     -- do something when we sell this items
-    sold = function (self, e)
-		local count = -1
-		if self.tradeAmount ~= nil then
-			count = self.tradeAmount
-		end
+    sold = function (self, e, tradeamount)
+		local count = tradeamount or 1  -- default to 1 for e.g. equipment market
         Game.player:GetDockedWith():AddEquipmentStock(e, count)
     end,
 

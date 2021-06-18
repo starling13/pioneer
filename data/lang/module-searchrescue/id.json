@@ -435,10 +435,6 @@
     "description": "",
     "message": "Lon:"
   },
-  "LY": {
-    "description": "",
-    "message": "ly"
-  },
   "MISSING_COMM": {
     "description": "",
     "message": "Cannot complete transfer. {cargotype} missing."
@@ -649,7 +645,7 @@
   },
   "SET_AS_TARGET": {
     "description": "",
-    "message": "Set as navigation target"
+    "message": "Tetapkan sebagai target navigasi"
   },
   "SET_RETURN_ROUTE": {
     "description": "",

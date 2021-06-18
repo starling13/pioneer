@@ -103,10 +103,6 @@
     "description": "",
     "message": "Rudasis nykštukas - subžvaigždinis objektas"
   },
-  "BUTTON": {
-    "description": "",
-    "message": "\" Mygtukas \""
-  },
   "CAMERA_BOTTOM_VIEW": {
     "description": "",
     "message": "Kamera iš apačios"
@@ -174,22 +170,6 @@
   "CH4_ATMOSPHERE": {
     "description": "",
     "message": "\" Metano atmosfera\""
-  },
-  "CLEARANCE_ALREADY_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Leidimas jau duotas. Skriskite į doką %bay."
-  },
-  "CLEARANCE_DENIED_NO_BAYS": {
-    "description": "",
-    "message": "Leidimas neduotas. Nėra laisvų švartavimosi vietų."
-  },
-  "CLEARANCE_DENIED_TOO_FAR": {
-    "description": "Shown if player requests docking too far away from station",
-    "message": "Clearance denied. Your ship is too far away for ID verification."
-  },
-  "CLEARANCE_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Leidimas duotas. Skriskite į švartavimosi doką %bay."
   },
   "CO2_ATMOSPHERE": {
     "description": "",
@@ -327,10 +307,6 @@
     "description": "",
     "message": "Paskirties vieta"
   },
-  "DIRECTION": {
-    "description": "Direction",
-    "message": "\" Katalogas \""
-  },
   "DISTANCE_LY": {
     "description": "",
     "message": "Atstumas: %distance{f.2} šviesm."
@@ -342,10 +318,6 @@
   "DOCKING": {
     "description": "",
     "message": "Švartuojamasi"
-  },
-  "DOCKING_CLEARANCE_EXPIRED": {
-    "description": "",
-    "message": "Švartavimosi leidimas pasibaigė. Jei norite švartuotis - privalote pakartoti užklausimą."
   },
   "DOWNGRADING_ALERT_STATUS": {
     "description": "",
@@ -362,10 +334,6 @@
   "DRAW_VERTICAL_LINES": {
     "description": "",
     "message": "Vaizduoti vertikalės linijas."
-  },
-  "EARTH": {
-    "description": "",
-    "message": "Žemė(-s)"
   },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
@@ -494,10 +462,6 @@
   "HARD_CAPITALIST": {
     "description": "",
     "message": "Visiškai kapitalistinė - nėra valstybinės socialinės paramos"
-  },
-  "HAT": {
-    "description": "Hat switch: Is the top button on a joystick",
-    "message": "\" Kepurė \""
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
@@ -651,10 +615,6 @@
     "description": "",
     "message": "Vairasvirtės įvestis"
   },
-  "JOY_AXIS": {
-    "description": "Regarding joystick",
-    "message": "%{sign}%joyname %axis Axis"
-  },
   "L4L5_DISPLAY_MODE_TOGGLE": {
     "description": "Either show L4/L5 points or don't",
     "message": "Switch between Lagrange L4/L5 point display modes."
@@ -750,70 +710,6 @@
   "MANUAL_CONTROL_MODE": {
     "description": "",
     "message": "Rankinis valdymo režimas"
-  },
-  "MAP_LOCK_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Nustatyti hipererdvės taikinį"
-  },
-  "MAP_TOGGLE_INFO_PANEL": {
-    "description": "",
-    "message": "Įj./Išj. Informacinį Skydą"
-  },
-  "MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
-    "description": "",
-    "message": "Toggle Selection Following View"
-  },
-  "MAP_VIEW_ROTATE_DOWN": {
-    "description": "",
-    "message": "Pakreipti vaizdą žemyn"
-  },
-  "MAP_VIEW_ROTATE_LEFT": {
-    "description": "",
-    "message": "Pasukti vaizdą kairėn"
-  },
-  "MAP_VIEW_ROTATE_RIGHT": {
-    "description": "",
-    "message": "Pasukti vaizdą dešinėn"
-  },
-  "MAP_VIEW_ROTATE_UP": {
-    "description": "",
-    "message": "Pakreipti vaizdą aukštyn"
-  },
-  "MAP_VIEW_SHIFT_BACKWARD": {
-    "description": "",
-    "message": "Paslinkti vaizdą atgal"
-  },
-  "MAP_VIEW_SHIFT_DOWN": {
-    "description": "",
-    "message": "Paslinkti vaizdą žemyn"
-  },
-  "MAP_VIEW_SHIFT_FORWARD": {
-    "description": "",
-    "message": "Paslinkti vaizdą pirmyn"
-  },
-  "MAP_VIEW_SHIFT_LEFT": {
-    "description": "",
-    "message": "Paslinkti vaizdą kairėn"
-  },
-  "MAP_VIEW_SHIFT_RIGHT": {
-    "description": "",
-    "message": "Paslinkti vaizdą dešinėn"
-  },
-  "MAP_VIEW_SHIFT_UP": {
-    "description": "",
-    "message": "Paslinkti vaizdą aukštyn"
-  },
-  "MAP_WARP_TO_CURRENT_SYSTEM": {
-    "description": "",
-    "message": "Persikelti į dabartinę sistemą"
-  },
-  "MAP_WARP_TO_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Persikelti į hipererdvės taikinį"
-  },
-  "MAP_WARP_TO_SELECTED_SYSTEM": {
-    "description": "",
-    "message": "Persikelti į pasirinktą sistemą"
   },
   "MASS": {
     "description": "",
@@ -1065,15 +961,23 @@
   },
   "N_EARTH_DAYS": {
     "description": "",
-    "message": "%days{f.1} Žemės dienų"
+    "message": "%days{f.1} Earth days"
   },
-  "N_WHATEVER_MASSES": {
+  "N_EARTH_MASSES": {
     "description": "",
-    "message": "%mass{f.3} %units masių"
+    "message": "%mass{f.3} Earth masses"
   },
-  "N_WHATEVER_RADII": {
+  "N_EARTH_RADII": {
+    "description": "Used in system info view. E.g.: \"0.17 Earth radii (118235 km)\"",
+    "message": "%radius{f.3} Earth radii (%radkm{f.0} km)"
+  },
+  "N_SOLAR_MASSES": {
+    "description": "",
+    "message": "%mass{f.3} Solar masses"
+  },
+  "N_SOLAR_RADII": {
     "description": "Used in system info view. E.g. for Barnard's star: \"0.17 Solar radii (118235 km)\"",
-    "message": "%radius{f.3} %units spindulys (%radkm{f.0} km)"
+    "message": "%radius{f.3} Solar radii (%radkm{f.0} km)"
   },
   "N_YEARS": {
     "description": "",
@@ -1230,10 +1134,6 @@
   "RESET": {
     "description": "",
     "message": "Perkrauti"
-  },
-  "RESET_ORIENTATION_AND_ZOOM": {
-    "description": "",
-    "message": "Atitaisyti kryptį ir priartinimą"
   },
   "ROBOTS": {
     "description": "",
@@ -1438,10 +1338,6 @@
   "SOCIAL_DEMOCRACY": {
     "description": "",
     "message": "Socialinė Demokratija"
-  },
-  "SOLAR": {
-    "description": "",
-    "message": "Saulės"
   },
   "SOME_ESTABLISHED_MINING": {
     "description": "",
@@ -1707,10 +1603,6 @@
     "description": "",
     "message": "Perjungti HUD režimą"
   },
-  "TOGGLE_LUA_CONSOLE": {
-    "description": "",
-    "message": "Įj./Išj. Lua konsolę"
-  },
   "TOGGLE_RADAR_MODE": {
     "description": "",
     "message": "Toggle radar mode"
@@ -1759,6 +1651,10 @@
     "description": "Duration unit: one 24-hour day",
     "message": "d"
   },
+  "UNIT_EARTH_GRAVITY": {
+    "description": "Acceleration unit: one earth gravity (g)",
+    "message": "g"
+  },
   "UNIT_HOURS": {
     "description": "Duration unit: one 60-minute hour",
     "message": "h"
@@ -1794,6 +1690,10 @@
   "UNIT_MINUTES": {
     "description": "Duration unit: one 60-second minute",
     "message": "m"
+  },
+  "UNIT_PRESSURE_ATMOSPHERES": {
+    "description": "Pressure unit: one earth atmosphere (atm)",
+    "message": "atm"
   },
   "UNIT_SECONDS": {
     "description": "Duration unit: one second",
@@ -1871,14 +1771,6 @@
     "description": "",
     "message": "\" neturi reikšmingos atmosferos\""
   },
-  "X": {
-    "description": "keybinding: x axis",
-    "message": "X"
-  },
-  "Y": {
-    "description": "keybinding: y axis",
-    "message": "Y"
-  },
   "YAW": {
     "description": "",
     "message": "Nuokrypis"
@@ -1894,10 +1786,6 @@
   "YOUNG_FARMING_COLONY": {
     "description": "",
     "message": "Jauna žemės ūkio kolonija."
-  },
-  "Z": {
-    "description": "keybinding: z axis",
-    "message": "Z"
   },
   "ZOOM_IN": {
     "description": "",

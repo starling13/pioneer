@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "libs.h"
@@ -19,7 +19,6 @@
 #include "GeoPatch.h"
 #include "GeoPatchContext.h"
 #include "GeoSphere.h"
-#include "Object.h"
 #include "ObjectViewerView.h"
 #include "Pi.h"
 #include "Planet.h"
@@ -28,7 +27,6 @@
 #include "SectorView.h"
 #include "Sfx.h"
 #include "Ship.h"
-#include "ShipCpanel.h"
 #include "ShipType.h"
 #include "SmartPtr.h"
 #include "Space.h"

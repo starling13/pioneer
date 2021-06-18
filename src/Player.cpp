@@ -1,19 +1,18 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Player.h"
 
+#include "FixedGuns.h"
 #include "Frame.h"
 #include "Game.h"
 #include "GameConfig.h"
 #include "GameLog.h"
 #include "HyperspaceCloud.h"
-#include "KeyBindings.h"
 #include "Lang.h"
 #include "Pi.h"
 #include "SectorView.h"
 #include "Sfx.h"
-#include "ShipCpanel.h"
 #include "SpaceStation.h"
 #include "StringF.h"
 #include "SystemView.h" // for the transfer planner
@@ -52,6 +51,7 @@ Player::Player(const ShipType::Id &shipId) :
 {
 	SetController(new PlayerShipController());
 	InitCockpit();
+	GetFixedGuns()->SetShouldUseLeadCalc(true);
 	registerEquipChangeListener(this);
 }
 
@@ -59,6 +59,7 @@ Player::Player(const Json &jsonObj, Space *space) :
 	Ship(jsonObj, space)
 {
 	InitCockpit();
+	GetFixedGuns()->SetShouldUseLeadCalc(true);
 	registerEquipChangeListener(this);
 }
 
@@ -121,7 +122,7 @@ bool Player::DoDamage(float kgDamage)
 }
 
 //XXX perhaps remove this, the sound is very annoying
-bool Player::OnDamage(Object *attacker, float kgDamage, const CollisionContact &contactData)
+bool Player::OnDamage(Body *attacker, float kgDamage, const CollisionContact &contactData)
 {
 	bool r = Ship::OnDamage(attacker, kgDamage, contactData);
 	if (!IsDead() && (GetPercentHull() < 25.0f)) {
@@ -196,7 +197,7 @@ void Player::NotifyRemoved(const Body *const removedBody)
 	if (GetCombatTarget() == removedBody) {
 		SetCombatTarget(0);
 
-		if (!GetNavTarget() && removedBody->IsType(Object::SHIP))
+		if (!GetNavTarget() && removedBody->IsType(ObjectType::SHIP))
 			SetNavTarget(static_cast<const Ship *>(removedBody)->GetHyperspaceCloud());
 	}
 
@@ -294,6 +295,10 @@ void Player::OnCockpitActivated()
 void Player::StaticUpdate(const float timeStep)
 {
 	Ship::StaticUpdate(timeStep);
+
+	for (size_t i = 0; i < GUNMOUNT_MAX; i++)
+		if (GetFixedGuns()->IsGunMounted(i))
+			GetFixedGuns()->UpdateLead(timeStep, i, this, GetCombatTarget());
 
 	// XXX even when not on screen. hacky, but really cockpit shouldn't be here
 	// anyway so this will do for now

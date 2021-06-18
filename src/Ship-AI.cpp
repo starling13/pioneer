@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "EnumStrings.h"
@@ -19,6 +19,7 @@
 // returns true if command is complete
 bool Ship::AITimeStep(float timeStep)
 {
+	PROFILE_SCOPED()
 	// allow the launch thruster thing to happen
 	if (m_launchLockTimeout > 0.0) return false;
 
@@ -86,7 +87,7 @@ void Ship::AIFlyTo(Body *target)
 	AIClearInstructions();
 	SetFuelReserve((GetFuel() < 0.5) ? GetFuel() / 2 : 0.25);
 
-	if (target->IsType(Object::SHIP)) { // test code
+	if (target->IsType(ObjectType::SHIP)) { // test code
 		vector3d posoff(-1000.0, 0.0, 1000.0);
 		m_curAICmd = new AICmdFormation(this, static_cast<Ship *>(target), posoff);
 	} else

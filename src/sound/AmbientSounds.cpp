@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "AmbientSounds.h"
@@ -148,16 +148,16 @@ void AmbientSounds::Update()
 			}
 		}
 	} else if (s_planetSurfaceNoise.IsPlaying()) {
-		// s_planetSurfaceNoise.IsPlaying() - if we are out of the atmosphere then stop playing
+		// s_planetSurfaceNoise.IsPlaying() - if player is no longer on the ground then stop playing
 		Frame *playerFrame = Frame::GetFrame(Pi::player->GetFrame());
 		if (playerFrame->IsRotFrame()) {
 			const Body *astro = playerFrame->GetBody();
-			if (astro->IsType(Object::PLANET)) {
+			if (astro->IsType(ObjectType::PLANET)) {
 				const double dist = Pi::player->GetPosition().Length();
 				double pressure, density, temperature;
 				static_cast<const Planet *>(astro)->GetAtmosphericState(dist, pressure, density, temperature);
-				if (pressure < 0.001) {
-					// Stop playing surface noise once out of the atmosphere
+				if (Pi::player->GetFlightState() != Ship::LANDED) {
+					// Stop playing surface noise once the ship is off the ground
 					s_planetSurfaceNoise.Stop();
 				}
 			}
@@ -230,7 +230,7 @@ void AmbientSounds::Update()
 
 		Frame *playerFrame = Frame::GetFrame(Pi::player->GetFrame());
 		const Body *astro = playerFrame->GetBody();
-		if (astro && playerFrame->IsRotFrame() && (astro->IsType(Object::PLANET))) {
+		if (astro && playerFrame->IsRotFrame() && (astro->IsType(ObjectType::PLANET))) {
 			double dist = Pi::player->GetPosition().Length();
 			double pressure, density, temperature;
 			static_cast<const Planet *>(astro)->GetAtmosphericState(dist, pressure, density, temperature);

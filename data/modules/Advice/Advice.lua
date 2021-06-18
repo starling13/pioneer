@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 -- This module is a substitute for not having a propper "bar" /
@@ -20,7 +20,7 @@ local advice_probability = .2
 -- There are three different versions of flavours "Rumours",
 -- "Traveller's tale", and "Traveller's advice", which have fake /
 -- arbitrary indices, for inflated feeling of rich universe and lore.
-local rumours_num = 0
+local rumours_num = 1
 local travellers_tale_num = 1
 local travellers_advice_indices = {481, -- tame black market
 								   16,  -- road faster taken

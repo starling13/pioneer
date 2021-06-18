@@ -5,19 +5,19 @@
   },
   "CORPORATIONS_1": {
     "description": "",
-    "message": "ТОП"
+    "message": "Апогей"
   },
   "CORPORATIONS_10": {
     "description": "",
-    "message": "Товарни Кораби"
+    "message": "Товарни кораби"
   },
   "CORPORATIONS_11": {
     "description": "",
-    "message": "Армент Аеродинамикс"
+    "message": "Аеродинамика Армент"
   },
   "CORPORATIONS_2": {
     "description": "",
-    "message": "Яка Кола"
+    "message": "Яка Кòла"
   },
   "CORPORATIONS_3": {
     "description": "",
@@ -61,11 +61,11 @@
   },
   "DENY_0": {
     "description": "",
-    "message": "Съжалявам, но не мога да Ви се доверя."
+    "message": "Съжалявам, но не мога да ти се доверя."
   },
   "DENY_1": {
     "description": "",
-    "message": "Върнете се, когато натрупате нужния опит."
+    "message": "Върни се, когато натрупаш нужния опит."
   },
   "DENY_2": {
     "description": "",
@@ -81,7 +81,7 @@
   },
   "DENY_5": {
     "description": "",
-    "message": "Неопитен си, няма да се справиш с толкова важен превоз."
+    "message": "Нямаш опит, няма да се справиш с толкова важен превоз."
   },
   "DENY_6": {
     "description": "",
@@ -125,7 +125,7 @@
   },
   "FLAVOUR_0_WHEREAREWE": {
     "description": "",
-    "message": "Къде сме? Достатъчно чакахме - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чакахме – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_0_WHYSOMUCH": {
     "description": "",
@@ -141,7 +141,7 @@
   },
   "FLAVOUR_10_FAILUREMSG": {
     "description": "",
-    "message": "Ти си пълен аматьор. Няма да ти платя и една стотинка."
+    "message": "Ти нямаш никакъв опит. Няма да ти платя и една стотинка."
   },
   "FLAVOUR_10_HOWMANY": {
     "description": "",
@@ -157,7 +157,7 @@
   },
   "FLAVOUR_10_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_10_WHYSOMUCH": {
     "description": "",
@@ -173,7 +173,7 @@
   },
   "FLAVOUR_11_FAILUREMSG": {
     "description": "",
-    "message": "Ще загубя работата си, заради твоята некомпетентност. Затова от мен пари няма да видиш."
+    "message": "Ще загубя работата си, заради твоята некомпетентност. Затова, от мен пари няма да видиш."
   },
   "FLAVOUR_11_HOWMANY": {
     "description": "",
@@ -189,7 +189,7 @@
   },
   "FLAVOUR_11_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_11_WHYSOMUCH": {
     "description": "",
@@ -221,7 +221,7 @@
   },
   "FLAVOUR_12_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_12_WHYSOMUCH": {
     "description": "",
@@ -253,7 +253,7 @@
   },
   "FLAVOUR_1_WHEREAREWE": {
     "description": "",
-    "message": "Къде сме? Достатъчно чакахме - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чакахме – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_1_WHYSOMUCH": {
     "description": "",
@@ -285,7 +285,7 @@
   },
   "FLAVOUR_2_WHEREAREWE": {
     "description": "",
-    "message": "Къде сме? Достатъчно чакахме - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чакахме – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_2_WHYSOMUCH": {
     "description": "",
@@ -297,7 +297,7 @@
   },
   "FLAVOUR_3_DANGER": {
     "description": "",
-    "message": "Мисля, че наемен убиец ми е тръгнал по следите, най-вероятно и теб ще убие."
+    "message": "Мисля, че наемен убиец ми върви по петите, най-вероятно и теб ще убие."
   },
   "FLAVOUR_3_FAILUREMSG": {
     "description": "",
@@ -305,7 +305,7 @@
   },
   "FLAVOUR_3_HOWMANY": {
     "description": "",
-    "message": "Сам съм."
+    "message": "Само аз."
   },
   "FLAVOUR_3_INTROTEXT": {
     "description": "",
@@ -317,7 +317,7 @@
   },
   "FLAVOUR_3_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_3_WHYSOMUCH": {
     "description": "",
@@ -349,7 +349,7 @@
   },
   "FLAVOUR_4_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_4_WHYSOMUCH": {
     "description": "",
@@ -369,7 +369,7 @@
   },
   "FLAVOUR_5_HOWMANY": {
     "description": "",
-    "message": "Сам съм."
+    "message": "Само аз."
   },
   "FLAVOUR_5_INTROTEXT": {
     "description": "",
@@ -381,11 +381,11 @@
   },
   "FLAVOUR_5_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_5_WHYSOMUCH": {
     "description": "",
-    "message": "Не знаеш ли - аз съм добре известна звездна личност."
+    "message": "Не знаеш ли – аз съм добре известна звездна личност."
   },
   "FLAVOUR_6_ADTEXT": {
     "description": "",
@@ -401,7 +401,7 @@
   },
   "FLAVOUR_6_HOWMANY": {
     "description": "",
-    "message": "Сам съм."
+    "message": "Само аз."
   },
   "FLAVOUR_6_INTROTEXT": {
     "description": "",
@@ -413,7 +413,7 @@
   },
   "FLAVOUR_6_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_6_WHYSOMUCH": {
     "description": "",
@@ -445,11 +445,11 @@
   },
   "FLAVOUR_7_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_7_WHYSOMUCH": {
     "description": "",
-    "message": "Мафията ме иска мъртъв."
+    "message": "Мафията желае смъртта ми."
   },
   "FLAVOUR_8_ADTEXT": {
     "description": "",
@@ -477,7 +477,7 @@
   },
   "FLAVOUR_8_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_8_WHYSOMUCH": {
     "description": "",
@@ -509,7 +509,7 @@
   },
   "FLAVOUR_9_WHEREAREWE": {
     "description": "",
-    "message": "Къде съм? Достатъчно чаках - карай към най-близката космическа станция ВЕДНАГА!"
+    "message": "Къде сме? Достатъчно чаках – карай към най-близката космическа станция ВЕДНАГА!"
   },
   "FLAVOUR_9_WHYSOMUCH": {
     "description": "",
@@ -539,21 +539,17 @@
     "description": "",
     "message": "Трябва да съм там преди "
   },
-  "LY": {
-    "description": "",
-    "message": "сг"
-  },
   "OK_AGREED": {
     "description": "",
-    "message": "ОК, съгласен."
+    "message": "ОК, става."
   },
   "PIRATE_TAUNTS_0": {
     "description": "",
-    "message": "Ще съжалваш, че се занимаваш с {client}"
+    "message": "Ще съжаляваш, че се занимаваш с {client}"
   },
   "PIRATE_TAUNTS_1": {
     "description": "",
-    "message": "Качил си {client} на борда? Лоша идея."
+    "message": "Този на борда {client} ли е? Лоша идея."
   },
   "PIRATE_TAUNTS_2": {
     "description": "",
@@ -565,7 +561,7 @@
   },
   "SET_AS_TARGET": {
     "description": "",
-    "message": "Задайте за навигационна цел"
+    "message": "Задаване за навигационна цел"
   },
   "TAXI": {
     "description": "",
@@ -581,7 +577,7 @@
   },
   "WHY_SO_MUCH_MONEY": {
     "description": "",
-    "message": "Защо толкова много пари?"
+    "message": "Възнаграждението не е ли много голямо?"
   },
   "WILL_I_BE_IN_ANY_DANGER": {
     "description": "",

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "buildopts.h"
@@ -12,8 +12,9 @@
 #include "GameSaveError.h"
 #include "HyperspaceCloud.h"
 #include "MathUtil.h"
-#include "Object.h"
+#include "collider/CollisionSpace.h"
 #include "core/GZipFormat.h"
+#include "galaxy/Economy.h"
 #include "lua/LuaEvent.h"
 #include "lua/LuaSerializer.h"
 #if WITH_OBJECTVIEWER
@@ -23,18 +24,16 @@
 #include "Player.h"
 #include "SectorView.h"
 #include "Sfx.h"
-#include "ShipCpanel.h"
 #include "Space.h"
 #include "SpaceStation.h"
 #include "SystemInfoView.h"
 #include "SystemView.h"
-#include "UIView.h"
 #include "WorldView.h"
 #include "galaxy/GalaxyGenerator.h"
-#include "pigui/View.h"
+#include "pigui/PiGuiView.h"
 #include "ship/PlayerShipController.h"
 
-static const int s_saveVersion = 86;
+static const int s_saveVersion = 87;
 
 Game::Game(const SystemPath &path, const double startDateTime) :
 	m_galaxy(GalaxyGenerator::Create()),
@@ -45,6 +44,7 @@ Game::Game(const SystemPath &path, const double startDateTime) :
 	m_requestedTimeAccel(TIMEACCEL_1X),
 	m_forceTimeAccel(false)
 {
+	PROFILE_SCOPED()
 	// Now that we have a Galaxy, check the starting location
 	if (!path.IsBodyPath())
 		throw InvalidGameStartLocation("SystemPath is not a body path");
@@ -74,7 +74,7 @@ Game::Game(const SystemPath &path, const double startDateTime) :
 
 	m_player->SetFrame(b->GetFrame());
 
-	if (b->GetType() == Object::SPACESTATION) {
+	if (b->GetType() == ObjectType::SPACESTATION) {
 		m_player->SetDockedWith(static_cast<SpaceStation *>(b), 0);
 	} else {
 		const SystemBody *sbody = b->GetSystemBody();
@@ -86,9 +86,7 @@ Game::Game(const SystemPath &path, const double startDateTime) :
 
 	EmitPauseState(IsPaused());
 
-#ifdef PIONEER_PROFILER
-	Pi::RequestProfileFrame("NewGame");
-#endif
+	Pi::GetApp()->RequestProfileFrame("NewGame");
 }
 
 Game::~Game()
@@ -122,6 +120,7 @@ Game::Game(const Json &jsonObj) :
 	m_requestedTimeAccel(TIMEACCEL_PAUSED),
 	m_forceTimeAccel(false)
 {
+	PROFILE_SCOPED()
 	try {
 		int version = jsonObj["version"];
 		Output("savefile version: %d\n", version);
@@ -135,6 +134,8 @@ Game::Game(const Json &jsonObj) :
 
 	// Preparing the Lua stuff
 	Pi::luaSerializer->InitTableRefs();
+
+	GalacticEconomy::LoadFromJson(jsonObj);
 
 	// galaxy generator
 	m_galaxy = Galaxy::LoadFromJson(jsonObj);
@@ -176,7 +177,7 @@ Game::Game(const Json &jsonObj) :
 
 	EmitPauseState(IsPaused());
 
-	Pi::RequestProfileFrame("LoadGame");
+	Pi::GetApp()->RequestProfileFrame("LoadGame");
 }
 
 void Game::ToJson(Json &jsonObj)
@@ -190,6 +191,8 @@ void Game::ToJson(Json &jsonObj)
 
 	// galaxy generator
 	m_galaxy->ToJson(jsonObj);
+
+	GalacticEconomy::SaveToJson(jsonObj);
 
 	// game state
 	jsonObj["time"] = m_time;
@@ -218,7 +221,6 @@ void Game::ToJson(Json &jsonObj)
 	jsonObj["hyperspace_clouds"] = hyperspaceCloudArray; // Add hyperspace cloud array to supplied object.
 
 	// views. must be saved in init order
-	m_gameViews->m_cpan->SaveToJson(jsonObj);
 	m_gameViews->m_sectorView->SaveToJson(jsonObj);
 	m_gameViews->m_worldView->SaveToJson(jsonObj);
 
@@ -281,22 +283,12 @@ void Game::TimeStep(float step)
 
 	m_space->TimeStep(step);
 
-	// XXX ui updates, not sure if they belong here
-	m_gameViews->m_cpan->TimeStepUpdate(step);
 	SfxManager::TimeStepAll(step, m_space->GetRootFrame());
 
 	if (m_state == State::HYPERSPACE) {
 		if (Pi::game->GetTime() >= m_hyperspaceEndTime) {
 			SwitchToNormalSpace();
 			m_player->EnterSystem();
-			// event "onEnterSystem(player)" is in the event queue after p_player->EnterSystem()
-			// in this callback, for example, fuel is reduced
-			// but event handling has already passed, and will only be in the next frame
-			// it turns out that we are already in the system, but the fuel has not yet been reduced
-			// and then the drawing of the views will go, and inconsistencies may occur,
-			// for example, the sphere of the hyperjump range will be too large
-			// so we forcefully call event handling again
-			LuaEvent::Emit();
 			RequestTimeAccel(TIMEACCEL_1X);
 		} else
 			m_hyperspaceProgress += step;
@@ -352,7 +344,7 @@ bool Game::UpdateTimeAccel()
 			else {
 				for (const Body *b : m_space->GetBodies()) {
 					if (b == m_player.get()) continue;
-					if (b->IsType(Object::HYPERSPACECLOUD)) continue;
+					if (b->IsType(ObjectType::HYPERSPACECLOUD)) continue;
 
 					vector3d toBody = m_player->GetPosition() - b->GetPositionRelTo(m_player->GetFrame());
 					double dist = toBody.Length();
@@ -427,7 +419,7 @@ void Game::SwitchToHyperspace()
 	m_hyperspaceClouds.clear();
 	for (Body *b : m_space->GetBodies()) {
 
-		if (!b->IsType(Object::HYPERSPACECLOUD)) continue;
+		if (!b->IsType(ObjectType::HYPERSPACECLOUD)) continue;
 
 		// only want departure clouds with ships in them
 		HyperspaceCloud *cloud = static_cast<HyperspaceCloud *>(b);
@@ -618,6 +610,10 @@ void Game::SwitchToNormalSpace()
 
 	m_space->GetBackground()->SetDrawFlags(Background::Container::DRAW_SKYBOX | Background::Container::DRAW_STARS);
 
+	// HACK: we call RebuildObjectTrees to make the internal state of CollisionSpace valid
+	// This is absolutely not our job and CollisionSpace should be redesigned to fix this.
+	Frame::GetFrame(m_player->GetFrame())->GetCollisionSpace()->RebuildObjectTrees();
+
 	m_state = State::NORMAL;
 }
 
@@ -654,7 +650,7 @@ void Game::SetTimeAccel(TimeAccel t)
 	// Give all ships a half-step acceleration to stop autopilot overshoot
 	if (t < m_timeAccel)
 		for (Body *b : m_space->GetBodies())
-			if (b->IsType(Object::SHIP))
+			if (b->IsType(ObjectType::SHIP))
 				(static_cast<Ship *>(b))->TimeAccelAdjust(0.5f * GetTimeStep());
 
 	bool emitPaused = (t == TIMEACCEL_PAUSED && t != m_timeAccel);
@@ -740,8 +736,7 @@ Game::Views::Views() :
 	m_worldView(nullptr),
 	m_deathView(nullptr),
 	m_spaceStationView(nullptr),
-	m_infoView(nullptr),
-	m_cpan(nullptr)
+	m_infoView(nullptr)
 {}
 
 void Game::Views::SetRenderer(Graphics::Renderer *r)
@@ -761,13 +756,12 @@ void Game::Views::SetRenderer(Graphics::Renderer *r)
 
 void Game::Views::Init(Game *game)
 {
-	m_cpan = new ShipCpanel(Pi::renderer, game);
 	m_sectorView = new SectorView(game);
 	m_worldView = new WorldView(game);
 	m_systemView = new SystemView(game);
 	m_systemInfoView = new SystemInfoView(game);
 	m_spaceStationView = new PiGuiView("StationView");
-	m_infoView = new UIView("InfoView");
+	m_infoView = new PiGuiView("InfoView");
 	m_deathView = new DeathView(game);
 
 #if WITH_OBJECTVIEWER
@@ -779,14 +773,13 @@ void Game::Views::Init(Game *game)
 
 void Game::Views::LoadFromJson(const Json &jsonObj, Game *game)
 {
-	m_cpan = new ShipCpanel(jsonObj, Pi::renderer, game);
 	m_sectorView = new SectorView(jsonObj, game);
 	m_worldView = new WorldView(jsonObj, game);
 
 	m_systemView = new SystemView(game);
 	m_systemInfoView = new SystemInfoView(game);
 	m_spaceStationView = new PiGuiView("StationView");
-	m_infoView = new UIView("InfoView");
+	m_infoView = new PiGuiView("InfoView");
 	m_deathView = new DeathView(game);
 
 #if WITH_OBJECTVIEWER
@@ -809,7 +802,6 @@ Game::Views::~Views()
 	delete m_systemView;
 	delete m_worldView;
 	delete m_sectorView;
-	delete m_cpan;
 }
 
 // XXX this should be in some kind of central UI management class that
@@ -820,6 +812,7 @@ Game::Views::~Views()
 // manage creation and destruction here to get the timing and order right
 void Game::CreateViews()
 {
+	PROFILE_SCOPED()
 	Pi::SetView(nullptr);
 
 	// XXX views expect Pi::game and Pi::player to exist
@@ -931,6 +924,7 @@ void Game::SaveGame(const std::string &filename, Game *game)
 		jsonData = Json::to_cbor(rootNode); // Convert the JSON data to CBOR.
 	}
 
+	FileSystem::userFiles.MakeDirectory(Pi::SAVE_DIR_NAME);
 	FILE *f = FileSystem::userFiles.OpenWriteStream(FileSystem::JoinPathBelow(Pi::SAVE_DIR_NAME, filename));
 	if (!f) throw CouldNotOpenFileException();
 
@@ -947,5 +941,5 @@ void Game::SaveGame(const std::string &filename, Game *game)
 		throw CouldNotWriteToFileException();
 	}
 
-	Pi::RequestProfileFrame("SaveGame");
+	Pi::GetApp()->RequestProfileFrame("SaveGame");
 }

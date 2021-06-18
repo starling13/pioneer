@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _RENDERER_H
@@ -96,6 +96,7 @@ namespace Graphics {
 
 		// XXX maybe GL-specific. maybe should be part of the render state
 		virtual bool SetDepthRange(double znear, double zfar) = 0;
+		virtual bool ResetDepthRange() = 0;
 
 		virtual bool SetWireFrameMode(bool enabled) = 0;
 

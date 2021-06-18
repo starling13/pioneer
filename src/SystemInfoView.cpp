@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "SystemInfoView.h"
@@ -10,6 +10,7 @@
 #include "SectorView.h"
 #include "Space.h"
 #include "StringF.h"
+#include "galaxy/Economy.h"
 #include "galaxy/Factions.h"
 #include "galaxy/Galaxy.h"
 #include "galaxy/Polit.h"
@@ -19,15 +20,12 @@
 #include <functional>
 
 SystemInfoView::SystemInfoView(Game *game) :
-	UIView(),
+	PiGuiView("system-info"),
 	m_game(game)
 {
 	SetTransparency(true);
 	m_refresh = REFRESH_NONE;
 	m_unexplored = true;
-	int trade_computer = 0;
-	Pi::player->Properties().Get("trade_computer_cap", trade_computer);
-	m_hasTradeComputer = bool(trade_computer);
 }
 
 void SystemInfoView::OnBodySelected(SystemBody *b)
@@ -89,9 +87,9 @@ void SystemInfoView::OnBodyViewed(SystemBody *b)
 	}
 
 	if (b->GetType() != SystemBody::TYPE_STARPORT_ORBITAL) {
-		_add_label_and_value(Lang::MASS, stringf(Lang::N_WHATEVER_MASSES, formatarg("mass", b->GetMassAsFixed().ToDouble()), formatarg("units", std::string(b->GetSuperType() == SystemBody::SUPERTYPE_STAR ? Lang::SOLAR : Lang::EARTH))));
+		_add_label_and_value(Lang::MASS, stringf(b->GetSuperType() == SystemBody::SUPERTYPE_STAR ? Lang::N_SOLAR_MASSES : Lang::N_EARTH_MASSES, formatarg("mass", b->GetMassAsFixed().ToDouble())));
 
-		_add_label_and_value(Lang::RADIUS, stringf(Lang::N_WHATEVER_RADII, formatarg("radius", b->GetRadiusAsFixed().ToDouble()), formatarg("units", std::string(b->GetSuperType() == SystemBody::SUPERTYPE_STAR ? Lang::SOLAR : Lang::EARTH)), formatarg("radkm", b->GetRadius() / 1000.0)));
+		_add_label_and_value(Lang::RADIUS, stringf(b->GetSuperType() == SystemBody::SUPERTYPE_STAR ? Lang::N_SOLAR_RADII : Lang::N_EARTH_RADII, formatarg("radius", b->GetRadiusAsFixed().ToDouble()), formatarg("radkm", b->GetRadius() / 1000.0)));
 	}
 
 	if (b->GetSuperType() == SystemBody::SUPERTYPE_STAR) {
@@ -143,140 +141,6 @@ void SystemInfoView::OnBodyViewed(SystemBody *b)
 
 	m_infoBox->ShowAll();
 	m_infoBox->ResizeRequest();
-}
-
-void SystemInfoView::UpdateEconomyTab()
-{
-	/* Economy info page */
-	StarSystem *s = m_system.Get(); // selected system
-
-	/* imports and exports */
-	const RefCountedPtr<StarSystem> hs = m_game->GetSpace()->GetStarSystem();
-
-	// check if trade analyzer is installed
-	int trade_computer = 0;
-	Pi::player->Properties().Get("trade_computer_cap", trade_computer);
-
-	// we might be here because we changed equipment, update that as well:
-	m_hasTradeComputer = bool(trade_computer);
-
-	// If current system is defined and not equal to selected we will compare them
-	const bool compareSelectedWithCurrent =
-		(hs && !m_system->GetPath().IsSameSystem(hs->GetPath()) && trade_computer > 0);
-
-	const std::string meh = "#999";
-	const std::string ok = "#fff";
-	const std::string good = "#7c7";
-	const std::string awesome = "#7f7";
-	const std::string illegal = "#744";
-
-	if (compareSelectedWithCurrent) {
-		// different system selected
-
-		const std::string COMM_COMP = stringf(Lang::COMMODITY_TRADE_ANALYSIS_COMPARE,
-			formatarg("selected_system", m_system->GetName().c_str()),
-			formatarg("current_system", hs->GetName().c_str()));
-
-		m_commodityTradeLabel->SetText(COMM_COMP.c_str());
-	} else {
-		// same system as current selected
-
-		const std::string COMM_SELF = stringf(Lang::COMMODITY_TRADE_ANALYSIS_SELF,
-			formatarg("system", m_system->GetName().c_str()));
-
-		m_commodityTradeLabel->SetText(COMM_SELF.c_str());
-	}
-
-	const int rowsep = 18;
-
-	// lambda function to build each colum for MAJOR/MINOR IMPORT/EXPORT
-	auto f = [&](std::function<bool(int)> isInList,
-				 std::function<bool(int)> isInInterval, std::string colorInInterval, std::string toolTipInInterval,
-				 std::function<bool(int)> isOther, std::string colorOther, std::string toolTipOther,
-				 Gui::Fixed *m_econMType, std::string tradeType) {
-		int num = 0;
-		m_econMType->DeleteAllChildren();
-		m_econMType->Add(new Gui::Label(std::string("#ff0") + tradeType),
-			0, num++ * rowsep);
-
-		for (int i = 1; i < GalacticEconomy::COMMODITY_COUNT; i++) {
-			if (isInList(s->GetCommodityBasePriceModPercent(GalacticEconomy::Commodity(i))) && s->IsCommodityLegal(GalacticEconomy::Commodity(i))) {
-				std::string extra = meh;  // default color
-				std::string tooltip = ""; // no tooltip for default
-				if (compareSelectedWithCurrent) {
-					if (isInInterval(hs->GetCommodityBasePriceModPercent(GalacticEconomy::Commodity(i)))) {
-						// change color
-						extra = colorInInterval;
-						// describe trade status in current system
-						tooltip = toolTipInInterval;
-					} else if (isOther(hs->GetCommodityBasePriceModPercent(GalacticEconomy::Commodity(i)))) {
-						extra = colorOther;
-						tooltip = toolTipOther;
-					}
-					if (!hs->IsCommodityLegal(GalacticEconomy::Commodity(i))) {
-						extra = illegal;
-						tooltip = std::string(Lang::ILLEGAL_CURRENT_SYSTEM);
-					}
-				}
-				Gui::Label *label = new Gui::Label(extra + GalacticEconomy::COMMODITY_DATA[i].name);
-				label->SetToolTip(tooltip);
-				m_econMType->Add(label, 5, num++ * rowsep);
-			}
-		}
-		m_econMType->SetSize(500, num * rowsep);
-		m_econMType->ShowAll();
-		if (num < 2)
-			m_econMType->Add(new Gui::Label(meh + Lang::COMMODITY_NONE), 5, num++ * rowsep);
-	};
-
-	// sm = selected system price modifier, csp = current system price modifier
-	f([](int sm) { return sm > 10; },
-		[](int cm) { return -10 <= cm && cm < -2; }, good, Lang::MINOR_EXPORT_CURRENT_SYSTEM,
-		[](int cm) { return cm < -10; }, awesome, Lang::MAJOR_EXPORT_CURRENT_SYSTEM,
-		m_econMajImport, Lang::MAJOR_IMPORTS);
-
-	f([](int sm) { return 2 < sm && sm <= 10; },
-		[](int cm) { return -10 <= cm && cm < -2; }, ok, Lang::MINOR_EXPORT_CURRENT_SYSTEM,
-		[](int cm) { return cm < -10; }, good, Lang::MAJOR_EXPORT_CURRENT_SYSTEM,
-		m_econMinImport, Lang::MINOR_IMPORTS);
-
-	f([](int sm) { return sm < -10; },
-		[](int cm) { return 2 < cm && cm <= 10; }, good, Lang::MINOR_IMPORT_CURRENT_SYSTEM,
-		[](int cm) { return 10 < cm; }, awesome, Lang::MAJOR_IMPORT_CURRENT_SYSTEM,
-		m_econMajExport, Lang::MAJOR_EXPORTS);
-
-	f([](int sm) { return -10 <= sm && sm < -2; },
-		[](int cm) { return 2 < cm && cm <= 10; }, ok, Lang::MINOR_IMPORT_CURRENT_SYSTEM,
-		[](int cm) { return 10 < cm; }, good, Lang::MAJOR_IMPORT_CURRENT_SYSTEM,
-		m_econMinExport, Lang::MINOR_EXPORTS);
-
-	// ILLEGAL GOODS
-	int num = 0;
-	m_econIllegal->DeleteAllChildren();
-	m_econIllegal->Add(new Gui::Label(
-						   std::string("#f55") + std::string(Lang::ILLEGAL_GOODS)),
-		0, num++ * rowsep);
-	for (int i = 1; i < GalacticEconomy::COMMODITY_COUNT; i++) {
-		if (!s->IsCommodityLegal(GalacticEconomy::Commodity(i))) {
-			std::string extra = illegal;
-			std::string tooltip = "";
-			if (compareSelectedWithCurrent)
-				if (hs->IsCommodityLegal(GalacticEconomy::Commodity(i))) {
-					extra = meh;
-					tooltip = std::string(Lang::LEGAL_CURRENT_SYSTEM);
-				}
-			Gui::Label *label = new Gui::Label(extra + GalacticEconomy::COMMODITY_DATA[i].name);
-			label->SetToolTip(tooltip);
-			m_econIllegal->Add(label, 5, num++ * rowsep);
-		}
-	}
-	if (num < 2) {
-		m_econIllegal->Add(new Gui::Label(illegal + Lang::COMMODITY_NONE), 5, num++ * rowsep);
-	}
-	m_econIllegal->SetSize(500, num * rowsep);
-	m_econIllegal->ShowAll();
-
-	m_econInfoTab->ResizeRequest();
 }
 
 void SystemInfoView::PutBodies(SystemBody *body, Gui::Fixed *container, int dir, float pos[2], int &majorBodies, int &starports, int &onSurface, float &prevSize)
@@ -362,13 +226,8 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 		return;
 	}
 
-	m_econInfoTab = new Gui::Fixed(float(Gui::Screen::GetWidth()), float(Gui::Screen::GetHeight() - 100));
-	Gui::Fixed *demographicsTab = new Gui::Fixed();
-
 	m_tabs = new Gui::Tabbed();
 	m_tabs->AddPage(new Gui::Label(Lang::PLANETARY_INFO), m_sbodyInfoTab);
-	m_tabs->AddPage(new Gui::Label(Lang::ECONOMIC_INFO), m_econInfoTab);
-	m_tabs->AddPage(new Gui::Label(Lang::DEMOGRAPHICS), demographicsTab);
 	Add(m_tabs, 0, 0);
 
 	m_sbodyInfoTab->onMouseButtonEvent.connect(sigc::mem_fun(this, &SystemInfoView::OnClickBackground));
@@ -378,17 +237,7 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 		float pos[2] = { 0, 0 };
 		float psize = -1;
 		majorBodies = starports = onSurface = 0;
-		PutBodies(m_system->GetRootBody().Get(), m_econInfoTab, 1, pos, majorBodies, starports, onSurface, psize);
-
-		majorBodies = starports = onSurface = 0;
-		pos[0] = pos[1] = 0;
-		psize = -1;
 		PutBodies(m_system->GetRootBody().Get(), m_sbodyInfoTab, 1, pos, majorBodies, starports, onSurface, psize);
-
-		majorBodies = starports = onSurface = 0;
-		pos[0] = pos[1] = 0;
-		psize = -1;
-		PutBodies(m_system->GetRootBody().Get(), demographicsTab, 1, pos, majorBodies, starports, onSurface, psize);
 	}
 
 	std::string _info = stringf(
@@ -421,83 +270,6 @@ void SystemInfoView::SystemChanged(const SystemPath &path)
 		scrollBox->PackStart(portal);
 	}
 
-	{
-		// economy tab
-		Gui::VBox *econbox = new Gui::VBox();
-		econbox->SetSpacing(5);
-
-		Gui::HBox *scrollBox2 = new Gui::HBox();
-		scrollBox2->SetSpacing(5);
-		m_econInfoTab->Add(econbox, 35, 300);
-		Gui::VScrollBar *scroll2 = new Gui::VScrollBar();
-		Gui::VScrollPortal *portal2 = new Gui::VScrollPortal(730);
-		scroll2->SetAdjustment(&portal2->vscrollAdjust);
-		scrollBox2->PackStart(scroll2);
-		scrollBox2->PackStart(portal2);
-
-		m_commodityTradeLabel = new Gui::Label("");
-		econbox->PackEnd(m_commodityTradeLabel);
-		econbox->PackEnd(scrollBox2);
-
-		m_econInfo = new Gui::Fixed();
-		m_econInfoTab->Add(m_econInfo, 35, 250);
-
-		Gui::Fixed *f = new Gui::Fixed();
-		m_econMajImport = new Gui::Fixed();
-		m_econMinImport = new Gui::Fixed();
-		m_econMajExport = new Gui::Fixed();
-		m_econMinExport = new Gui::Fixed();
-		m_econIllegal = new Gui::Fixed();
-		f->Add(m_econMajImport, 0, 0);
-		f->Add(m_econMinImport, 150, 0);
-		f->Add(m_econMajExport, 300, 0);
-		f->Add(m_econMinExport, 450, 0);
-		f->Add(m_econIllegal, 600, 0);
-		portal2->Add(f);
-
-		UpdateEconomyTab();
-	}
-
-	{
-		Gui::Fixed *col1 = new Gui::Fixed();
-		demographicsTab->Add(col1, 200, 300);
-		Gui::Fixed *col2 = new Gui::Fixed();
-		demographicsTab->Add(col2, 400, 300);
-
-		const float YSEP = Gui::Screen::GetFontHeight() * 1.2f;
-
-		col1->Add((new Gui::Label(Lang::SYSTEM_TYPE))->Color(255, 255, 0), 0, 0);
-		col2->Add(new Gui::Label(m_system->GetShortDescription()), 0, 0);
-
-		col1->Add((new Gui::Label(Lang::GOVERNMENT_TYPE))->Color(255, 255, 0), 0, 2 * YSEP);
-		col2->Add(new Gui::Label(m_system->GetSysPolit().GetGovernmentDesc()), 0, 2 * YSEP);
-
-		col1->Add((new Gui::Label(Lang::ECONOMY_TYPE))->Color(255, 255, 0), 0, 3 * YSEP);
-		col2->Add(new Gui::Label(m_system->GetSysPolit().GetEconomicDesc()), 0, 3 * YSEP);
-
-		col1->Add((new Gui::Label(Lang::ALLEGIANCE))->Color(255, 255, 0), 0, 4 * YSEP);
-		col2->Add(new Gui::Label(m_system->GetFaction()->name.c_str()), 0, 4 * YSEP);
-		col1->Add((new Gui::Label(Lang::POPULATION))->Color(255, 255, 0), 0, 5 * YSEP);
-		std::string popmsg;
-		fixed pop = m_system->GetTotalPop();
-		if (pop >= fixed(1, 1)) {
-			popmsg = stringf(Lang::OVER_N_BILLION, formatarg("population", pop.ToInt32()));
-		} else if (pop >= fixed(1, 1000)) {
-			popmsg = stringf(Lang::OVER_N_MILLION, formatarg("population", (pop * 1000).ToInt32()));
-		} else if (pop != fixed(0)) {
-			popmsg = Lang::A_FEW_THOUSAND;
-		} else {
-			popmsg = Lang::NO_REGISTERED_INHABITANTS;
-		}
-		col2->Add(new Gui::Label(popmsg), 0, 5 * YSEP);
-
-		col1->Add((new Gui::Label(Lang::SECTOR_COORDINATES))->Color(255, 255, 0), 0, 6 * YSEP);
-		col2->Add(new Gui::Label(stringf("%0{d}, %1{d}, %2{d}", path.sectorX, path.sectorY, path.sectorZ)), 0, 6 * YSEP);
-
-		col1->Add((new Gui::Label(Lang::SYSTEM_NUMBER))->Color(255, 255, 0), 0, 7 * YSEP);
-		col2->Add(new Gui::Label(stringf("%0", path.systemIndex)), 0, 7 * YSEP);
-	}
-
 	UpdateIconSelections();
 
 	ShowAll();
@@ -508,7 +280,6 @@ void SystemInfoView::Draw3D()
 	PROFILE_SCOPED()
 	m_renderer->SetTransform(matrix4x4f::Identity());
 	m_renderer->ClearScreen();
-	UIView::Draw3D();
 }
 
 static bool IsShownInInfoView(const SystemBody *sb)
@@ -526,12 +297,6 @@ SystemInfoView::RefreshType SystemInfoView::NeedsRefresh()
 		return REFRESH_ALL;
 
 	if (m_system->GetUnexplored() != m_unexplored)
-		return REFRESH_ALL;
-
-	// If we changed equipment since last refresh
-	int trade_computer = 0;
-	Pi::player->Properties().Get("trade_computer_cap", trade_computer);
-	if (m_hasTradeComputer != (trade_computer != 0))
 		return REFRESH_ALL;
 
 	if (m_system->GetUnexplored())
@@ -577,14 +342,12 @@ void SystemInfoView::Update()
 		break;
 	case REFRESH_SELECTED_BODY:
 		UpdateIconSelections();
-		UpdateEconomyTab(); //update price analysis after hyper jump
 		m_refresh = REFRESH_NONE;
 		assert(NeedsRefresh() == REFRESH_NONE);
 		break;
 	case REFRESH_NONE:
 		break;
 	}
-	UIView::Update();
 }
 
 void SystemInfoView::OnSwitchTo()
@@ -594,13 +357,6 @@ void SystemInfoView::OnSwitchTo()
 		if (needsRefresh != REFRESH_NONE)
 			m_refresh = needsRefresh;
 	}
-	UIView::OnSwitchTo();
-}
-
-void SystemInfoView::NextPage()
-{
-	if (m_tabs)
-		m_tabs->OnActivate();
 }
 
 void SystemInfoView::UpdateIconSelections()
@@ -616,9 +372,9 @@ void SystemInfoView::UpdateIconSelections()
 			//navtarget can be only set in current system
 			Body *navtarget = Pi::player->GetNavTarget();
 			if (navtarget &&
-				(navtarget->IsType(Body::STAR) ||
-					navtarget->IsType(Body::PLANET) ||
-					navtarget->IsType(Body::SPACESTATION))) {
+				(navtarget->IsType(ObjectType::STAR) ||
+					navtarget->IsType(ObjectType::PLANET) ||
+					navtarget->IsType(ObjectType::SPACESTATION))) {
 				const SystemPath &navpath = navtarget->GetSystemBody()->GetPath();
 				if (bodyIcon.first == navpath.bodyIndex) {
 					bodyIcon.second->SetSelectColor(Color(0, 255, 0, 255));

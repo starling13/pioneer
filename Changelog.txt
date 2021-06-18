@@ -1,3 +1,183 @@
+June 2021
+   * New Features
+     * Improve startup times with threading (#4951)
+   
+   * Fixes
+     * Fix floating point truncation crash on old AMD hardware (#5204)
+     * Fix build with USE_SYSTEM_LIBLUA=ON (#5206)
+
+May 2021
+   * New Features
+     * Add more tradeships and improve their behavior (#4984)
+     * Highly improved performance with many ships in one system (#5166)
+
+   * Internal Changes
+     * Add zone-based profiling to debug/profiler builds (#5168)
+
+   * Fixes
+     * Fix crash when loading invalid AI command data from savefile (#5167)
+     * Fix compilation of PiRngWrapper under GCC11 (#5172)
+     * Fix enable selecting stars in sector search even when duplicate named (#5193)
+     * Small improvements for the combat mission (#5184)
+     * Fix News Event not modifying commodity price and stock (#5192)
+     * Fix Cargo mission, to not pick up cargo if too late (#5196)
+
+April 2021
+   * New Features
+     * Add custom content to the Rondel system (#5095)
+     * Add music to the map view, add new music tracks (#5093)
+
+   * Internal Changes
+     * Add new debug tooling colorscheme (#5161)
+     * Upgrade build tooling to C++17, remove nonstd::string_view (#5151)
+
+   * Fixes
+     * Fix legal footer always being 'Clean' in station view (#5094)
+
+March 2021
+   * New Features
+     * Sinonatrix overhaul (#5106)
+
+   * Fixes
+     * Fix GasGiant clipping and bright spots on models (#5157)
+     * Fix crash in hyperspace with sector map opened (#5155)
+     * Fix death music not playing over tombstone screen (#5129)
+
+   * Internal Changes
+     * Modify GetAtmosphericState() to accept any two bodies (#5128)
+
+February 2021
+   * Internal Changes
+     * Support PowerPC 64 platform (#5141)
+
+   * Fixes
+     * Fix crash on keypress (#5147)
+     * Move the surface starport's system bodies on loading (#5126)
+     * Updating the orientation of the docking tags. - No more backwards docking (#5131)
+     * Update Quickstart.txt (#5132)
+     * Several small improvements and fixes system map (#5123)
+
+January 2021
+   * New Features
+     * New scoop mission (#4860)
+     * Add alternative naming schemes (#4933)
+
+   * Internal Changes
+     * Happy new year (#5105)
+     * Update buildscripts to use Ubuntu 20.04 (#5109)
+     * Fix build with system lua (#5121)
+
+   * Fixes
+     * Fix surface sounds playing after leaving surface (#5115)
+     * Fix segfault when setting destination to binary star (#5114)
+     * Fix background display issues when changing star density slider (#5116)
+     * Fix crash triggered by spacestation when removing advert (#5118)
+     * Fix empty landing pad being occupied by a skipjack ship (#5086)
+     * Fix game crash when selecting system map in hyperspace (#5120)
+
+December 2020
+   * New Features
+     * Move planar radar widget to pigui (#5081)
+     * Overhaul body names in the 1 Orionis system (#5042)
+     * Significantly reduce savefile sizes (#5075)
+     * Show background stars in system view (#5068)
+     * Show surface starports in system view (#5060)
+     * Use new icons in Worldview (#5042)
+     * Move economy & trade to pigui (#4067)
+     * New BBS advert for soldout commodity (#5059)
+
+   * Internal Changes
+     * Reduce probability for imported goods to be sold out (#5074)
+     * Show commodity import/export information in market (#5082)
+     * Update several system's names to use alternate name feature (#5083)
+     * Clarify tooltip for rotate button (#5070)
+     * Adjust mission payouts to more natural numbers (#5050)
+     * Optimize route rendering (#5033)
+     * CMake: Fix modelcompiler not compiling anything (#5039)
+     * Add MSVC build to github-actions CI builds (#5036)
+     * Add incremental drag widget to pigui (#5031)
+     * Fix unused variables in release build (#5043)
+     * Donate to crank improvements (#5073)
+     * Remove SetDepthRange (#5080)
+
+   * Fixes
+     * Fix crash when switching to system map after hyperjumping (#5077)
+     * Fix buy/sell of station stock updating inverted (#5072)
+     * Fix ambient music looping (#5061)
+     * Fix grammar in translation string for Earth/Sol radius (#5053)
+     * Be consistent with use of nuclear vs radioactive (#5057)
+     * Fix menu music issues (#5047)
+     * Several map fixes and small tweaks (#5048)
+     * Small UI fixes (#5085)
+     * Localize header string on ship info screen (#5063)
+     * Scottish place name revision (#5052)
+     * Fix soldout BBS advert title template after load (#5092)
+     * Fix soldout advert crashing the game when saving (#5097)
+
+November 2020
+   * New Features
+     * New unified color theme and new icons (#4993)
+     * Commodities and Economies are now defined in JSON (#4944)
+     * Skipjack Courier from OKB Kaluri (#4871)
+     * Add a new model for escape pods (#4877)
+     * Improved missile damage calculations, slightly boosted damage (#4927)
+     * More lively station traffic control communications (#4987)
+     * Add tag display to ModelViewer (#5010)
+     * Port Crew Roster to PiGui (#5022)
+     * Port Active Missions display to PiGui (#5025)
+     * Move Economy & Trade -view to pigui (#4967)
+     * Add menu and ingame music from franzopow (#5027)
+     * NewUI is dead, long live PiGui! (#5032)
+     * Improve combat targeting by adding aim assist for player weapons (#5037)
+     * Added lower-cost 5MW mining laser (#5037)
+
+   * Internal Changes
+     * Decrease the maximum background star size to 0.3 (#4991)
+     * CMake: Avoid libGLU dependency (#4994)
+     * Improved icon renderering at small sizes (#4993)
+     * Update NanoSVG (#4996)
+     * Moved ESC key handling to PiGui (#4999)
+     * Add a selection highlight to the ship market list (#4999)
+     * Removed old Ship.lua compatibility code (#5000)
+     * Allow all ships with hyperdrives to be selected for rendezvous missions (#5002)
+     * Fall back to an empty resource if it hasn't been translated (#5011)
+     * MSVC CMake Updates (#5012)
+     * Buffed local delivery mission payouts, reduced fuel costs (#5037)
+     * Move comms to entirely in lua (#5008)
+
+   * Fixes
+     * Fix SAR crash where IsPlayer() is falsely called by non-ship body (#4985)
+     * Fix tradeships inflating save files with 1000s of duplicate cargo items (#4993)
+     * Fix some old hardware not being compatible with the Reverse-Z implementation (#4993)
+     * Minor bugfixes for cargo mission (#4998)
+     * Fix external camera causing segfaults/crashes under some circumstances (#4999)
+     * Set the timeaccel to 1x when clicking the undock/blastoff button. (#4999)
+     * Fix saved games in external camera resetting to internal camera on load (#4999)
+     * Fix radar display state being incorrectly saved (#4999)
+     * Fix jump range being improperly persisted across games (#4999)
+     * Fix ship displays not properly updating between games / selections (#4999)
+     * Fix zenith indicator not pointing away from the planet (#4999)
+     * Fix starting a new game charging a docking fee (#5000)
+     * Herding back the Sun and Moon icons who went astray during the latest iconoclast raid. (#5003)
+     * Same font size for ship info as other screens (#5024)
+     * Fix input system bugs (#5009)
+
+October 2020
+   * New Features
+     * Ship-specific atmospheric pressure limits (#4958)
+     * Make thruster upgrades availabile based on tech level (#4956)
+
+   * Internal Changes
+     * Optimize body list container in Space.cpp (#4957)
+     * Use an offscreen buffer as the primary rendering target (#4974)
+     * Use Reverse-Z depth buffer, drop logZ hack (#4975)
+     * Add PlanetsGravity processor for GalaxyStats tool (#4971)
+     * Add theme color display/editor to debug menu (#4979)
+
+   * Fixes
+     * Fix Flight Log crashes (#4973)
+     * Update MSVC CMake configuration and instructions (#4980)
+
 September 2020
    * New Features
      * Add external camera interpolation and spring (#4955)
@@ -12,7 +192,7 @@ September 2020
    * Fixes
      * Show the ship's translated name in savegame stats (#4953)
      * Clear starports array if system has no population (#4950)
-	 * No more crashes when hyperjumping (#4907)
+     * No more crashes when hyperjumping (#4907)
 
 August 2020
    * New Features

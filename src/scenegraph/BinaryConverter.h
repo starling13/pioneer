@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SCENEGRAPH_BINARYCONVERTER_H
@@ -51,7 +51,6 @@ namespace SceneGraph {
 		ModelDefinition FindModelDefinition(const std::string &);
 
 		Node *LoadNode(Serializer::Reader &);
-		void LoadChildren(Serializer::Reader &, Group *parent);
 		//this is a very simple loader so it's implemented here
 		static Label3D *LoadLabel3D(NodeDatabase &);
 

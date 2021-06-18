@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 local Lang = require 'Lang'
 local Engine = require 'Engine'
@@ -12,6 +12,7 @@ local lc = Lang.GetResource("core")
 local shouldShowRadialMenu = false
 local radialMenuPos = Vector2(0,0)
 local radialMenuSize = 10
+local radialMenuIconSize = Vector2(radialMenuSize)
 local radialMenuTarget = nil
 local radialMenuMouseButton = 1
 local radialMenuActions = {}
@@ -27,7 +28,7 @@ local radialMenuMousePos = nil
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -58,8 +59,8 @@ end
 local radial_menu_actions_station = {
 	{icon=ui.theme.icons.comms, tooltip=lc.REQUEST_DOCKING_CLEARANCE,
 		action=function(target)
-			local msg = Game.player:RequestDockingClearance(target)
-		 	Game.AddCommsLogLine(msg, target.label)
+			local clearanceGranted = target:RequestDockingClearance(Game.player)
+			-- TODO: play a negative sound if clearance is refused
 			Game.player:SetNavTarget(target)
 			ui.playSfx("OK")
 		end},
@@ -154,7 +155,7 @@ function ui.radialMenu(id)
 	local tooltips = {}
 	for _,action in pairs(radialMenuActions) do
 		local uv0, uv1 = ui.get_icon_tex_coords(action.icon)
-		table.insert(icons, { id = ui.icons_texture, uv0 = uv0, uv1 = uv1 })
+		table.insert(icons, { id = ui.get_icons_texture(radialMenuIconSize), uv0 = uv0, uv1 = uv1 })
 		-- TODO: don't just assume that radialMenuTarget is a Body
 		table.insert(tooltips, string.interp(action.tooltip, { target = radialMenuTarget and radialMenuTarget.label or "UNKNOWN" }))
 	end

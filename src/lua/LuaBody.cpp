@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Body.h"
@@ -161,14 +161,14 @@ static int l_body_is_moon(lua_State *l)
 static int l_body_is_missile(lua_State *l)
 {
 	Body *body = LuaObject<Body>::CheckFromLua(1);
-	LuaPush<bool>(l, body->GetType() == Object::Type::MISSILE);
+	LuaPush<bool>(l, body->GetType() == ObjectType::MISSILE);
 	return 1;
 }
 
 static int l_body_is_station(lua_State *l)
 {
 	Body *body = LuaObject<Body>::CheckFromLua(1);
-	LuaPush<bool>(l, body->GetType() == Object::Type::SPACESTATION);
+	LuaPush<bool>(l, body->GetType() == ObjectType::SPACESTATION);
 	return 1;
 }
 
@@ -191,21 +191,21 @@ static int l_body_is_ground_station(lua_State *l)
 static int l_body_is_cargo_container(lua_State *l)
 {
 	Body *body = LuaObject<Body>::CheckFromLua(1);
-	LuaPush<bool>(l, body->GetType() == Object::Type::CARGOBODY);
+	LuaPush<bool>(l, body->GetType() == ObjectType::CARGOBODY);
 	return 1;
 }
 
 static int l_body_is_ship(lua_State *l)
 {
 	Body *body = LuaObject<Body>::CheckFromLua(1);
-	LuaPush<bool>(l, body->GetType() == Object::Type::SHIP);
+	LuaPush<bool>(l, body->GetType() == ObjectType::SHIP);
 	return 1;
 }
 
 static int l_body_is_hyperspace_cloud(lua_State *l)
 {
 	Body *body = LuaObject<Body>::CheckFromLua(1);
-	LuaPush<bool>(l, body->GetType() == Object::Type::HYPERSPACECLOUD);
+	LuaPush<bool>(l, body->GetType() == ObjectType::HYPERSPACECLOUD);
 	return 1;
 }
 
@@ -304,7 +304,7 @@ static int l_body_get_altitude_rel_to(lua_State *l)
 	const Body *other = LuaObject<Body>::CheckFromLua(2);
 	vector3d pos = Pi::player->GetPositionRelTo(other);
 	double center_dist = pos.Length();
-	if (other && other->IsType(Object::TERRAINBODY)) {
+	if (other && other->IsType(ObjectType::TERRAINBODY)) {
 		const TerrainBody *terrain = static_cast<const TerrainBody *>(other);
 		vector3d surface_pos = pos.Normalized();
 		double radius = 0.0;
@@ -401,7 +401,7 @@ static int l_body_attr_super_type(lua_State *l)
 static int l_body_attr_frame_body(lua_State *l)
 {
 	Body *b = LuaObject<Body>::CheckFromLua(1);
-	if (!b->IsType(Object::DYNAMICBODY)) {
+	if (!b->IsType(ObjectType::DYNAMICBODY)) {
 		lua_pushnil(l);
 		return 1;
 	}
@@ -430,7 +430,7 @@ static int l_body_attr_frame_body(lua_State *l)
 static int l_body_attr_frame_rotating(lua_State *l)
 {
 	Body *b = LuaObject<Body>::CheckFromLua(1);
-	if (!b->IsType(Object::DYNAMICBODY)) {
+	if (!b->IsType(ObjectType::DYNAMICBODY)) {
 		lua_pushnil(l);
 		return 1;
 	}
@@ -473,7 +473,7 @@ static int l_body_attr_frame_rotating(lua_State *l)
 static int l_body_is_dynamic(lua_State *l)
 {
 	Body *b = LuaObject<Body>::CheckFromLua(1);
-	lua_pushboolean(l, b->IsType(Object::DYNAMICBODY));
+	lua_pushboolean(l, b->IsType(ObjectType::DYNAMICBODY));
 	return 1;
 }
 
@@ -544,7 +544,7 @@ static int l_body_distance_to(lua_State *l)
 static int l_body_get_ground_position(lua_State *l)
 {
 	Body *b = LuaObject<Body>::CheckFromLua(1);
-	if (!b->IsType(Object::DYNAMICBODY)) {
+	if (!b->IsType(ObjectType::DYNAMICBODY)) {
 		lua_pushnil(l);
 		return 1;
 	}
@@ -559,7 +559,7 @@ static int l_body_get_ground_position(lua_State *l)
 	lua_pushnumber(l, latitude);
 	lua_pushnumber(l, longitude);
 	Body *astro = f->GetBody();
-	if (astro->IsType(Object::TERRAINBODY)) {
+	if (astro->IsType(ObjectType::TERRAINBODY)) {
 		double radius = static_cast<TerrainBody *>(astro)->GetTerrainHeight(pos.Normalized());
 		double altitude = pos.Length() - radius;
 		lua_pushnumber(l, altitude);
@@ -602,7 +602,7 @@ static int l_body_get_ground_position(lua_State *l)
 static int l_body_find_nearest_to(lua_State *l)
 {
 	Body *b = LuaObject<Body>::CheckFromLua(1);
-	Object::Type type = static_cast<Object::Type>(LuaConstants::GetConstantFromArg(l, "PhysicsObjectType", 2));
+	ObjectType type = static_cast<ObjectType>(LuaConstants::GetConstantFromArg(l, "PhysicsObjectType", 2));
 
 	Body *nearest = Pi::game->GetSpace()->FindNearestTo(b, type);
 	LuaObject<Body>::PushToLua(nearest);
@@ -633,39 +633,16 @@ static int l_body_get_phys_radius(lua_State *l)
 	return 1;
 }
 
-/*
- * Method: GetProjectedScreenPosition
- *
- * Get the body's position projected to screen space as a Vector
- *
- * > body:GetProjectedScreenPosition()
- *
- * Availability:
- *
- *   2017-04
- *
- * Status:
- *
- *   stable
- */
-
-static int l_body_get_projected_screen_position(lua_State *l)
-{
-	Body *b = LuaObject<Body>::CheckFromLua(1);
-	WorldView *wv = Pi::game->GetWorldView();
-	vector3d p = wv->WorldSpaceToScreenSpace(b);
-	return PiGui::pushOnScreenPositionDirection(l, p);
-}
-
 static int l_body_get_atmospheric_state(lua_State *l)
 {
-	Body *b = LuaObject<Body>::CheckFromLua(1);
+	Body *planetBody = LuaObject<Body>::CheckFromLua(1);
+	Body *b = LuaObject<Body>::CheckFromLua(2);
 	//	const SystemBody *sb = b->GetSystemBody();
-	vector3d pos = Pi::player->GetPosition();
+	vector3d pos = b->GetPositionRelTo(planetBody);
 	double center_dist = pos.Length();
-	if (b->IsType(Object::PLANET)) {
+	if (planetBody->IsType(ObjectType::PLANET)) {
 		double pressure, density, temperature;
-		static_cast<Planet *>(b)->GetAtmosphericState(center_dist, pressure, density, temperature);
+		static_cast<Planet *>(planetBody)->GetAtmosphericState(center_dist, pressure, density, temperature);
 		lua_pushnumber(l, pressure);
 		lua_pushnumber(l, density);
 		return 2;
@@ -681,46 +658,38 @@ static int l_body_get_label(lua_State *l)
 	return 1;
 }
 
-static int l_body_get_target_indicator_screen_position(lua_State *l)
-{
-	Body *b = LuaObject<Body>::CheckFromLua(1);
-	WorldView *wv = Pi::game->GetWorldView();
-	vector3d p = wv->GetTargetIndicatorScreenPosition(b);
-	return PiGui::pushOnScreenPositionDirection(l, p);
-}
-
 static bool push_body_to_lua(Body *body)
 {
 	assert(body);
 	switch (body->GetType()) {
-	case Object::BODY:
+	case ObjectType::BODY:
 		LuaObject<Body>::PushToLua(body);
 		break;
-	case Object::MODELBODY:
+	case ObjectType::MODELBODY:
 		LuaObject<Body>::PushToLua(dynamic_cast<ModelBody *>(body));
 		break;
-	case Object::SHIP:
+	case ObjectType::SHIP:
 		LuaObject<Ship>::PushToLua(dynamic_cast<Ship *>(body));
 		break;
-	case Object::PLAYER:
+	case ObjectType::PLAYER:
 		LuaObject<Player>::PushToLua(dynamic_cast<Player *>(body));
 		break;
-	case Object::SPACESTATION:
+	case ObjectType::SPACESTATION:
 		LuaObject<SpaceStation>::PushToLua(dynamic_cast<SpaceStation *>(body));
 		break;
-	case Object::PLANET:
+	case ObjectType::PLANET:
 		LuaObject<Planet>::PushToLua(dynamic_cast<Planet *>(body));
 		break;
-	case Object::STAR:
+	case ObjectType::STAR:
 		LuaObject<Star>::PushToLua(dynamic_cast<Star *>(body));
 		break;
-	case Object::CARGOBODY:
+	case ObjectType::CARGOBODY:
 		LuaObject<Star>::PushToLua(dynamic_cast<CargoBody *>(body));
 		break;
-	case Object::MISSILE:
+	case ObjectType::MISSILE:
 		LuaObject<Missile>::PushToLua(dynamic_cast<Missile *>(body));
 		break;
-	case Object::HYPERSPACECLOUD:
+	case ObjectType::HYPERSPACECLOUD:
 		LuaObject<HyperspaceCloud>::PushToLua(dynamic_cast<HyperspaceCloud *>(body));
 		break;
 	default:
@@ -760,6 +729,20 @@ static bool _body_from_json(const Json &obj)
 	return push_body_to_lua(body);
 }
 
+static int l_body_get_velocity(lua_State *l)
+{
+	Body *b = LuaObject<Body>::CheckFromLua(1);
+	LuaPush<vector3d>(l, b->GetVelocity());
+	return 1;
+}
+
+static int l_body_set_velocity(lua_State *l)
+{
+	Body *b = LuaObject<Body>::CheckFromLua(1);
+	b->SetVelocity(LuaPull<vector3d>(l, 2));
+	return 0;
+}
+
 template <>
 const char *LuaObject<Body>::s_type = "Body";
 
@@ -776,8 +759,6 @@ void LuaObject<Body>::RegisterClass()
 		{ "GetVelocityRelTo", l_body_get_velocity_rel_to },
 		{ "GetPositionRelTo", l_body_get_position_rel_to },
 		{ "GetAltitudeRelTo", l_body_get_altitude_rel_to },
-		{ "GetProjectedScreenPosition", l_body_get_projected_screen_position },
-		{ "GetTargetIndicatorScreenPosition", l_body_get_target_indicator_screen_position },
 		{ "GetPhysicalRadius", l_body_get_phys_radius },
 		{ "GetAtmosphericState", l_body_get_atmospheric_state },
 		{ "GetLabel", l_body_get_label },
@@ -792,6 +773,8 @@ void LuaObject<Body>::RegisterClass()
 		{ "IsGroundStation", l_body_is_ground_station },
 		{ "IsCargoContainer", l_body_is_cargo_container },
 		{ "GetSystemBody", l_body_get_system_body },
+		{ "GetVelocity", l_body_get_velocity },
+		{ "SetVelocity", l_body_set_velocity },
 		{ 0, 0 }
 	};
 

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Frame.h"
@@ -34,6 +34,10 @@ Frame::Frame(const Dummy &d, FrameId parent, const char *label, unsigned int fla
 
 	s_collisionSpaces.emplace_back();
 	m_collisionSpace = s_collisionSpaces.size() - 1;
+	// TODO: this hacks around TraceRay being called on an uninitialized collision space and crashing
+	// Need to further evaluate the impact of this and whether it should be called in the CollisionSpace constructor instead
+	// FIXME: this causes a crash when resizing the collisionSpace array because a collision space double-frees when move constructing
+	// s_collisionSpaces.back().RebuildObjectTrees();
 
 	if (m_parent.valid())
 		Frame::GetFrame(m_parent)->AddChild(m_thisId);
@@ -242,14 +246,12 @@ void Frame::DeleteFrames()
 
 Frame *Frame::GetFrame(FrameId fId)
 {
-	PROFILE_SCOPED()
-
-	if (fId && fId.id() < s_frames.size())
-		return &s_frames[fId];
-	else if (fId)
+#ifndef NDEBUG
+	if (fId && fId.id() >= s_frames.size())
 		Error("In '%s': fId is valid but out of range (%zu)...\n", __func__, fId.id());
+#endif
 
-	return nullptr;
+	return fId.valid() ? &s_frames[fId] : nullptr;
 }
 
 FrameId Frame::CreateCameraFrame(FrameId parent)
@@ -288,6 +290,8 @@ void Frame::PostUnserializeFixup(FrameId fId, Space *space)
 	Frame *f = Frame::GetFrame(fId);
 	f->UpdateRootRelativeVars();
 	f->m_astroBody = space->GetBodyByIndex(f->m_astroBodyIndex);
+	// build the object trees once after loading so they're initialized while paused.
+	f->GetCollisionSpace()->RebuildObjectTrees();
 	for (FrameId kid : f->GetChildren())
 		PostUnserializeFixup(kid, space);
 }
@@ -473,6 +477,7 @@ void Frame::ClearMovement()
 
 void Frame::UpdateOrbitRails(double time, double timestep)
 {
+	PROFILE_SCOPED()
 	std::for_each(begin(s_frames), end(s_frames), [&time, &timestep](Frame &frame) {
 		frame.m_oldPos = frame.m_pos;
 		frame.m_oldAngDisplacement = frame.m_angSpeed * timestep;

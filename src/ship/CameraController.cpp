@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "CameraController.h"
@@ -196,7 +196,7 @@ void ExternalCameraController::Update()
 	// when landed don't let external view look from below
 	// XXX shouldn't be limited to player
 	const Ship *ship = GetShip();
-	if (ship->IsType(Object::PLAYER)) {
+	if (ship->IsType(ObjectType::PLAYER)) {
 		if (ship->GetFlightState() == Ship::LANDED ||
 			ship->GetFlightState() == Ship::DOCKED) {
 			m_rotX = Clamp(m_rotX, DEG2RAD(-170.0), DEG2RAD(-5.0));
@@ -219,7 +219,7 @@ void ExternalCameraController::Update()
 
 	// de-penetrate the camera from any world objects it might be clipping into
 	double max_dist = m_distTo;
-	CollisionSpace *cspace = Frame::GetFrame(ship->GetFrame())->GetCollisionSpace();
+	CollisionSpace *cspace = ship->IsInSpace() ? Frame::GetFrame(ship->GetFrame())->GetCollisionSpace() : nullptr;
 	if (cspace) {
 		// to check if we will end up inside an object, trace from the camera's target position towards
 		// the ship - if the first thing we hit is a normal that's facing away from us; we're inside an object

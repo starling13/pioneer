@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "WorldView.h"
@@ -24,27 +24,42 @@
 #include "ship/PlayerShipController.h"
 #include "ship/ShipViewController.h"
 #include "sound/Sound.h"
-#include "ui/Widget.h"
 
 namespace {
-	static const Color s_hudTextColor(0, 255, 0, 230);
 	static const float HUD_CROSSHAIR_SIZE = 8.0f;
-	static const Color white(255, 255, 255, 204);
 	static const Color green(0, 255, 0, 204);
-	static const Color yellow(230, 230, 77, 255);
 	static const Color red(255, 0, 0, 128);
 } // namespace
 
+REGISTER_INPUT_BINDING(WorldView)
+{
+	using namespace InputBindings;
+	Input::BindingGroup *group = input->GetBindingPage("General")->GetBindingGroup("Miscellaneous");
+
+	input->AddActionBinding("BindToggleHudMode", group, Action({ SDLK_TAB }));
+	input->AddActionBinding("BindIncreaseTimeAcceleration", group, Action({ SDLK_PAGEUP }));
+	input->AddActionBinding("BindDecreaseTimeAcceleration", group, Action({ SDLK_PAGEDOWN }));
+}
+
+void WorldView::InputBinding::RegisterBindings()
+{
+	toggleHudMode = AddAction("BindToggleHudMode");
+	increaseTimeAcceleration = AddAction("BindIncreaseTimeAcceleration");
+	decreaseTimeAcceleration = AddAction("BindDecreaseTimeAcceleration");
+}
+
 WorldView::WorldView(Game *game) :
 	PiGuiView("WorldView"),
-	m_game(game)
+	m_game(game),
+	InputBindings(Pi::input)
 {
 	InitObject();
 }
 
 WorldView::WorldView(const Json &jsonObj, Game *game) :
 	PiGuiView("WorldView"),
-	m_game(game)
+	m_game(game),
+	InputBindings(Pi::input)
 {
 	if (!jsonObj["world_view"].is_object()) throw SavedGameCorruptException();
 	Json worldViewObj = jsonObj["world_view"];
@@ -52,26 +67,6 @@ WorldView::WorldView(const Json &jsonObj, Game *game) :
 	InitObject();
 
 	shipView->LoadFromJson(worldViewObj);
-}
-
-WorldView::InputBinding WorldView::InputBindings;
-
-void WorldView::RegisterInputBindings()
-{
-	using namespace KeyBindings;
-	Input::BindingPage *page = Pi::input->GetBindingPage("General");
-	Input::BindingGroup *group;
-
-#define BINDING_GROUP(n) group = page->GetBindingGroup(#n);
-#define KEY_BINDING(n, id, k1, k2) InputBindings.n = Pi::input->AddActionBinding(id, group, \
-									   ActionBinding(k1, k2));
-#define AXIS_BINDING(n, id, k1, k2) InputBindings.n = Pi::input->AddAxisBinding(id, group, \
-										AxisBinding(k1, k2));
-
-	BINDING_GROUP(Miscellaneous)
-	KEY_BINDING(toggleHudMode, "BindToggleHudMode", SDLK_TAB, 0)
-	KEY_BINDING(increaseTimeAcceleration, "BindIncreaseTimeAcceleration", SDLK_PAGEUP, 0)
-	KEY_BINDING(decreaseTimeAcceleration, "BindDecreaseTimeAcceleration", SDLK_PAGEDOWN, 0)
 }
 
 void WorldView::InitObject()
@@ -84,8 +79,6 @@ void WorldView::InitObject()
 	rsd.depthWrite = false;
 	rsd.depthTest = false;
 	m_blendState = Pi::renderer->CreateRenderState(rsd); //XXX m_renderer not set yet
-	m_navTunnel = new NavTunnelWidget(this, m_blendState);
-	Add(m_navTunnel, 0, 0);
 
 	/*
 	  NEW UI
@@ -104,13 +97,14 @@ void WorldView::InitObject()
 	m_cameraContext.Reset(new CameraContext(Graphics::GetScreenWidth(), Graphics::GetScreenHeight(), fovY, znear, zfar));
 	m_camera.reset(new Camera(m_cameraContext, Pi::renderer));
 
+	InputBindings.RegisterBindings();
 	shipView.reset(new ShipViewController(this));
 	shipView->Init();
 	SetViewController(shipView.get());
 
-	m_onToggleHudModeCon = InputBindings.toggleHudMode->onPress.connect(sigc::mem_fun(this, &WorldView::OnToggleLabels));
-	m_onIncTimeAccelCon = InputBindings.increaseTimeAcceleration->onPress.connect(sigc::mem_fun(this, &WorldView::OnRequestTimeAccelInc));
-	m_onDecTimeAccelCon = InputBindings.decreaseTimeAcceleration->onPress.connect(sigc::mem_fun(this, &WorldView::OnRequestTimeAccelDec));
+	m_onToggleHudModeCon = InputBindings.toggleHudMode->onPressed.connect(sigc::mem_fun(this, &WorldView::OnToggleLabels));
+	m_onIncTimeAccelCon = InputBindings.increaseTimeAcceleration->onPressed.connect(sigc::mem_fun(this, &WorldView::OnRequestTimeAccelInc));
+	m_onDecTimeAccelCon = InputBindings.decreaseTimeAcceleration->onPressed.connect(sigc::mem_fun(this, &WorldView::OnRequestTimeAccelDec));
 }
 
 WorldView::~WorldView()
@@ -239,12 +233,14 @@ void WorldView::OnSwitchTo()
 {
 	if (m_viewController)
 		m_viewController->Activated();
+	Pi::input->AddInputFrame(&InputBindings);
 }
 
 void WorldView::OnSwitchFrom()
 {
 	if (m_viewController)
 		m_viewController->Deactivated();
+	Pi::input->RemoveInputFrame(&InputBindings);
 	Pi::DrawGUI = true;
 }
 
@@ -301,22 +297,20 @@ static inline bool project_to_screen(const vector3d &in, vector3d &out, const Gr
 void WorldView::UpdateProjectedObjects()
 {
 	const Frame *cam_frame = Frame::GetFrame(m_cameraContext->GetTempFrame());
-	matrix3x3d cam_rot = cam_frame->GetOrient();
+	matrix3x3d cam_rot = cam_frame->GetOrient().Inverse() * Pi::player->GetOrient();
 
 	// later we might want non-ship enemies (e.g., for assaults on military bases)
-	assert(!Pi::player->GetCombatTarget() || Pi::player->GetCombatTarget()->IsType(Object::SHIP));
+	assert(!Pi::player->GetCombatTarget() || Pi::player->GetCombatTarget()->IsType(ObjectType::SHIP));
 
 	// update combat HUD
 	Ship *enemy = static_cast<Ship *>(Pi::player->GetCombatTarget());
 	if (enemy) {
-		const vector3d targpos = enemy->GetInterpPositionRelTo(Pi::player) * cam_rot;
 		const vector3d targScreenPos = enemy->GetInterpPositionRelTo(cam_frame->GetId());
 
 		UpdateIndicator(m_combatTargetIndicator, targScreenPos);
 
 		// calculate firing solution and relative velocity along our z axis
 		int laser = -1;
-		double projspeed = 0;
 		if (shipView->GetCamType() == ShipViewController::CAM_INTERNAL) {
 			switch (shipView->m_internalCameraController->GetMode()) {
 			case InternalCameraController::MODE_FRONT: laser = 0; break;
@@ -325,20 +319,13 @@ void WorldView::UpdateProjectedObjects()
 			}
 		}
 
-		if (laser >= 0) {
-			Pi::player->Properties().Get(laser ? "laser_rear_speed" : "laser_front_speed", projspeed);
-		}
-		if (projspeed > 0) { // only display target lead position on views with lasers
-			const vector3d targvel = enemy->GetVelocityRelTo(Pi::player) * cam_rot;
-			vector3d leadpos = targpos + targvel * (targpos.Length() / projspeed);
-			leadpos = targpos + targvel * (leadpos.Length() / projspeed); // second order approx
-
-			UpdateIndicator(m_targetLeadIndicator, leadpos);
-
+		if (laser >= 0 && Pi::player->GetFixedGuns()->IsGunMounted(laser)) {
+			UpdateIndicator(m_targetLeadIndicator, cam_rot * Pi::player->GetFixedGuns()->GetTargetLeadPos());
 			if ((m_targetLeadIndicator.side != INDICATOR_ONSCREEN) || (m_combatTargetIndicator.side != INDICATOR_ONSCREEN))
 				HideIndicator(m_targetLeadIndicator);
-		} else
+		} else {
 			HideIndicator(m_targetLeadIndicator);
+		}
 	} else {
 		HideIndicator(m_combatTargetIndicator);
 		HideIndicator(m_targetLeadIndicator);
@@ -437,16 +424,6 @@ void WorldView::HideIndicator(Indicator &indicator)
 	indicator.pos = vector2f(0.0f, 0.0f);
 }
 
-double getSquareDistance(double initialDist, double scalingFactor, int num)
-{
-	return pow(scalingFactor, num - 1) * num * initialDist;
-}
-
-double getSquareHeight(double distance, double angle)
-{
-	return distance * tan(angle);
-}
-
 void WorldView::Draw()
 {
 	assert(m_game);
@@ -534,104 +511,6 @@ void WorldView::DrawEdgeMarker(const Indicator &marker, const Color &c)
 	m_edgeMarker.Draw(m_renderer, m_blendState);
 }
 
-NavTunnelWidget::NavTunnelWidget(WorldView *worldview, Graphics::RenderState *rs) :
-	Widget(),
-	m_worldView(worldview),
-	m_renderState(rs)
-{
-}
-
-void NavTunnelWidget::Draw()
-{
-	if (!Pi::IsNavTunnelDisplayed()) return;
-
-	Body *navtarget = Pi::player->GetNavTarget();
-	if (navtarget) {
-		const vector3d navpos = navtarget->GetPositionRelTo(Pi::player);
-		const matrix3x3d &rotmat = Pi::player->GetOrient();
-		const vector3d eyevec = rotmat * m_worldView->shipView->GetCameraController()->GetOrient().VectorZ();
-		if (eyevec.Dot(navpos) >= 0.0) return;
-
-		const double distToDest = Pi::player->GetPositionRelTo(navtarget).Length();
-
-		const int maxSquareHeight = std::max(Gui::Screen::GetWidth(), Gui::Screen::GetHeight()) / 2;
-		const double angle = atan(maxSquareHeight / distToDest);
-		// ECRAVEN: TODO not the ideal way to handle Begin/EndCameraFrame here :-/
-		// m_worldView->BeginCameraFrame();
-		const vector3d nav_screen = m_worldView->WorldSpaceToScreenSpace(navtarget);
-		// m_worldView->EndCameraFrame();
-		const vector2f tpos(vector2f(nav_screen.x / Graphics::GetScreenWidth() * Gui::Screen::GetWidth(), nav_screen.y / Graphics::GetScreenHeight() * Gui::Screen::GetHeight()));
-		const vector2f distDiff(tpos - vector2f(Gui::Screen::GetWidth() / 2.0f, Gui::Screen::GetHeight() / 2.0f));
-
-		double dist = 0.0;
-		const double scalingFactor = 1.6; // scales distance between squares: closer to 1.0, more squares
-		for (int squareNum = 1;; squareNum++) {
-			dist = getSquareDistance(10.0, scalingFactor, squareNum);
-			if (dist > distToDest)
-				break;
-
-			const double sqh = getSquareHeight(dist, angle);
-			if (sqh >= 10) {
-				const vector2f off = distDiff * (dist / distToDest);
-				const vector2f sqpos(tpos - off);
-				DrawTargetGuideSquare(sqpos, sqh, green);
-			}
-		}
-	}
-}
-
-void NavTunnelWidget::DrawTargetGuideSquare(const vector2f &pos, const float size, const Color &c)
-{
-	const float x1 = pos.x - size;
-	const float x2 = pos.x + size;
-	const float y1 = pos.y - size;
-	const float y2 = pos.y + size;
-
-	Color black(c);
-	black.a = c.a / 6;
-	Graphics::VertexArray va(Graphics::ATTRIB_POSITION | Graphics::ATTRIB_DIFFUSE, 8);
-	va.Add(vector3f(x1, y1, 0.f), c);
-	va.Add(vector3f(pos.x, y1, 0.f), black);
-	va.Add(vector3f(x2, y1, 0.f), c);
-	va.Add(vector3f(x2, pos.y, 0.f), black);
-	va.Add(vector3f(x2, y2, 0.f), c);
-	va.Add(vector3f(pos.x, y2, 0.f), black);
-	va.Add(vector3f(x1, y2, 0.f), c);
-	va.Add(vector3f(x1, pos.y, 0.f), black);
-
-	if (!m_vbuffer.get()) {
-		CreateVertexBuffer(8);
-	}
-
-	m_vbuffer->Populate(va);
-
-	m_worldView->m_renderer->DrawBuffer(m_vbuffer.get(), m_renderState, m_material.Get(), Graphics::LINE_LOOP);
-}
-
-void NavTunnelWidget::GetSizeRequested(float size[2])
-{
-	size[0] = Gui::Screen::GetWidth();
-	size[1] = Gui::Screen::GetHeight();
-}
-
-void NavTunnelWidget::CreateVertexBuffer(const Uint32 size)
-{
-	Graphics::Renderer *r = m_worldView->m_renderer;
-
-	Graphics::MaterialDescriptor desc;
-	desc.vertexColors = true;
-	m_material.Reset(r->CreateMaterial(desc));
-
-	Graphics::VertexBufferDesc vbd;
-	vbd.attrib[0].semantic = Graphics::ATTRIB_POSITION;
-	vbd.attrib[0].format = Graphics::ATTRIB_FORMAT_FLOAT3;
-	vbd.attrib[1].semantic = Graphics::ATTRIB_DIFFUSE;
-	vbd.attrib[1].format = Graphics::ATTRIB_FORMAT_UBYTE4;
-	vbd.usage = Graphics::BUFFER_USAGE_DYNAMIC;
-	vbd.numVertices = size;
-	m_vbuffer.reset(r->CreateVertexBuffer(vbd));
-}
-
 // project vector vec onto plane (normal must be normalized)
 static vector3d projectVecOntoPlane(const vector3d &vec, const vector3d &normal)
 {
@@ -694,8 +573,17 @@ static vector3d projectToScreenSpace(const vector3d &pos, RefCountedPtr<CameraCo
 	if (!frustum.ProjectPoint(pos, proj)) {
 		return vector3d(w / 2, h / 2, 0);
 	}
+	// convert NDC to top-left screen coordinates
 	proj.x *= w;
 	proj.y = h - proj.y * h;
+
+	// linearize depth coordinate
+	// see https://thxforthefish.com/posts/reverse_z/
+	float znear;
+	float zfar;
+	Pi::renderer->GetNearFarRange(znear, zfar);
+	proj.z = -znear / proj.z;
+
 	// set z to -1 if in front of camera, 1 else
 	if (adjustZ)
 		proj.z = pos.z < 0 ? -1 : 1;
@@ -705,7 +593,7 @@ static vector3d projectToScreenSpace(const vector3d &pos, RefCountedPtr<CameraCo
 // project a body in world-space to a screen-space location
 vector3d WorldView::WorldSpaceToScreenSpace(const Body *body) const
 {
-	if (body->IsType(Object::PLAYER) && !shipView->IsExteriorView())
+	if (body->IsType(ObjectType::PLAYER) && !shipView->IsExteriorView())
 		return vector3d(0, 0, 0);
 
 	vector3d pos = body->GetInterpPositionRelTo(m_cameraContext->GetCameraFrame());
@@ -720,18 +608,11 @@ vector3d WorldView::WorldSpaceToScreenSpace(const vector3d &position) const
 	return projectToScreenSpace(pos, m_cameraContext);
 }
 
-// convert a position in ship-local coordinates to screen-space coordinates
-vector3d WorldView::ShipSpaceToScreenSpace(const vector3d &pos) const
+// convert a direction in world-space coordinates to a position in screen-space coordinates
+vector3d WorldView::WorldDirToScreenSpace(const vector3d &pos) const
 {
-	// rotate ship-local coordinates into the camera frame orientation
-	vector3d camspace = Pi::player->GetInterpOrient() * pos * m_cameraContext->GetCameraOrient();
-	return projectToScreenSpace(camspace, m_cameraContext, false);
-}
-
-// convert a position in body-relative coordinates (frame-oriented, player-origin) to screen-space
-vector3d WorldView::RelSpaceToScreenSpace(const vector3d &pos) const
-{
-	return projectToScreenSpace(pos * m_cameraContext->GetCameraOrient(), m_cameraContext);
+	// rotate world-space coordinates into the camera frame orientation
+	return projectToScreenSpace(pos * m_cameraContext->GetCameraOrient(), m_cameraContext, false);
 }
 
 vector3d WorldView::CameraSpaceToScreenSpace(const vector3d &pos) const
@@ -741,18 +622,11 @@ vector3d WorldView::CameraSpaceToScreenSpace(const vector3d &pos) const
 
 vector3d WorldView::GetTargetIndicatorScreenPosition(const Body *body) const
 {
-	if (body->IsType(Object::PLAYER) && !shipView->IsExteriorView())
+	if (body->IsType(ObjectType::PLAYER) && !shipView->IsExteriorView())
 		return vector3d(0, 0, 0);
 
 	// get the target indicator position in body-local coordinates
 	vector3d pos = body->GetInterpPositionRelTo(m_cameraContext->GetCameraFrame());
 	pos += body->GetInterpOrientRelTo(m_cameraContext->GetCameraFrame()) * body->GetTargetIndicatorPosition();
 	return WorldSpaceToScreenSpace(pos);
-}
-
-void WorldView::HandleSDLEvent(SDL_Event &event)
-{
-	InputBindings.toggleHudMode->CheckSDLEventAndDispatch(&event);
-	InputBindings.increaseTimeAcceleration->CheckSDLEventAndDispatch(&event);
-	InputBindings.decreaseTimeAcceleration->CheckSDLEventAndDispatch(&event);
 }

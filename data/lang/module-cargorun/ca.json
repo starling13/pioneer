@@ -327,10 +327,6 @@
     "description": "",
     "message": "Estic rebent danys. Demano auxili."
   },
-  "LY": {
-    "description": "",
-    "message": "al"
-  },
   "MACHINE_TOOLS": {
     "description": "custom cargo",
     "message": "Màquines eina"
@@ -502,6 +498,10 @@
   "TITANIUM": {
     "description": "custom cargo",
     "message": "Titani"
+  },
+  "TOO_LATE_TO_PICK_UP": {
+    "description": "",
+    "message": "You are much too late! Your performance is so bad that I am cancelling my contract with you."
   },
   "TUNGSTEN": {
     "description": "custom cargo",

@@ -1,11 +1,13 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
+#include "graphics/Graphics.h"
 #include "pigui/LuaPiGui.h"
 
 #include "SystemView.h"
 
 #include "AnimationCurves.h"
+#include "Background.h"
 #include "Game.h"
 #include "GameLog.h"
 #include "Input.h"
@@ -38,195 +40,16 @@ static const float WHEEL_SENSITIVITY = .1f; // Should be a variable in user sett
 static const double DEFAULT_VIEW_DISTANCE = 10.0;
 static const int MAX_TRANSITION_FRAMES = 60;
 
-TransferPlanner::TransferPlanner() :
-	m_position(0., 0., 0.),
-	m_velocity(0., 0., 0.)
+void SystemView::InputBindings::RegisterBindings()
 {
-	m_dvPrograde = 0.0;
-	m_dvNormal = 0.0;
-	m_dvRadial = 0.0;
-	m_startTime = 0.0;
-	m_factor = 1;
+	mapViewPitch = AddAxis("BindMapViewPitch");
+	mapViewYaw = AddAxis("BindMapViewYaw");
+	mapViewZoom = AddAxis("BindMapViewZoom");
 }
-
-vector3d TransferPlanner::GetVel() const { return m_velocity + GetOffsetVel(); }
-
-vector3d TransferPlanner::GetOffsetVel() const
-{
-	if (m_position.ExactlyEqual(vector3d(0., 0., 0.)))
-		return vector3d(0., 0., 0.);
-
-	const vector3d pNormal = m_position.Cross(m_velocity);
-
-	return m_dvPrograde * m_velocity.Normalized() +
-		m_dvNormal * pNormal.Normalized() +
-		m_dvRadial * m_position.Normalized();
-}
-
-void TransferPlanner::AddStartTime(double timeStep)
-{
-	if (std::fabs(m_startTime) < 1.)
-		m_startTime = Pi::game->GetTime();
-
-	m_startTime += m_factor * timeStep;
-	double deltaT = m_startTime - Pi::game->GetTime();
-	if (deltaT > 0.) {
-		FrameId frameId = Frame::GetFrame(Pi::player->GetFrame())->GetNonRotFrame();
-		Frame *frame = Frame::GetFrame(frameId);
-		Orbit playerOrbit = Orbit::FromBodyState(Pi::player->GetPositionRelTo(frameId), Pi::player->GetVelocityRelTo(frameId), frame->GetSystemBody()->GetMass());
-
-		m_position = playerOrbit.OrbitalPosAtTime(deltaT);
-		m_velocity = playerOrbit.OrbitalVelocityAtTime(frame->GetSystemBody()->GetMass(), deltaT);
-	} else
-		ResetStartTime();
-}
-
-void TransferPlanner::ResetStartTime()
-{
-	m_startTime = 0;
-	Frame *frame = Frame::GetFrame(Pi::player->GetFrame());
-	if (!frame || GetOffsetVel().ExactlyEqual(vector3d(0., 0., 0.))) {
-		m_position = vector3d(0., 0., 0.);
-		m_velocity = vector3d(0., 0., 0.);
-	} else {
-		frame = Frame::GetFrame(frame->GetNonRotFrame());
-		m_position = Pi::player->GetPositionRelTo(frame->GetId());
-		m_velocity = Pi::player->GetVelocityRelTo(frame->GetId());
-	}
-}
-
-double TransferPlanner::GetStartTime() const
-{
-	return m_startTime < 0.0 ? 0.0 : m_startTime;
-}
-
-static std::string formatTime(double t)
-{
-	std::stringstream formattedTime;
-	formattedTime << std::setprecision(1) << std::fixed;
-	double absT = fabs(t);
-	if (absT < 60.)
-		formattedTime << t << "s";
-	else if (absT < 3600)
-		formattedTime << t / 60. << "m";
-	else if (absT < 86400)
-		formattedTime << t / 3600. << "h";
-	else if (absT < 31536000)
-		formattedTime << t / 86400. << "d";
-	else
-		formattedTime << t / 31536000. << "y";
-	return formattedTime.str();
-}
-
-std::string TransferPlanner::printDeltaTime()
-{
-	std::stringstream out;
-	out << std::setw(9);
-	double deltaT = m_startTime - Pi::game->GetTime();
-	if (std::fabs(m_startTime) < 1.)
-		out << Lang::NOW;
-	else
-		out << formatTime(deltaT);
-
-	return out.str();
-}
-
-void TransferPlanner::AddDv(BurnDirection d, double dv)
-{
-	if (m_position.ExactlyEqual(vector3d(0., 0., 0.))) {
-		FrameId frame = Frame::GetFrame(Pi::player->GetFrame())->GetNonRotFrame();
-		m_position = Pi::player->GetPositionRelTo(frame);
-		m_velocity = Pi::player->GetVelocityRelTo(frame);
-		m_startTime = Pi::game->GetTime();
-	}
-
-	switch (d) {
-	case PROGRADE: m_dvPrograde += m_factor * dv; break;
-	case NORMAL: m_dvNormal += m_factor * dv; break;
-	case RADIAL: m_dvRadial += m_factor * dv; break;
-	}
-}
-
-void TransferPlanner::ResetDv(BurnDirection d)
-{
-	switch (d) {
-	case PROGRADE: m_dvPrograde = 0; break;
-	case NORMAL: m_dvNormal = 0; break;
-	case RADIAL: m_dvRadial = 0; break;
-	}
-
-	if (std::fabs(m_startTime) < 1. &&
-		GetOffsetVel().ExactlyEqual(vector3d(0., 0., 0.))) {
-		m_position = vector3d(0., 0., 0.);
-		m_velocity = vector3d(0., 0., 0.);
-		m_startTime = 0.;
-	}
-}
-
-void TransferPlanner::ResetDv()
-{
-	m_dvPrograde = 0;
-	m_dvNormal = 0;
-	m_dvRadial = 0;
-
-	if (std::fabs(m_startTime) < 1.) {
-		m_position = vector3d(0., 0., 0.);
-		m_velocity = vector3d(0., 0., 0.);
-		m_startTime = 0.;
-	}
-}
-
-double TransferPlanner::GetDv(BurnDirection d)
-{
-	switch (d) {
-	case PROGRADE: return m_dvPrograde; break;
-	case NORMAL: return m_dvNormal; break;
-	case RADIAL: return m_dvRadial; break;
-	}
-	return 0.0;
-}
-
-std::string TransferPlanner::printDv(BurnDirection d)
-{
-	double dv = 0;
-	char buf[10];
-
-	switch (d) {
-	case PROGRADE: dv = m_dvPrograde; break;
-	case NORMAL: dv = m_dvNormal; break;
-	case RADIAL: dv = m_dvRadial; break;
-	}
-
-	snprintf(buf, sizeof(buf), "%6.0fm/s", dv);
-	return std::string(buf);
-}
-
-void TransferPlanner::IncreaseFactor(void)
-{
-	if (m_factor > 1000) return;
-	m_factor *= m_factorFactor;
-}
-void TransferPlanner::ResetFactor(void) { m_factor = 1; }
-
-void TransferPlanner::DecreaseFactor(void)
-{
-	if (m_factor < 0.0002) return;
-	m_factor /= m_factorFactor;
-}
-
-std::string TransferPlanner::printFactor(void)
-{
-	char buf[16];
-	snprintf(buf, sizeof(buf), "%8gx", 10 * m_factor);
-	return std::string(buf);
-}
-
-vector3d TransferPlanner::GetPosition() const { return m_position; }
-
-void TransferPlanner::SetPosition(const vector3d &position) { m_position = position; }
 
 SystemView::SystemView(Game *game) :
-	UIView(),
+	PiGuiView("system-view"),
+	m_input(Pi::input),
 	m_game(game),
 	m_showL4L5(LAG_OFF),
 	m_shipDrawing(OFF),
@@ -238,6 +61,8 @@ SystemView::SystemView(Game *game) :
 	m_rot_x = 50;
 	m_zoom = 1.0f / float(AU);
 	SetTransparency(true);
+
+	m_input.RegisterBindings();
 
 	Graphics::RenderStateDesc rsd;
 	m_lineState = Pi::renderer->CreateRenderState(rsd); //m_renderer not set yet
@@ -282,6 +107,7 @@ void SystemView::ResetViewpoint()
 	m_zoomTo = 1.0f / float(AU);
 	m_timeStep = 1.0f;
 	m_time = m_game->GetTime();
+	m_transTo *= 0.0;
 	m_animateTransition = MAX_TRANSITION_FRAMES;
 }
 
@@ -337,25 +163,36 @@ void SystemView::PutOrbit(Projectable::bases base, RefType *ref, const Orbit *or
 		}
 	}
 
-	Gui::Screen::EnterOrtho();
-	vector3d pos;
-	if (Gui::Screen::Project(offset + orbit->Perigeum(), pos) && pos.z < 1)
-		AddProjected<RefType>(Projectable::PERIAPSIS, base, ref, pos, offset + orbit->Perigeum());
-	if (Gui::Screen::Project(offset + orbit->Apogeum(), pos) && pos.z < 1)
-		AddProjected<RefType>(Projectable::APOAPSIS, base, ref, pos, offset + orbit->Apogeum());
+	AddProjected<RefType>(Projectable::PERIAPSIS, base, ref, offset + orbit->Perigeum());
+	AddProjected<RefType>(Projectable::APOAPSIS, base, ref, offset + orbit->Apogeum());
 
 	if (showLagrange && m_showL4L5 != LAG_OFF) {
 		const vector3d posL4 = orbit->EvenSpacedPosTrajectory((1.0 / 360.0) * 60.0, tMinust0);
-		if (Gui::Screen::Project(offset + posL4, pos) && pos.z < 1) {
-			AddProjected<RefType>(Projectable::L4, base, ref, pos, offset + posL4);
-		}
+		AddProjected<RefType>(Projectable::L4, base, ref, offset + posL4);
 
 		const vector3d posL5 = orbit->EvenSpacedPosTrajectory((1.0 / 360.0) * 300.0, tMinust0);
-		if (Gui::Screen::Project(offset + posL5, pos) && pos.z < 1) {
-			AddProjected<RefType>(Projectable::L5, base, ref, pos, offset + posL5);
-		}
+		AddProjected<RefType>(Projectable::L5, base, ref, offset + posL5);
 	}
-	Gui::Screen::LeaveOrtho();
+}
+
+// returns the position of the ground spaceport relative to the center of the planet at the specified time
+static vector3d position_of_surface_starport_relative_to_parent(const SystemBody *starport, double time)
+{
+	const SystemBody *parent = starport->GetParent();
+	// planet axis tilt
+	return matrix3x3d::RotateX(parent->GetAxialTilt()) *
+		// the angle the planet has turned since the beginning of time
+		matrix3x3d::RotateY(-2 * M_PI / parent->GetRotationPeriod() * time + parent->GetRotationPhaseAtStart()) *
+		// the original coordinates of the starport are saved as a 3x3 matrix,
+		starport->GetOrbit().GetPlane() *
+		// to get the direction to the station, you need to multiply them by 0.0, 1.0, 0.0
+		vector3d(0.0, 1.0, 0.0) *
+		// we need the distance to the center of the planet
+		(Pi::game->IsNormalSpace() && Pi::game->GetSpace()->GetStarSystem()->GetPath().IsSameSystem(Pi::game->GetSectorView()->GetSelected()) ?
+				// if we look at the current system, the relief is known, we take the height from the physical body
+				Pi::game->GetSpace()->FindBodyForPath(&(starport->GetPath()))->GetPosition().Length() :
+				// if the remote system - take the radius of the planet
+				parent->GetRadius());
 }
 
 void SystemView::PutBody(const SystemBody *b, const vector3d &offset, const matrix4x4f &trans)
@@ -385,18 +222,18 @@ void SystemView::PutBody(const SystemBody *b, const vector3d &offset, const matr
 
 		m_renderer->SetTransform(trans);
 
-		AddNotProjected<const SystemBody>(Projectable::OBJECT, Projectable::SYSTEMBODY, b, offset);
+		AddProjected<const SystemBody>(Projectable::OBJECT, Projectable::SYSTEMBODY, b, offset);
 	}
-
-	Frame *frame = Frame::GetFrame(Pi::player->GetFrame());
-	if (frame->IsRotFrame())
-		frame = Frame::GetFrame(frame->GetNonRotFrame());
 
 	// display all child bodies and their orbits
 	if (b->HasChildren()) {
 		for (const SystemBody *kid : b->GetChildren()) {
-			if (is_zero_general(kid->GetOrbit().GetSemiMajorAxis()))
+			if (kid->GetType() == SystemBody::TYPE_STARPORT_SURFACE) {
+				AddProjected<const SystemBody>(Projectable::OBJECT, Projectable::SYSTEMBODY, kid, position_of_surface_starport_relative_to_parent(kid, m_time) + offset);
 				continue;
+			}
+
+			if (is_zero_general(kid->GetOrbit().GetSemiMajorAxis())) continue;
 
 			const double axisZoom = kid->GetOrbit().GetSemiMajorAxis();
 			//semimajor axis radius should be at least 1% of screen width to show the orbit
@@ -415,20 +252,29 @@ void SystemView::PutBody(const SystemBody *b, const vector3d &offset, const matr
 
 void SystemView::GetTransformTo(const SystemBody *b, vector3d &pos)
 {
-	if (b->GetParent()) {
-		GetTransformTo(b->GetParent(), pos);
-		pos -= b->GetOrbit().OrbitalPosAtTime(m_time);
+	const SystemBody *parent = b->GetParent();
+	if (parent) {
+		GetTransformTo(parent, pos);
+		if (b->GetType() == SystemBody::TYPE_STARPORT_SURFACE)
+			pos -= position_of_surface_starport_relative_to_parent(b, m_time);
+		else
+			pos -= b->GetOrbit().OrbitalPosAtTime(m_time);
 	}
 }
 
 void SystemView::GetTransformTo(Projectable &p, vector3d &pos)
 {
+	if (m_selectedObject.type == Projectable::NONE) {
+		// notning selected
+		pos *= 0.0;
+		return;
+	}
 	// accept only real objects (no orbit icons or lagrange points)
 	assert(p.type == Projectable::OBJECT);
 	pos = vector3d(0., 0., 0.);
 	if (p.base == Projectable::SYSTEMBODY)
 		GetTransformTo(p.ref.sbody, pos);
-	else if (p.ref.body->GetType() == Object::Type::SHIP || p.ref.body->GetType() == Object::Type::PLAYER) {
+	else if (p.ref.body->GetType() == ObjectType::SHIP || p.ref.body->GetType() == ObjectType::PLAYER) {
 		const Ship *s = static_cast<const Ship *>(p.ref.body);
 		CalculateShipPositionAtTime(s, s->ComputeOrbit(), m_time, pos);
 		pos = -pos;
@@ -445,16 +291,15 @@ void SystemView::CalculateShipPositionAtTime(const Ship *s, Orbit o, double t, v
 	pos = vector3d(0., 0., 0.);
 	FrameId shipFrameId = s->GetFrame();
 	FrameId shipNonRotFrameId = Frame::GetFrame(shipFrameId)->GetNonRotFrame();
-	if (s->GetFlightState() != Ship::FlightState::FLYING) {
+	// if the ship is in a rotating frame, we will rotate it with the frame
+	if (Frame::GetFrame(shipFrameId)->IsRotFrame()) {
 		vector3d rpos(0.0);
-		if (Frame::GetFrame(shipFrameId)->IsRotFrame()) {
-			Frame *rotframe = Frame::GetFrame(shipFrameId);
-			if (t == m_game->GetTime()) {
-				pos = s->GetPositionRelTo(m_game->GetSpace()->GetRootFrame());
-				return;
-			} else
-				rpos = s->GetPositionRelTo(shipNonRotFrameId) * rotframe->GetOrient() * matrix3x3d::RotateY(rotframe->GetAngSpeed() * (t - m_game->GetTime())) * rotframe->GetOrient().Transpose();
-		}
+		Frame *rotframe = Frame::GetFrame(shipFrameId);
+		if (t == m_game->GetTime()) {
+			pos = s->GetPositionRelTo(m_game->GetSpace()->GetRootFrame());
+			return;
+		} else
+			rpos = s->GetPositionRelTo(shipNonRotFrameId) * rotframe->GetOrient() * matrix3x3d::RotateY(rotframe->GetAngSpeed() * (t - m_game->GetTime())) * rotframe->GetOrient().Transpose();
 		vector3d fpos(0.0);
 		CalculateFramePositionAtTime(shipNonRotFrameId, t, fpos);
 		pos += fpos + rpos;
@@ -480,12 +325,8 @@ void SystemView::CalculateFramePositionAtTime(FrameId frameId, double t, vector3
 void SystemView::Draw3D()
 {
 	PROFILE_SCOPED()
-	// We need to adjust the "far" cutoff plane, so that at high magnifications you can see
-	// distant objects in the background.
-	m_renderer->SetPerspectiveProjection(CAMERA_FOV, m_renderer->GetDisplayAspect(), 1.f, 1000.f * m_zoom * float(AU) + DEFAULT_VIEW_DISTANCE * 2);
 	m_renderer->ClearScreen();
 	m_projected.clear();
-	//TODO add reserve
 
 	SystemPath path = m_game->GetSectorView()->GetSelected().SystemOnly();
 	if (m_system) {
@@ -507,6 +348,31 @@ void SystemView::Draw3D()
 		m_unexplored = m_system->GetUnexplored();
 	}
 
+	// Set up the perspective projection for the background stars
+	m_renderer->SetPerspectiveProjection(CAMERA_FOV, m_renderer->GetDisplayAspect(), 1.f, 1500.f);
+
+	matrix4x4d trans2bg = matrix4x4d::Identity();
+	trans2bg.RotateX(DEG2RAD(-m_rot_x));
+	trans2bg.RotateY(DEG2RAD(-m_rot_y));
+	auto *background = m_game->GetSpace()->GetBackground();
+	// Background is rotated around (0,0,0) and drawn
+	background->SetIntensity(0.6);
+	if (!m_game->IsNormalSpace() || !m_game->GetSpace()->GetStarSystem()->GetPath().IsSameSystem(path)) {
+		Uint32 cachedFlags = background->GetDrawFlags();
+		background->SetDrawFlags(Background::Container::DRAW_SKYBOX);
+		background->Draw(trans2bg);
+		background->SetDrawFlags(cachedFlags);
+	} else {
+		background->Draw(trans2bg);
+	}
+
+	m_renderer->ClearDepthBuffer();
+
+	// We need to adjust the "far" cutoff plane, so that at high magnifications you can see
+	// distant objects in the background.
+	m_renderer->SetPerspectiveProjection(CAMERA_FOV, m_renderer->GetDisplayAspect(), 1.f, 1000.f * m_zoom * float(AU) + DEFAULT_VIEW_DISTANCE * 2);
+	//TODO add reserve
+
 	// The matrix is shifted from the (0,0,0) by DEFAULT_VIEW_DISTANCE
 	// and then rotated (around 0,0,0) and scaled by m_zoom, shift doesn't scale.
 	// m_zoom default value is 1/AU.
@@ -527,16 +393,21 @@ void SystemView::Draw3D()
 	m_renderer->SetTransform(m_cameraSpace);
 
 	// smooth transition animation
-	m_transTo *= 0.0;
-	if (m_selectedObject.type != Projectable::NONE) GetTransformTo(m_selectedObject, m_transTo);
 	if (m_animateTransition) {
+		// since the object being approached can move, we need to compensate for its movement
+		// making an imprint of the old value (from previous frame)
+		m_trans -= m_transTo;
+		// calculate the new value
+		GetTransformTo(m_selectedObject, m_transTo);
+		// now the difference between the new and the old value is added to m_trans
+		m_trans += m_transTo;
 		const float ft = Pi::GetFrameTime();
 		m_animateTransition--;
 		AnimationCurves::Approach(m_trans.x, m_transTo.x, ft);
 		AnimationCurves::Approach(m_trans.y, m_transTo.y, ft);
 		AnimationCurves::Approach(m_trans.z, m_transTo.z, ft);
 	} else {
-		m_trans = m_transTo;
+		GetTransformTo(m_selectedObject, m_trans);
 	}
 
 	vector3d pos = m_trans;
@@ -551,7 +422,6 @@ void SystemView::Draw3D()
 	if (m_game->IsNormalSpace() && m_game->GetSpace()->GetStarSystem()->GetPath().IsSameSystem(m_game->GetSectorView()->GetSelected())) {
 		// draw ships
 		if (m_shipDrawing != OFF) {
-			RefreshShips();
 			DrawShips(m_time, pos);
 		}
 		// draw player and planner
@@ -562,7 +432,7 @@ void SystemView::Draw3D()
 		Frame *playerNonRotFrame = Frame::GetFrame(playerNonRotFrameId);
 		SystemBody *playerAround = playerNonRotFrame->GetSystemBody();
 		CalculateShipPositionAtTime(static_cast<Ship *>(Pi::player), playerOrbit, m_time, ppos);
-		AddNotProjected<Body>(Projectable::OBJECT, Projectable::PLAYER, PlayerBody, ppos + pos);
+		AddProjected<Body>(Projectable::OBJECT, Projectable::PLAYER, PlayerBody, ppos + pos);
 
 		vector3d offset(0.0);
 		CalculateFramePositionAtTime(playerNonRotFrameId, m_time, offset);
@@ -577,9 +447,9 @@ void SystemView::Draw3D()
 					playerAround->GetMass());
 				PutOrbit<Body>(Projectable::PLANNER, PlayerBody, &plannedOrbit, offset, svColor[PLANNER_ORBIT], playerAround->GetRadius());
 				if (std::fabs(m_time - m_game->GetTime()) > 1. && (m_time - plannerStartTime) > 0.)
-					AddNotProjected<Body>(Projectable::OBJECT, Projectable::PLANNER, PlayerBody, offset + plannedOrbit.OrbitalPosAtTime(m_time - plannerStartTime));
+					AddProjected<Body>(Projectable::OBJECT, Projectable::PLANNER, PlayerBody, offset + plannedOrbit.OrbitalPosAtTime(m_time - plannerStartTime));
 				else
-					AddNotProjected<Body>(Projectable::OBJECT, Projectable::PLANNER, PlayerBody, offset + m_planner->GetPosition());
+					AddProjected<Body>(Projectable::OBJECT, Projectable::PLANNER, PlayerBody, offset + m_planner->GetPosition());
 			}
 		}
 	}
@@ -587,8 +457,6 @@ void SystemView::Draw3D()
 	if (m_gridDrawing != GridDrawing::OFF) {
 		DrawGrid();
 	}
-
-	UIView::Draw3D();
 }
 
 void SystemView::Update()
@@ -623,16 +491,24 @@ void SystemView::Update()
 	}
 
 	// camera control signals from devices, sent to the SectorView
-	if (SectorView::InputBindings.mapViewZoom->IsActive())
-		m_zoomTo *= pow(ZOOM_IN_SPEED * 0.006 + 1, SectorView::InputBindings.mapViewZoom->GetValue());
-	if (SectorView::InputBindings.mapViewYaw->IsActive())
-		m_rot_y_to += SectorView::InputBindings.mapViewYaw->GetValue() * ft * 60;
-	if (SectorView::InputBindings.mapViewPitch->IsActive())
-		m_rot_x_to += SectorView::InputBindings.mapViewPitch->GetValue() * ft * 60;
+	if (m_input.mapViewZoom->IsActive())
+		m_zoomTo *= pow(ZOOM_IN_SPEED * 0.006 + 1, m_input.mapViewZoom->GetValue());
+	if (m_input.mapViewYaw->IsActive())
+		m_rot_y_to += m_input.mapViewYaw->GetValue() * ft * 60;
+	if (m_input.mapViewPitch->IsActive())
+		m_rot_x_to += m_input.mapViewPitch->GetValue() * ft * 60;
 
 	m_rot_x_to = Clamp(m_rot_x_to, -80.0f, 80.0f);
 
-	UIView::Update();
+	if (m_shipDrawing != OFF) {
+		RefreshShips();
+		// if we are attached to the ship, check if we not deleted it in the previous frame
+		if (m_selectedObject.type != Projectable::NONE && m_selectedObject.base == Projectable::SHIP) {
+			auto bs = m_game->GetSpace()->GetBodies();
+			if (std::find(bs.begin(), bs.end(), m_selectedObject.ref.body) == bs.end())
+				ResetViewpoint();
+		}
+	}
 }
 
 void SystemView::MouseWheel(bool up)
@@ -651,7 +527,7 @@ void SystemView::RefreshShips(void)
 	auto bs = m_game->GetSpace()->GetBodies();
 	for (auto s = bs.begin(); s != bs.end(); s++) {
 		if ((*s) != Pi::player &&
-			(*s)->GetType() == Object::SHIP) {
+			(*s)->GetType() == ObjectType::SHIP) {
 
 			const auto c = static_cast<Ship *>(*s);
 			m_contacts.push_back(std::make_pair(c, c->ComputeOrbit()));
@@ -668,10 +544,10 @@ void SystemView::DrawShips(const double t, const vector3d &offset)
 		pos = pos + offset;
 		//draw highlighted orbit for selected ship
 		const bool isSelected = m_selectedObject.type == Projectable::OBJECT && m_selectedObject.base != Projectable::SYSTEMBODY && m_selectedObject.ref.body == (*s).first;
-		AddNotProjected<Body>(Projectable::OBJECT, Projectable::SHIP, static_cast<Body *>((*s).first), pos);
+		AddProjected<Body>(Projectable::OBJECT, Projectable::SHIP, static_cast<Body *>((*s).first), pos);
 		if (m_shipDrawing == ORBITS && (*s).first->GetFlightState() == Ship::FlightState::FLYING) {
 			vector3d framepos(0.0);
-			CalculateFramePositionAtTime(Frame::GetFrame((*s).first->GetFrame())->GetNonRotFrame(), m_time, framepos);
+			CalculateFramePositionAtTime((*s).first->GetFrame(), m_time, framepos);
 			PutOrbit<Body>(Projectable::SHIP, static_cast<Body *>((*s).first), &(*s).second, offset + framepos, isSelected ? svColor[SELECTED_SHIP_ORBIT] : svColor[SHIP_ORBIT], 0);
 		}
 	}
@@ -714,34 +590,16 @@ void SystemView::DrawGrid()
 }
 
 template <typename T>
-void SystemView::AddNotProjected(Projectable::types type, Projectable::bases base, T *ref, const vector3d &worldpos)
+void SystemView::AddProjected(Projectable::types type, Projectable::bases base, T *ref, const vector3d &worldpos)
 {
-	//project and add
-	Gui::Screen::EnterOrtho();
-	vector3d screenpos;
-	if (Gui::Screen::Project(worldpos, screenpos) && screenpos.z < 1)
-		AddProjected<T>(type, base, ref, screenpos, worldpos);
-	Gui::Screen::LeaveOrtho();
-}
+	vector3d pos = Graphics::ProjectToScreen(m_renderer, worldpos);
+	if (pos.z > 0.0) return; // reject back-projected objects
+	pos.y = m_renderer->GetViewport().h - pos.y;
 
-template <typename T>
-void SystemView::AddProjected(Projectable::types type, Projectable::bases base, T *ref, vector3d &pos, const vector3d &worldpos)
-{
-	float scale[2];
-	Gui::Screen::GetCoords2Pixels(scale);
 	Projectable p(type, base, ref);
-	p.screenpos.x = pos.x / scale[0];
-	p.screenpos.y = pos.y / scale[1];
-	p.screenpos.z = pos.z;
+	p.screenpos = pos;
 	p.worldpos = worldpos;
 	m_projected.push_back(p);
-}
-
-// SystemBody can't be inaccessible
-void SystemView::BodyInaccessible(Body *b)
-{
-	if (m_selectedObject.type == Projectable::OBJECT && m_selectedObject.base != Projectable::SYSTEMBODY && m_selectedObject.ref.body == b)
-		ResetViewpoint();
 }
 
 void SystemView::SetVisibility(std::string param)
@@ -760,9 +618,12 @@ void SystemView::SetVisibility(std::string param)
 		m_showL4L5 = LAG_ICON;
 	else if (param == "LAG_ICONTEXT")
 		m_showL4L5 = LAG_ICONTEXT;
-	else if (param == "SHIPS_OFF")
+	else if (param == "SHIPS_OFF") {
 		m_shipDrawing = OFF;
-	else if (param == "SHIPS_ON")
+		// if we are attached to the ship, reset view, since the ship was hidden
+		if (m_selectedObject.type != Projectable::NONE && m_selectedObject.base == Projectable::SHIP)
+			ResetViewpoint();
+	} else if (param == "SHIPS_ON")
 		m_shipDrawing = BOXES;
 	else if (param == "SHIPS_ORBITS")
 		m_shipDrawing = ORBITS;
@@ -798,6 +659,10 @@ void SystemView::SetSelectedObject(Projectable::types type, Projectable::bases b
 	m_selectedObject.type = type;
 	m_selectedObject.base = base;
 	m_selectedObject.ref.sbody = sb;
+	// we will immediately determine the coordinates of the selected body so that
+	// there is a correct starting point of the transition animation, otherwise
+	// there may be an unwanted shift in the next frame
+	GetTransformTo(m_selectedObject, m_transTo);
 	m_animateTransition = MAX_TRANSITION_FRAMES;
 }
 
@@ -806,6 +671,10 @@ void SystemView::SetSelectedObject(Projectable::types type, Projectable::bases b
 	m_selectedObject.type = type;
 	m_selectedObject.base = base;
 	m_selectedObject.ref.body = b;
+	// we will immediately determine the coordinates of the selected body so that
+	// there is a correct starting point of the transition animation, otherwise
+	// there may be an unwanted shift in the next frame
+	GetTransformTo(m_selectedObject, m_transTo);
 	m_animateTransition = MAX_TRANSITION_FRAMES;
 }
 
@@ -819,3 +688,4 @@ double SystemView::ProjectedSize(double size, vector3d pos)
 
 double SystemView::GetOrbitTime(double t, const SystemBody *b) { return t; }
 double SystemView::GetOrbitTime(double t, const Body *b) { return t - m_game->GetTime(); }
+void SystemView::OnSwitchFrom() { m_projected.clear(); } // because ships from the previous system may remain after last update

@@ -327,10 +327,6 @@
     "description": "",
     "message": "I'm taking damage. I need help."
   },
-  "LY": {
-    "description": "",
-    "message": "ly"
-  },
   "MACHINE_TOOLS": {
     "description": "custom cargo",
     "message": "Machine tools"
@@ -453,7 +449,7 @@
   },
   "SET_AS_TARGET": {
     "description": "",
-    "message": "Set as navigation target"
+    "message": "Tetapkan sebagai target navigasi"
   },
   "SET_RETURN_ROUTE": {
     "description": "",
@@ -502,6 +498,10 @@
   "TITANIUM": {
     "description": "custom cargo",
     "message": "Titanium"
+  },
+  "TOO_LATE_TO_PICK_UP": {
+    "description": "",
+    "message": "You are much too late! Your performance is so bad that I am cancelling my contract with you."
   },
   "TUNGSTEN": {
     "description": "custom cargo",

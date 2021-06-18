@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _DYNAMICBODY_H
@@ -28,7 +28,7 @@ public:
 	virtual void SetFrame(FrameId fId) override;
 	vector3d GetAngVelocity() const;
 	void SetAngVelocity(const vector3d &v);
-	virtual bool OnCollision(Object *o, Uint32 flags, double relVel) override;
+	virtual bool OnCollision(Body *o, Uint32 flags, double relVel) override;
 	vector3d GetAngularMomentum() const;
 	double GetAngularInertia() const { return m_angInertia; }
 	void SetMassDistributionFromModel();
@@ -67,6 +67,7 @@ public:
 		AIERROR_NONE = 0,
 		AIERROR_GRAV_TOO_HIGH,
 		AIERROR_REFUSED_PERM,
+		AIERROR_PRESS_TOO_HIGH,
 		AIERROR_ORBIT_IMPOSSIBLE
 	};
 	AIError AIMessage(AIError msg = AIERROR_NONE)

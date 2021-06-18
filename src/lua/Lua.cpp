@@ -1,14 +1,14 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Lua.h"
 #include "Pi.h"
 
 #include "LuaColor.h"
-#include "LuaComms.h"
 #include "LuaConsole.h"
 #include "LuaConstants.h"
 #include "LuaDev.h"
+#include "LuaEconomy.h"
 #include "LuaEngine.h"
 #include "LuaEvent.h"
 #include "LuaFileSystem.h"
@@ -35,10 +35,8 @@
 #include "SystemView.h"
 
 #include "galaxy/StarSystem.h"
-#include "gameui/Lua.h"
 #include "pigui/LuaPiGui.h"
 #include "scenegraph/Lua.h"
-#include "ui/Lua.h"
 
 namespace Lua {
 
@@ -101,6 +99,7 @@ namespace Lua {
 		LuaConstants::Register(Lua::manager->GetLuaState());
 		LuaLang::Register();
 		LuaEngine::Register();
+		LuaEconomy::Register();
 		LuaInput::Register();
 		LuaFileSystem::Register();
 		LuaJson::Register();
@@ -108,24 +107,19 @@ namespace Lua {
 		LuaServerAgent::Register();
 #endif
 		LuaGame::Register();
-		LuaComms::Register();
 		LuaFormat::Register();
 		LuaSpace::Register();
 		LuaShipDef::Register();
 		LuaMusic::Register();
 		LuaDev::Register();
-		LuaConsole::Register();
+		// LuaConsole::Register();
 
 		// XXX sigh
-		UI::Lua::Init();
-		GameUI::Lua::Init();
 		SceneGraph::Lua::Init();
 
 		// XXX load everything. for now, just modules
 		pi_lua_dofile(l, "libs/autoload.lua");
 		lua_pop(l, 1);
-
-		pi_lua_import_recursive(l, "ui");
 
 		pi_lua_import(l, "pigui", true);
 

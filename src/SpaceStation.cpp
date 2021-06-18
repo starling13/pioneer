@@ -1,10 +1,11 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "SpaceStation.h"
 
 #include "Camera.h"
 #include "CityOnPlanet.h"
+#include "EnumStrings.h"
 #include "Frame.h"
 #include "Game.h"
 #include "GameLog.h"
@@ -150,6 +151,7 @@ void SpaceStation::PostLoadFixup(Space *space)
 
 void SpaceStation::InitStation()
 {
+	PROFILE_SCOPED()
 	m_adjacentCity = 0;
 	for (int i = 0; i < NUM_STATIC_SLOTS; i++)
 		m_staticSlot[i] = false;
@@ -201,7 +203,7 @@ void SpaceStation::InitStation()
 	m_navLights.reset(new NavLights(model, 2.2f));
 	m_navLights->SetEnabled(true);
 
-	if (ground) SetClipRadius(CITY_ON_PLANET_RADIUS); // overrides setmodel
+	if (ground) SetClipRadius(CityOnPlanet::RADIUS); // overrides setmodel
 
 	m_doorAnimation = model->FindAnimation("doors");
 
@@ -317,12 +319,25 @@ bool SpaceStation::LaunchShip(Ship *ship, const int port)
 	return true;
 }
 
-bool SpaceStation::GetDockingClearance(Ship *s, std::string &outMsg)
+// gets number of undocked ships within a given radius from the station
+int SpaceStation::GetNearbyTraffic(double radius)
+{
+	int shipsNearby = 0;
+	Space::BodyNearList traffic = Pi::game->GetSpace()->GetBodiesMaybeNear(this, radius);
+	for (Body *body : traffic) {
+		if (!body->IsType(ObjectType::SHIP)) continue;
+		shipsNearby++;
+	}
+	return shipsNearby - NumShipsDocked();
+}
+
+bool SpaceStation::GetDockingClearance(Ship *s)
 {
 	assert(m_shipDocking.size() == m_type->NumDockingPorts());
 	for (Uint32 i = 0; i < m_shipDocking.size(); i++) {
 		if (m_shipDocking[i].ship == s) {
-			outMsg = stringf(Lang::CLEARANCE_ALREADY_GRANTED_BAY_N, formatarg("bay", i + 1));
+			LuaEvent::Queue("onDockingClearanceDenied", this, s,
+				EnumStrings::GetString("DockingRefusedReason", int(DockingRefusedReason::ClearanceAlreadyGranted)));
 			return (m_shipDocking[i].stage > 0); // grant docking only if the ship is not already docked/undocking
 		}
 	}
@@ -341,8 +356,9 @@ bool SpaceStation::GetDockingClearance(Ship *s, std::string &outMsg)
 		// distance-to-station check
 		const double shipDist = s->GetPositionRelTo(this).Length();
 		double requestDist = 100000.0; //100km
-		if (s->IsType(Object::PLAYER) && shipDist > requestDist) {
-			outMsg = Lang::CLEARANCE_DENIED_TOO_FAR;
+		if (s->IsType(ObjectType::PLAYER) && shipDist > requestDist) {
+			LuaEvent::Queue("onDockingClearanceDenied", this, s,
+				EnumStrings::GetString("DockingRefusedReason", int(DockingRefusedReason::TooFarFromStation)));
 			return false;
 		}
 
@@ -354,17 +370,19 @@ bool SpaceStation::GetDockingClearance(Ship *s, std::string &outMsg)
 			// Note: maxOffset is squared
 			sd.maxOffset = std::max((pPort->maxShipSize / 2 - bboxRad), float(pPort->maxShipSize / 5.0));
 			sd.maxOffset *= sd.maxOffset;
-			outMsg = stringf(Lang::CLEARANCE_GRANTED_BAY_N, formatarg("bay", i + 1));
+			LuaEvent::Queue("onDockingClearanceGranted", this, s);
 			return true;
 		}
 	}
-	outMsg = Lang::CLEARANCE_DENIED_NO_BAYS;
+
+	LuaEvent::Queue("onDockingClearanceDenied", this, s,
+		EnumStrings::GetString("DockingRefusedReason", int(DockingRefusedReason::NoBaysAvailable)));
 	return false;
 }
 
-bool SpaceStation::OnCollision(Object *b, Uint32 flags, double relVel)
+bool SpaceStation::OnCollision(Body *b, Uint32 flags, double relVel)
 {
-	if ((flags & 0x10) && (b->IsType(Object::SHIP))) {
+	if ((flags & 0x10) && (b->IsType(ObjectType::SHIP))) {
 		Ship *s = static_cast<Ship *>(b);
 
 		int port = -1;
@@ -512,8 +530,8 @@ void SpaceStation::DockingUpdate(const double timeStep)
 		}
 
 		double stageDuration = (dt.stage > 0 ?
-				m_type->GetDockAnimStageDuration(dt.stage - 1) :
-				m_type->GetUndockAnimStageDuration(abs(dt.stage) - 1));
+				  m_type->GetDockAnimStageDuration(dt.stage - 1) :
+				  m_type->GetUndockAnimStageDuration(abs(dt.stage) - 1));
 		dt.stagePos += timeStep / stageDuration;
 
 		if (dt.stage == 1) {
@@ -522,8 +540,7 @@ void SpaceStation::DockingUpdate(const double timeStep)
 			m_doorAnimationStep = 0.3; // open door
 
 			if (dt.stagePos >= 1.0) {
-				if (dt.ship == Pi::player)
-					Pi::game->log->Add(GetLabel(), Lang::DOCKING_CLEARANCE_EXPIRED, GameLog::PRIORITY_IMPORTANT);
+				LuaEvent::Queue("onDockingClearanceExpired", this, dt.ship);
 				dt.ship = 0;
 				dt.stage = 0;
 				m_doorAnimationStep = -0.3; // close door
@@ -724,7 +741,7 @@ void SpaceStation::Render(Graphics::Renderer *r, const Camera *camera, const vec
 	Body *b = Frame::GetFrame(GetFrame())->GetBody();
 	assert(b);
 
-	if (!b->IsType(Object::PLANET)) {
+	if (!b->IsType(ObjectType::PLANET)) {
 		// orbital spaceport -- don't make city turds or change lighting based on atmosphere
 		RenderModel(r, camera, viewCoords, viewTransform);
 		m_navLights->Render(r);

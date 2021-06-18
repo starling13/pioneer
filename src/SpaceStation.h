@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SPACESTATION_H
@@ -32,6 +32,12 @@ public:
 	OBJDEF(SpaceStation, ModelBody, SPACESTATION);
 	static void Init();
 
+	enum class DockingRefusedReason { // <enum scope='SpaceStation::DockingRefusedReason' name='DockingRefusedReason' public>
+		ClearanceAlreadyGranted,
+		TooFarFromStation,
+		NoBaysAvailable
+	};
+
 	SpaceStation() = delete;
 	// Should point to SystemBody in Pi::currentSystem
 	SpaceStation(const SystemBody *);
@@ -39,7 +45,7 @@ public:
 
 	virtual ~SpaceStation();
 	virtual vector3d GetAngVelocity() const { return vector3d(0, m_type->AngVel(), 0); }
-	virtual bool OnCollision(Object *b, Uint32 flags, double relVel) override;
+	virtual bool OnCollision(Body *b, Uint32 flags, double relVel) override;
 	bool DoShipDamage(Ship *s, Uint32 flags, double relVel);
 	virtual void Render(Graphics::Renderer *r, const Camera *camera, const vector3d &viewCoords, const matrix4x4d &viewTransform) override;
 	virtual void StaticUpdate(const float timeStep) override;
@@ -57,7 +63,9 @@ public:
 	void SetDocked(Ship *ship, const int port);
 	void SwapDockedShipsPort(const int oldPort, const int newPort);
 
-	bool GetDockingClearance(Ship *s, std::string &outMsg);
+	int GetNearbyTraffic(double radius);
+
+	bool GetDockingClearance(Ship *s);
 	int GetDockingPortCount() const { return m_type->NumDockingPorts(); }
 	int GetFreeDockingPort(const Ship *s) const; // returns -1 if none free
 	int GetMyDockingPort(const Ship *s) const;

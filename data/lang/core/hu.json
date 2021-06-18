@@ -103,10 +103,6 @@
     "description": "",
     "message": "Barna törpe objektum"
   },
-  "BUTTON": {
-    "description": "",
-    "message": "\" Gomb \""
-  },
   "CAMERA_BOTTOM_VIEW": {
     "description": "",
     "message": "Alsó kamera"
@@ -174,22 +170,6 @@
   "CH4_ATMOSPHERE": {
     "description": "",
     "message": "\" metán\""
-  },
-  "CLEARANCE_ALREADY_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Engedély már megadva. Haladj a(z) %bay leszállóöböl felé."
-  },
-  "CLEARANCE_DENIED_NO_BAYS": {
-    "description": "",
-    "message": "Kérés elutasítva. Nincs szabad leszállóhelyünk."
-  },
-  "CLEARANCE_DENIED_TOO_FAR": {
-    "description": "Shown if player requests docking too far away from station",
-    "message": "Engedély megtagadva. Hajó túl távol van az azonosításhoz."
-  },
-  "CLEARANCE_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Engedély megadva. Haladj a(z) %bay leszállóöböl felé."
   },
   "CO2_ATMOSPHERE": {
     "description": "",
@@ -327,10 +307,6 @@
     "description": "",
     "message": "Célállomás"
   },
-  "DIRECTION": {
-    "description": "Direction",
-    "message": "\" Irány \""
-  },
   "DISTANCE_LY": {
     "description": "",
     "message": "Távolság: %distance{f.2} fényév"
@@ -342,10 +318,6 @@
   "DOCKING": {
     "description": "",
     "message": "Dokkol"
-  },
-  "DOCKING_CLEARANCE_EXPIRED": {
-    "description": "",
-    "message": "Dokkolási engedély lejárt. Ha dokkolni akarsz, újra engedélyt kell kérned."
   },
   "DOWNGRADING_ALERT_STATUS": {
     "description": "",
@@ -362,10 +334,6 @@
   "DRAW_VERTICAL_LINES": {
     "description": "",
     "message": "Függőleges vonalak rajzolása"
-  },
-  "EARTH": {
-    "description": "",
-    "message": "Föld"
   },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
@@ -494,10 +462,6 @@
   "HARD_CAPITALIST": {
     "description": "",
     "message": "Teljesen kapitalista - kormányintézkedések nélkül"
-  },
-  "HAT": {
-    "description": "Hat switch: Is the top button on a joystick",
-    "message": "\" Hat\""
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
@@ -651,10 +615,6 @@
     "description": "",
     "message": "Joystick bevitel"
   },
-  "JOY_AXIS": {
-    "description": "Regarding joystick",
-    "message": "%{sign}%joyname %axis tengely"
-  },
   "L4L5_DISPLAY_MODE_TOGGLE": {
     "description": "Either show L4/L5 points or don't",
     "message": "L4/L5 Lagrange pont megjelenítése."
@@ -750,70 +710,6 @@
   "MANUAL_CONTROL_MODE": {
     "description": "",
     "message": "Manuális irányítás"
-  },
-  "MAP_LOCK_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Hiperűr cél rögzítése"
-  },
-  "MAP_TOGGLE_INFO_PANEL": {
-    "description": "",
-    "message": "Info panel "
-  },
-  "MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
-    "description": "",
-    "message": "Kijelölés követi a nézetet"
-  },
-  "MAP_VIEW_ROTATE_DOWN": {
-    "description": "",
-    "message": "Nézet forgatása le"
-  },
-  "MAP_VIEW_ROTATE_LEFT": {
-    "description": "",
-    "message": "Nézet forgatása balra"
-  },
-  "MAP_VIEW_ROTATE_RIGHT": {
-    "description": "",
-    "message": "Nézet forgatása jobbra"
-  },
-  "MAP_VIEW_ROTATE_UP": {
-    "description": "",
-    "message": "Nézet forgatása fel"
-  },
-  "MAP_VIEW_SHIFT_BACKWARD": {
-    "description": "",
-    "message": "Hátsó nézet"
-  },
-  "MAP_VIEW_SHIFT_DOWN": {
-    "description": "",
-    "message": "Le nézet"
-  },
-  "MAP_VIEW_SHIFT_FORWARD": {
-    "description": "",
-    "message": "Előre nézet"
-  },
-  "MAP_VIEW_SHIFT_LEFT": {
-    "description": "",
-    "message": "Bal nézet"
-  },
-  "MAP_VIEW_SHIFT_RIGHT": {
-    "description": "",
-    "message": "Jobb nézet"
-  },
-  "MAP_VIEW_SHIFT_UP": {
-    "description": "",
-    "message": "Fel nézet"
-  },
-  "MAP_WARP_TO_CURRENT_SYSTEM": {
-    "description": "",
-    "message": "Ugrás a jelenlegi rendszerbe"
-  },
-  "MAP_WARP_TO_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Ugrás hiperűr célponthoz"
-  },
-  "MAP_WARP_TO_SELECTED_SYSTEM": {
-    "description": "",
-    "message": "Ugrás a kiválasztott rendszerbe"
   },
   "MASS": {
     "description": "",
@@ -1067,13 +963,21 @@
     "description": "",
     "message": "%days{f.1} földi nap"
   },
-  "N_WHATEVER_MASSES": {
+  "N_EARTH_MASSES": {
     "description": "",
-    "message": "%mass{f.3} %units tömeg"
+    "message": "%mass{f.3} Föld-tömeg"
   },
-  "N_WHATEVER_RADII": {
+  "N_EARTH_RADII": {
+    "description": "Used in system info view. E.g.: \"0.17 Earth radii (118235 km)\"",
+    "message": "%radius{f.3} Föld-sugár (%radkm{f.0} km)"
+  },
+  "N_SOLAR_MASSES": {
+    "description": "",
+    "message": "%mass{f.3} Nap-tömeg"
+  },
+  "N_SOLAR_RADII": {
     "description": "Used in system info view. E.g. for Barnard's star: \"0.17 Solar radii (118235 km)\"",
-    "message": "%radius{f.3} %units sugár (%radkm{f.0} km)"
+    "message": "%radius{f.3} Nap-sugár (%radkm{f.0} km)"
   },
   "N_YEARS": {
     "description": "",
@@ -1230,10 +1134,6 @@
   "RESET": {
     "description": "",
     "message": "Alaphelyzet"
-  },
-  "RESET_ORIENTATION_AND_ZOOM": {
-    "description": "",
-    "message": "Nézet alaphelyzetbe"
   },
   "ROBOTS": {
     "description": "",
@@ -1438,10 +1338,6 @@
   "SOCIAL_DEMOCRACY": {
     "description": "",
     "message": "Szociális demokrácia"
-  },
-  "SOLAR": {
-    "description": "",
-    "message": "Nap"
   },
   "SOME_ESTABLISHED_MINING": {
     "description": "",
@@ -1707,10 +1603,6 @@
     "description": "",
     "message": "HUD mód váltás"
   },
-  "TOGGLE_LUA_CONSOLE": {
-    "description": "",
-    "message": "Lua konzol"
-  },
   "TOGGLE_RADAR_MODE": {
     "description": "",
     "message": "Radar mód"
@@ -1759,6 +1651,10 @@
     "description": "Duration unit: one 24-hour day",
     "message": "n"
   },
+  "UNIT_EARTH_GRAVITY": {
+    "description": "Acceleration unit: one earth gravity (g)",
+    "message": "g"
+  },
   "UNIT_HOURS": {
     "description": "Duration unit: one 60-minute hour",
     "message": "ó"
@@ -1794,6 +1690,10 @@
   "UNIT_MINUTES": {
     "description": "Duration unit: one 60-second minute",
     "message": "p"
+  },
+  "UNIT_PRESSURE_ATMOSPHERES": {
+    "description": "Pressure unit: one earth atmosphere (atm)",
+    "message": "atm"
   },
   "UNIT_SECONDS": {
     "description": "Duration unit: one second",
@@ -1871,14 +1771,6 @@
     "description": "",
     "message": "\" számottevő atmoszféra nélkül\""
   },
-  "X": {
-    "description": "keybinding: x axis",
-    "message": "X"
-  },
-  "Y": {
-    "description": "keybinding: y axis",
-    "message": "Y"
-  },
   "YAW": {
     "description": "",
     "message": "Kitér"
@@ -1894,10 +1786,6 @@
   "YOUNG_FARMING_COLONY": {
     "description": "",
     "message": "Fiatal farmkolónia"
-  },
-  "Z": {
-    "description": "keybinding: z axis",
-    "message": "Z"
   },
   "ZOOM_IN": {
     "description": "",

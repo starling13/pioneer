@@ -129,7 +129,7 @@
   },
   "DENY_5": {
     "description": "",
-    "message": "Не трать впустую моё время! Ты ещё зелёный."
+    "message": "Не трать моё время впустую! Ты ещё слишком зелен."
   },
   "DENY_6": {
     "description": "",
@@ -185,7 +185,7 @@
   },
   "FAILUREMSG_3": {
     "description": "",
-    "message": "Listen, we were clear about the deadline. You can forget about getting paid."
+    "message": "Послушайте, вы знали срок, можете забыть об оплате."
   },
   "FAILUREMSG_4": {
     "description": "",
@@ -213,7 +213,7 @@
   },
   "HOWMUCH_1": {
     "description": "regarding mass, always more than 1t",
-    "message": "{amount} метротонн."
+    "message": "{amount} тонн."
   },
   "HOWMUCH_2": {
     "description": "regarding mass, always more than 1t",
@@ -301,7 +301,7 @@
   },
   "INTROTEXT_PICKUP_LOCAL_2": {
     "description": "",
-    "message": "Здравствуйте. Меня зовут {name}. \nМой работодатель готов нанять вас за {cash} для помощи в переезде нашего склада, путём перевозки {cargoname} из космопорта {starport} на новое место в космопорте {dom_starport}."
+    "message": "Здравствуйте. Меня зовут {name}. \nМой работодатель готов нанять вас за {cash} для помощи в переезде нашего склада, нужно перевезти {cargoname} из космопорта {starport} на новое место в космопорте {dom_starport}."
   },
   "INTROTEXT_WEDDING_1": {
     "description": "",
@@ -326,10 +326,6 @@
   "I_NEED_HELP": {
     "description": "",
     "message": "Меня подбили. Нужна помощь."
-  },
-  "LY": {
-    "description": "",
-    "message": "св.лет"
   },
   "MACHINE_TOOLS": {
     "description": "custom cargo",
@@ -469,7 +465,7 @@
   },
   "STEM_BOLTS": {
     "description": "custom cargo, used in Star Trek DS9 as something with unclear usefulness",
-    "message": "Self-sealing stem bolts"
+    "message": "Самозатягивающиеся болты"
   },
   "SUCCESSMSG_1": {
     "description": "",
@@ -502,6 +498,10 @@
   "TITANIUM": {
     "description": "custom cargo",
     "message": "Титан"
+  },
+  "TOO_LATE_TO_PICK_UP": {
+    "description": "",
+    "message": "You are much too late! Your performance is so bad that I am cancelling my contract with you."
   },
   "TUNGSTEN": {
     "description": "custom cargo",

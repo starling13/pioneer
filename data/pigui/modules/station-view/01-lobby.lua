@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local ui = require 'pigui'
@@ -11,9 +11,10 @@ local Equipment = require 'Equipment'
 local ShipDef = require 'ShipDef'
 local Character = require 'Character'
 local Comms = require 'Comms'
+local Space = require 'Space'
 
-local InfoFace = require 'ui.PiguiFace'
-local PiImage = require 'ui.PiImage'
+local PiGuiFace = require 'pigui.libs.face'
+local PiImage = require 'pigui.libs.image'
 local textTable = require 'pigui.libs.text-table'
 local ModalWindow = require 'pigui.libs.modal-win'
 
@@ -62,6 +63,7 @@ end)
 local requestLaunch = function ()
 	local crimes, fine = Game.player:GetCrimeOutstanding()
 	local station = Game.player:GetDockedWith()
+	local nearbyTraffic = station:GetNearbyTraffic(50000) -- ships within 50km of station
 
 	if not Game.player:HasCorrectCrew() then
 		Comms.ImportantMessage(l.LAUNCH_PERMISSION_DENIED_CREW, station.label)
@@ -75,7 +77,14 @@ local requestLaunch = function ()
 		Comms.ImportantMessage(l.LAUNCH_PERMISSION_DENIED_BUSY, station.label)
 		popupMsg = l.LAUNCH_PERMISSION_DENIED_BUSY
 		popup:open()
+	elseif nearbyTraffic - (station.numShipsDocked) > 0 then -- station radar picking up stuff nearby
+		Comms.Message(l.LAUNCH_PERMISSION_GRANTED_WATCH_TRAFFIC, station.label)
+		Game.SwitchView()
+	elseif station.numDocks - (station.numShipsDocked + 1) < station.numShipsDocked * 0.2 then -- busy station, pads almost full
+		Comms.Message(l.LAUNCH_PERMISSION_GRANTED_DEPART_QUICK, station.label)
+		Game.SwitchView()
 	else
+		Comms.Message(l.LAUNCH_PERMISSION_GRANTED, station.label)
 		Game.SwitchView()
 	end
 end
@@ -234,6 +243,16 @@ local function drawPlayerInfo()
 
 	local orbit_period = station.path:GetSystemBody().orbitPeriod
 
+	local station_frameBody = Space.GetBody(station.path:GetSystemBody().parent.index)
+	local local_gravity_pressure = ""
+	if station.type == "STARPORT_SURFACE" then
+		if station.path:GetSystemBody().parent.hasAtmosphere then
+			local_gravity_pressure = string.format(l.STATION_LOCAL_GRAVITY_PRESSURE, (station.path:GetSystemBody().parent.gravity/9.8), station_frameBody:GetAtmosphericState(station))
+		else
+			local_gravity_pressure = string.format(l.STATION_LOCAL_GRAVITY, (station.path:GetSystemBody().parent.gravity/9.8))
+		end
+	end
+
 	local station_orbit_info = ""
 	if station.type == "STARPORT_ORBITAL" then
 		station_orbit_info =
@@ -245,20 +264,21 @@ local function drawPlayerInfo()
 		ui.withStyleVars({WindowPadding = widgetSizes.windowPadding, ItemSpacing = widgetSizes.itemSpacing}, function()
 			local conReg = ui.getContentRegion()
 			local infoColumnWidth = conReg.x - widgetSizes.faceSize.x - widgetSizes.windowPadding.x*3
-			local lobbyMenuHeight = widgetSizes.buttonSizeBase.y*3 + widgetSizes.itemSpacing.y*2
+			local lobbyMenuHeight = widgetSizes.buttonSizeBase.y*3 + widgetSizes.itemSpacing.y*3 + widgetSizes.windowPadding.y*2
 			local lobbyMenuAtBottom = (conReg.y - widgetSizes.faceSize.y > lobbyMenuHeight + widgetSizes.windowPadding.x*2)
 
-			ui.child("Wrapper", Vector2(0, widgetSizes.faceSize.y + widgetSizes.windowPadding.y*2 + widgetSizes.itemSpacing.y), {}, function()
+			ui.child("Wrapper", Vector2(0, lobbyMenuAtBottom and -lobbyMenuHeight or 0), {}, function()
 				ui.child("PlayerShipFuel", Vector2(infoColumnWidth, 0), {"AlwaysUseWindowPadding"}, function()
 					local curPos = ui.getCursorPos()
 					textTable.withHeading(station.label, orbiteer.xlarge, {
 						{ tech_certified, "" },
 						{ station_docks, "" },
 						{ station_orbit_info, "" },
+						{ local_gravity_pressure, ""},
 					})
 
 					if not lobbyMenuAtBottom then
-						lobbyMenu(Vector2(curPos.x, curPos.y + widgetSizes.faceSize.y - lobbyMenuHeight))
+						lobbyMenu(Vector2(curPos.x, conReg.y - lobbyMenuHeight))
 					end
 				end)
 
@@ -298,7 +318,7 @@ StationView:registerView({
 			if (stationSeed ~= station.seed) then
 				stationSeed = station.seed
 				local rand = Rand.New(station.seed)
-				face = InfoFace.New(Character.New({ title = l.STATION_MANAGER }, rand), {windowPadding = widgetSizes.windowPadding, itemSpacing = widgetSizes.itemSpacing, size = widgetSizes.faceSize})
+				face = PiGuiFace.New(Character.New({ title = l.STATION_MANAGER }, rand), {itemSpacing = widgetSizes.itemSpacing})
 			end
 			hyperdrive = table.unpack(Game.player:GetEquip("engine")) or nil
 			hyperdrive_fuel = hyperdrive and hyperdrive.fuel or Equipment.cargo.hydrogen

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "GuiApplication.h"
@@ -13,6 +13,7 @@
 #include "graphics/Renderer.h"
 #include "graphics/Texture.h"
 #include "pigui/PiGui.h"
+#include "profiler/Profiler.h"
 #include "utils.h"
 #include "versioningInfo.h"
 
@@ -21,6 +22,7 @@
 
 void GuiApplication::BeginFrame()
 {
+	PROFILE_SCOPED()
 #if RTT
 	m_renderer->SetRenderTarget(m_renderTarget);
 #endif
@@ -61,6 +63,7 @@ void GuiApplication::DrawRenderTarget()
 
 void GuiApplication::EndFrame()
 {
+	PROFILE_SCOPED()
 #if RTT
 	DrawRenderTarget();
 #endif
@@ -148,16 +151,21 @@ void GuiApplication::HandleEvents()
 
 		m_input->HandleSDLEvent(event);
 	}
+
+	m_input->DispatchEvents();
 }
 
 Graphics::Renderer *GuiApplication::StartupRenderer(IniConfig *config, bool hidden)
 {
 	PROFILE_SCOPED()
+
 	// Initialize SDL
+	PROFILE_START_DESC("SDL_Init")
 	Uint32 sdlInitFlags = SDL_INIT_VIDEO | SDL_INIT_JOYSTICK;
 	if (SDL_Init(sdlInitFlags) < 0) {
 		Error("SDL initialization failed: %s\n", SDL_GetError());
 	}
+	PROFILE_STOP()
 
 	OutputVersioningInfo();
 
@@ -189,6 +197,7 @@ Graphics::Renderer *GuiApplication::StartupRenderer(IniConfig *config, bool hidd
 
 void GuiApplication::ShutdownRenderer()
 {
+	PROFILE_SCOPED()
 	m_renderTarget.reset();
 	m_renderState.reset();
 	m_renderer.reset();
@@ -196,20 +205,23 @@ void GuiApplication::ShutdownRenderer()
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-Input *GuiApplication::StartupInput(IniConfig *config)
+Input::Manager *GuiApplication::StartupInput(IniConfig *config)
 {
-	m_input.reset(new Input(config));
+	PROFILE_SCOPED()
+	m_input.reset(new Input::Manager(config));
 
 	return m_input.get();
 }
 
 void GuiApplication::ShutdownInput()
 {
+	PROFILE_SCOPED()
 	m_input.reset();
 }
 
 PiGui::Instance *GuiApplication::StartupPiGui()
 {
+	PROFILE_SCOPED()
 	m_pigui.Reset(new PiGui::Instance());
 	m_pigui->Init(GetRenderer());
 	return m_pigui.Get();
@@ -217,6 +229,7 @@ PiGui::Instance *GuiApplication::StartupPiGui()
 
 void GuiApplication::ShutdownPiGui()
 {
+	PROFILE_SCOPED()
 	m_pigui->Uninit();
 	m_pigui.Reset();
 }

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _PLAYER_H
@@ -22,7 +22,7 @@ public:
 
 	virtual void SetDockedWith(SpaceStation *, int port) override;
 	virtual bool DoDamage(float kgDamage) override final; // overloaded to add "crush" audio
-	virtual bool OnDamage(Object *attacker, float kgDamage, const CollisionContact &contactData) override;
+	virtual bool OnDamage(Body *attacker, float kgDamage, const CollisionContact &contactData) override;
 	virtual bool SetWheelState(bool down) override; // returns success of state change, NOT state itself
 	virtual Missile *SpawnMissile(ShipType::Id missile_type, int power = -1) override;
 	virtual void SetAlertState(Ship::AlertState as) override;

@@ -1,8 +1,7 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
-local Event = require 'Event'
 local Equipment = require 'Equipment'
 
 local Lang = require 'Lang'
@@ -26,47 +25,17 @@ local hyperJumpPlanner = {} -- for export
 -- hyperjump route stuff
 local hyperjump_route = {}
 local route_jumps = 0
-local auto_route_min_jump = 2 -- minimum jump distance when auto routing
 local current_system
 local current_path
 local map_selected_path
 local selected_jump
 local current_fuel
 local remove_first_if_current = true
-local hideHyperJumpPlaner = false
 local textIconSize = nil
 
 local function textIcon(icon, tooltip)
 	ui.icon(icon, textIconSize, colors.font, tooltip)
 end
-
-local function showJumpData(start, target, status, distance, fuel, duration, short)
-	local color = colors.font
-	if short then
-		ui.withStyleColors({["Text"] = color}, function()
-
-			ui.text(target:GetStarSystem().name)
-			ui.sameLine()
-			ui.text("("..fuel .. lc.UNIT_TONNES..")")
-		end)
-	else
-		ui.withStyleColors({["Text"] = color}, function()
-			ui.text(start:GetStarSystem().name)
-			ui.sameLine()
-			ui.text("->")
-			ui.sameLine()
-			ui.text(target:GetStarSystem().name)
-			ui.sameLine()
-			ui.text(":")
-			ui.sameLine()
-			ui.text(string.format("%.2f", distance) .. lc.UNIT_LY)
-			ui.sameLine()
-			ui.text(fuel .. lc.UNIT_TONNES)
-			ui.sameLine()
-			ui.text(ui.Format.Duration(duration, 2))
-		end)
-	end
-end -- showJumpData
 
 local function showInfo()
 	if ui.collapsingHeader(lui.ROUTE_INFO,{"DefaultOpen"}) then
@@ -74,7 +43,7 @@ local function showInfo()
 		local total_duration = 0
 		local total_distance = 0
 
-		textIcon(icons.display_navtarget, lui.CURRENT_SYSTEM)
+		textIcon(icons.navtarget, lui.CURRENT_SYSTEM)
 		ui.sameLine()
 		-- we can only have the current path in normal space
 		if current_path then
@@ -90,7 +59,7 @@ local function showInfo()
 				start = jump.path
 			end
 
-			if ui.selectable(current_system.name .. " (" .. current_path.sectorX .. ", " .. current_path.sectorY .. ", " .. current_path.sectorZ ..")") then
+			if ui.selectable(ui.Format.SystemPath(current_path)) then
 				sectorView:SwitchToPath(current_path)
 			end
 		else -- no current path => we are hyperjumping => no current system
@@ -101,9 +70,8 @@ local function showInfo()
 
 		if route_jumps > 0 then
 			local final_path = hyperjump_route[route_jumps].path
-			local final_sys = final_path:GetStarSystem()
 			ui.sameLine()
-			if ui.selectable(final_sys.name .. " (" .. final_path.sectorX .. ", " .. final_path.sectorY .. ", " .. final_path.sectorZ .. ")", false, {}) then
+			if ui.selectable(ui.Format.SystemPath(final_path), false, {}) then
 				sectorView:SwitchToPath(final_path)
 			end
 		else
@@ -146,7 +114,8 @@ end --mainButton
 local function buildJumpRouteList()
 	hyperjump_route = {}
 	local player = Game.player
-	local start = Game.system.path
+	-- if we are not in the system, then we are in hyperspace, we start building the route from the jump target
+	local start = Game.system and Game.system.path or player:GetHyperspaceDestination()
 	local drive = table.unpack(player:GetEquip("engine")) or nil
 	local fuel_type = drive and drive.fuel or Equipment.cargo.hydrogen
 	local current_fuel = player:CountEquip(fuel_type,"cargo")
@@ -180,7 +149,8 @@ local function updateHyperspaceTarget()
 	if #hyperjump_route > 0 then
 		-- first waypoint is always the hyperspace target
 		sectorView:SetHyperspaceTarget(hyperjump_route[1].path)
-	else
+	elseif not Game.InHyperspace() then
+		-- we will not reset the hyperjump target while we are in the hyperjump
 		sectorView:ResetHyperspaceTarget()
 		selected_jump = nil
 	end
@@ -198,8 +168,6 @@ local function showJumpRoute()
 
 		mainButton(icons.current_line, lui.REMOVE_JUMP,
 		function()
-			local new_route = {}
-			local new_count = 0
 			if selected_jump then
 				sectorView:RemoveRouteItem(selected_jump)
 			end
@@ -365,7 +333,7 @@ function hyperJumpPlanner.onEnterSystem(ship)
 	-- this should be the case if you are following a route and want the route to be
 	-- updated as you make multiple jumps
 	if ship:IsPlayer() and remove_first_if_current then
-		if route_jumps > 0 and hyperjump_route[1].path:IsSameSystem(Game.system.path) then
+		if route_jumps > 0 and hyperjump_route[1] and hyperjump_route[1].path:IsSameSystem(Game.system.path) then
 			sectorView:RemoveRouteItem(1)
 		end
 	end

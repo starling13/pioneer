@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Body.h"
@@ -83,15 +83,15 @@ void Body::ToJson(Json &jsonObj, Space *space)
 	jsonObj["body_type"] = int(GetType());
 
 	switch (GetType()) {
-	case Object::STAR:
-	case Object::PLANET:
-	case Object::SPACESTATION:
-	case Object::SHIP:
-	case Object::PLAYER:
-	case Object::MISSILE:
-	case Object::CARGOBODY:
-	case Object::PROJECTILE:
-	case Object::HYPERSPACECLOUD:
+	case ObjectType::STAR:
+	case ObjectType::PLANET:
+	case ObjectType::SPACESTATION:
+	case ObjectType::SHIP:
+	case ObjectType::PLAYER:
+	case ObjectType::MISSILE:
+	case ObjectType::CARGOBODY:
+	case ObjectType::PROJECTILE:
+	case ObjectType::HYPERSPACECLOUD:
 		SaveToJson(jsonObj, space);
 		break;
 	default:
@@ -104,33 +104,33 @@ Body *Body::FromJson(const Json &jsonObj, Space *space)
 	if (!jsonObj["body_type"].is_number_integer())
 		throw SavedGameCorruptException();
 
-	Object::Type type = Object::Type(jsonObj["body_type"]);
+	ObjectType type = ObjectType(jsonObj["body_type"]);
 	switch (type) {
-	case Object::STAR:
+	case ObjectType::STAR:
 		return new Star(jsonObj, space);
-	case Object::PLANET:
+	case ObjectType::PLANET:
 		return new Planet(jsonObj, space);
-	case Object::SPACESTATION:
+	case ObjectType::SPACESTATION:
 		return new SpaceStation(jsonObj, space);
-	case Object::SHIP: {
+	case ObjectType::SHIP: {
 		Ship *s = new Ship(jsonObj, space);
 		// Here because of comments in Ship.cpp on following function
 		s->UpdateLuaStats();
 		return static_cast<Body *>(s);
 	}
-	case Object::PLAYER: {
+	case ObjectType::PLAYER: {
 		Player *p = new Player(jsonObj, space);
 		// Read comments in Ship.cpp on following function
 		p->UpdateLuaStats();
 		return static_cast<Body *>(p);
 	}
-	case Object::MISSILE:
+	case ObjectType::MISSILE:
 		return new Missile(jsonObj, space);
-	case Object::PROJECTILE:
+	case ObjectType::PROJECTILE:
 		return new Projectile(jsonObj, space);
-	case Object::CARGOBODY:
+	case ObjectType::CARGOBODY:
 		return new CargoBody(jsonObj, space);
-	case Object::HYPERSPACECLOUD:
+	case ObjectType::HYPERSPACECLOUD:
 		return new HyperspaceCloud(jsonObj, space);
 	default:
 		assert(0);
@@ -234,7 +234,7 @@ void Body::UpdateFrame()
 		FrameId parent = frame->GetParent();
 		Frame *newFrame = Frame::GetFrame(parent);
 		if (newFrame) { // don't fall out of root frame
-			Output("%s leaves frame %s\n", GetLabel().c_str(), frame->GetLabel().c_str());
+			Log::Verbose("{} leaves frame{}\n", GetLabel(), frame->GetLabel());
 			SwitchToFrame(parent);
 			return;
 		}
@@ -246,7 +246,7 @@ void Body::UpdateFrame()
 		const vector3d pos = GetPositionRelTo(kid);
 		if (pos.Length() >= kid_frame->GetRadius()) continue;
 		SwitchToFrame(kid);
-		Output("%s enters frame %s\n", GetLabel().c_str(), kid_frame->GetLabel().c_str());
+		Log::Verbose("{} enters frame{}\n", GetLabel(), frame->GetLabel());
 		break;
 	}
 }

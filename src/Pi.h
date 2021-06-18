@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _PI_H
@@ -16,6 +16,10 @@
 #include <string>
 #include <vector>
 
+namespace Input {
+	class Manager;
+} //namespace Input
+
 namespace PiGui {
 	class Instance;
 } //namespace PiGui
@@ -23,7 +27,6 @@ namespace PiGui {
 class Game;
 
 class GameConfig;
-class Input;
 class Intro;
 class LuaConsole;
 class LuaNameGen;
@@ -59,10 +62,6 @@ namespace Sound {
 	class MusicPlayer;
 }
 
-namespace UI {
-	class Context;
-}
-
 class DetailLevel {
 public:
 	DetailLevel() :
@@ -82,6 +81,16 @@ public:
 		bool HeadlessMode() { return m_noGui; }
 
 		void SetStartPath(const SystemPath &startPath);
+
+		// Returns a pointer to the async JobSet for the current startup loading step.
+		// The current load step will not complete until all ordered jobs have finished.
+		// NOTE: this queue runs on a different thread.
+		JobSet *GetCurrentLoadStepQueue() const;
+
+		// Returns a pointer to the async JobSet for the entire startup loading screen.
+		// Loading will not finish until all ordered jobs have finished.
+		// NOTE: this queue runs on a different thread.
+		JobSet *GetAsyncStartupQueue() const;
 
 	protected:
 		// for compatibility, while we're moving Pi's internals into App
@@ -142,8 +151,6 @@ public:
 	// FIXME: hacked-in singleton pattern, find a better way to locate the application
 	static App *GetApp() { return m_instance; }
 
-	static bool IsConsoleActive();
-
 	static bool IsNavTunnelDisplayed() { return navTunnelDisplayed; }
 	static void SetNavTunnelDisplayed(bool state) { navTunnelDisplayed = state; }
 	static bool AreSpeedLinesDisplayed() { return speedLinesDisplayed; }
@@ -172,7 +179,6 @@ public:
 	static ServerAgent *serverAgent;
 #endif
 
-	static RefCountedPtr<UI::Context> ui;
 	static PiGui::Instance *pigui;
 
 	static Random rng;
@@ -184,7 +190,7 @@ public:
 
 	static void SetAmountBackgroundStars(const float pc)
 	{
-		amountOfBackgroundStarsDisplayed = Clamp(pc, 0.01f, 1.0f);
+		amountOfBackgroundStarsDisplayed = Clamp(pc, 0.0f, 1.0f);
 		bRefreshBackgroundStars = true;
 	}
 	static float GetAmountBackgroundStars() { return amountOfBackgroundStarsDisplayed; }
@@ -198,19 +204,10 @@ public:
 	/* Only use #if WITH_DEVKEYS */
 	static bool showDebugInfo;
 
-#if PIONEER_PROFILER
-	static std::string profilerPath;
-	static std::string profileOnePath;
-	static bool doProfileSlow;
-	static bool doProfileOne;
-#endif
-
-	static void RequestProfileFrame(const std::string &profilePath = "");
-
-	static Input *input;
+	static Input::Manager *input;
 	static Player *player;
 	static TransferPlanner *planner;
-	static LuaConsole *luaConsole;
+	static std::unique_ptr<LuaConsole> luaConsole;
 	static Sound::MusicPlayer &GetMusicPlayer() { return musicPlayer; }
 	static Graphics::Renderer *renderer;
 	static ModelCache *modelCache;
@@ -229,7 +226,6 @@ public:
 
 private:
 	static void HandleKeyDown(SDL_Keysym *key);
-	static void HandleEscKey();
 
 	// private members
 	static const Uint32 SYNC_JOBS_PER_LOOP = 1;

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Program.h"
@@ -112,7 +112,7 @@ namespace Graphics {
 						strCode.replace(found, (endFilename + 1) - found, incCode->GetData(), incCode->GetSize());
 						found = strCode.find("#include");
 					} else {
-						Error("Could not load %s", incPathBuffer.c_str());
+						Error("Could not load shader #include %s for shader %s\n", incPathBuffer.c_str(), filename.c_str());
 					}
 				}
 				// Store the modified text with the included files (if any)

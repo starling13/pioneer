@@ -327,10 +327,6 @@
     "description": "",
     "message": "Odniosłem uszkodzenia. Potrzebuję pomocy."
   },
-  "LY": {
-    "description": "",
-    "message": "lś"
-  },
   "MACHINE_TOOLS": {
     "description": "custom cargo",
     "message": "Maszyneria"
@@ -469,7 +465,7 @@
   },
   "STEM_BOLTS": {
     "description": "custom cargo, used in Star Trek DS9 as something with unclear usefulness",
-    "message": "Self-sealing stem bolts"
+    "message": "Samodociskające się śruby"
   },
   "SUCCESSMSG_1": {
     "description": "",
@@ -502,6 +498,10 @@
   "TITANIUM": {
     "description": "custom cargo",
     "message": "Tytan"
+  },
+  "TOO_LATE_TO_PICK_UP": {
+    "description": "",
+    "message": "You are much too late! Your performance is so bad that I am cancelling my contract with you."
   },
   "TUNGSTEN": {
     "description": "custom cargo",

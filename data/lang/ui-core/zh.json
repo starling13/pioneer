@@ -43,6 +43,10 @@
     "description": "Used in ShipInfo view, followed by a yes/no depending on if the ship can carry atmospheric shields",
     "message": "可安装大气护盾"
   },
+  "ATMO_PRESS_LIMIT": {
+    "description": "Base external pressure limit of a ship (without atmo shield)",
+    "message": "气压极限"
+  },
   "ATTEMPT_TO_REPAIR_HULL": {
     "description": "",
     "message": "尝试修理船体"
@@ -133,11 +137,11 @@
   },
   "CENTER_ON_SYSTEM": {
     "description": "Center on selected star system",
-    "message": "系统中心"
+    "message": "星系中心"
   },
   "CHANGE": {
     "description": "Face feature option",
-    "message": "更改"
+    "message": "更换形象:"
   },
   "CHANGE_BINDING": {
     "description": "Key binding option",
@@ -187,6 +191,10 @@
     "description": "",
     "message": "商品市场"
   },
+  "COMMODITY_TRADE_ANALYSIS": {
+    "description": "",
+    "message": "商品贸易分析:"
+  },
   "COMPACT_RADAR": {
     "description": "Game settings option",
     "message": "小型雷达"
@@ -219,6 +227,10 @@
     "description": "",
     "message": "继续游戏"
   },
+  "CONTRACT_FRAUD": {
+    "description": "Crime committed by intentionally breaking a contract",
+    "message": "合同欺诈"
+  },
   "CONTROLS": {
     "description": "",
     "message": "控制"
@@ -246,6 +258,10 @@
   "CREW_ROSTER": {
     "description": "",
     "message": "船员名册"
+  },
+  "CRIMINAL": {
+    "description": "Legal status of player",
+    "message": "犯人"
   },
   "CRIMINAL_RECORD": {
     "description": "Past crimes / crime history of character",
@@ -357,7 +373,7 @@
   },
   "DUE": {
     "description": "mission deadline date",
-    "message": "应有"
+    "message": "到期"
   },
   "DUMPING": {
     "description": "The illegal act of dumping waste",
@@ -515,17 +531,21 @@
     "description": "Hyperjump planner, referring to star system target",
     "message": "最终目标："
   },
+  "FINANCE": {
+    "description": "Financial statement of player, e.g. cash",
+    "message": "财务"
+  },
   "FLIGHTLOG_DOCKING": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is a station name",
-    "message": "停靠于{primary_info}"
+    "message": "停靠在{primary_info}"
   },
   "FLIGHTLOG_FLYING": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is the name of a space body",
-    "message": "在太空飞行，相对{primary_info}"
+    "message": "在{primary_info}外太空飞行"
   },
   "FLIGHTLOG_HYPERSPACE": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is the star system targeted for hyperspace jump.",
-    "message": "在超空间中，前往 {primary_info}"
+    "message": "从超空间，去 {primary_info}"
   },
   "FLIGHTLOG_JUMPING": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is the star system targeted for hyperspace jump.",
@@ -533,7 +553,7 @@
   },
   "FLIGHTLOG_LANDED": {
     "description": "Used in Flight Log, to indicate player's position, 'primary_info' is the name of a space body, typically a planet, the other two variables are latitude and longitude as floating point number, e.g. 'Landed on Trantor, position (-43.23, 67.89)'",
-    "message": "登陆到{primary}，位置（{secondary}，{teriory}info}）"
+    "message": "登陆到{primary},位于({secondary_info}, {tertiary_info})"
   },
   "FLIGHTLOG_STARPORT_ORBITAL": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is a station name, 'secondary_info' is a space body (planet, moon/satelite, star) name",
@@ -595,6 +615,10 @@
     "description": "",
     "message": "燃料重量"
   },
+  "FUGITIVE": {
+    "description": "Legal status of player",
+    "message": "逃犯"
+  },
   "FULL_SCREEN": {
     "description": "",
     "message": "全屏"
@@ -614,6 +638,10 @@
   "GOOD_RIDDANCE_TO_YOU_TOO": {
     "description": "",
     "message": "也祝你好运."
+  },
+  "GO_BACK": {
+    "description": "",
+    "message": "返回"
   },
   "GPU_JOBS": {
     "description": "",
@@ -1019,6 +1047,10 @@
     "description": "",
     "message": "超空间范围"
   },
+  "ILLEGAL_IN_SYSTEM": {
+    "description": "An illegal action or commodity",
+    "message": "系统违禁"
+  },
   "ILLEGAL_JUMP": {
     "description": "A finable crime",
     "message": "鲁莽的超空间跳跃已经被记录在案"
@@ -1111,6 +1143,18 @@
     "description": "",
     "message": "发射请求驳回:你的罚金已经爆表了."
   },
+  "LAUNCH_PERMISSION_GRANTED": {
+    "description": "",
+    "message": "已授予启动许可。"
+  },
+  "LAUNCH_PERMISSION_GRANTED_DEPART_QUICK": {
+    "description": "",
+    "message": "已授予许可。请不要把降落区弄得乱七八糟，赶快离开。"
+  },
+  "LAUNCH_PERMISSION_GRANTED_WATCH_TRAFFIC": {
+    "description": "",
+    "message": "已授予许可。出发时注意交通。"
+  },
   "LEGAL_STATUS": {
     "description": "",
     "message": "法律状况"
@@ -1187,9 +1231,17 @@
     "description": "Light year",
     "message": "光年"
   },
+  "MAJOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "主要出口"
+  },
   "MAJOR_EXPORTS_ITEM": {
     "description": "",
     "message": "主要出口"
+  },
+  "MAJOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "主要入口"
   },
   "MAJOR_IMPORTS_ITEM": {
     "description": "",
@@ -1267,13 +1319,25 @@
     "description": "",
     "message": "军事"
   },
+  "MINIMAL_TRADE": {
+    "description": "Indicates a system does not have a significant amount of trade in a commodity.",
+    "message": "最小贸易额"
+  },
   "MINIMUM_CREW": {
     "description": "",
     "message": "最小成员数"
   },
+  "MINOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "次要出口"
+  },
   "MINOR_EXPORTS_ITEM": {
     "description": "",
     "message": "次要出口"
+  },
+  "MINOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "次要入口"
   },
   "MINOR_IMPORTS_ITEM": {
     "description": "",
@@ -1423,6 +1487,10 @@
     "description": "",
     "message": "关闭"
   },
+  "OFFENDER": {
+    "description": "Legal status of player",
+    "message": "罪犯"
+  },
   "OK": {
     "description": "",
     "message": "确认"
@@ -1450,6 +1518,10 @@
   "OUTER_ARM": {
     "description": "Arm of the Milky Way galaxy",
     "message": "外部臂"
+  },
+  "OUTLAW": {
+    "description": "Legal status of player",
+    "message": "逃犯"
   },
   "OUTSTANDING_FINES": {
     "description": "Unpaid fines for crimes committed",
@@ -1535,6 +1607,10 @@
     "description": "For player reputation",
     "message": "专家"
   },
+  "PROFITABLE_TRADE": {
+    "description": "Indicates a profitable trade route.",
+    "message": "赢利贸易"
+  },
   "PUMP_DOWN": {
     "description": "Drain the fuel tank",
     "message": "抽空"
@@ -1615,6 +1691,10 @@
     "description": "",
     "message": "重置"
   },
+  "RESET_ORIENTATION_AND_ZOOM": {
+    "description": "",
+    "message": "重置方向和缩放"
+  },
   "RETURN_TO_GAME": {
     "description": "",
     "message": "返回游戏"
@@ -1636,8 +1716,8 @@
     "message": "报酬"
   },
   "ROTATE_VIEW": {
-    "description": "",
-    "message": "旋转视图"
+    "description": "Indicates that the button must be kept pressed down, to rotate camera view with mouse",
+    "message": "按住可旋转视图"
   },
   "ROUTE_INFO": {
     "description": "For hyperjump planner",
@@ -1703,6 +1783,10 @@
     "description": "",
     "message": "将目的地设置为导航目标. "
   },
+  "SET_RETURN_ROUTE": {
+    "description": "",
+    "message": "设置返程航线"
+  },
   "SHIP": {
     "description": "",
     "message": "飞船"
@@ -1757,7 +1841,7 @@
   },
   "START_AT_BARNARDS_STAR_DESC": {
     "description": "",
-    "message": "这是一个艰难的开始，从系统管理休息监狱站。"
+    "message": "这是一个艰难的开始，从星系管理休息监狱站。"
   },
   "START_AT_EARTH": {
     "description": "",
@@ -1807,6 +1891,14 @@
     "description": "Information shown in the station lobby, for total number of docking pads",
     "message": "我们的总容量是 {total_docking_pads} 对接垫."
   },
+  "STATION_LOCAL_GRAVITY": {
+    "description": "",
+    "message": "局部重力%.2f g."
+  },
+  "STATION_LOCAL_GRAVITY_PRESSURE": {
+    "description": "",
+    "message": "局部重力 %.2f g, 与气压 %.2f atm."
+  },
   "STATION_MANAGER": {
     "description": "",
     "message": "空间站管理者"
@@ -1855,6 +1947,10 @@
     "description": "Arm of the Milky Way galaxy",
     "message": "3k秒差距旋臂"
   },
+  "TOGGLE_FULL_COMMS_WINDOW": {
+    "description": "on world view / main screen",
+    "message": "Toggle full comms window"
+  },
   "TOGGLE_MALE_FEMALE": {
     "description": "player gender",
     "message": "切换 男/女"
@@ -1899,9 +1995,17 @@
     "description": "",
     "message": "总质量"
   },
+  "TRADING_FROM": {
+    "description": "Indicates the source system of a commodity trade.",
+    "message": "来自{system}:"
+  },
   "TRADING_ILLEGAL_GOODS": {
     "description": "",
     "message": "交易非法货物"
+  },
+  "TRADING_TO": {
+    "description": "Indicates the destination system of a commodity trade.",
+    "message": "去{system}:"
   },
   "TRUSTWORTHY": {
     "description": "For player reputation",
@@ -1914,6 +2018,10 @@
   "UNLAWFUL_WEAPONS_DISCHARGE": {
     "description": "",
     "message": "武器违法射击"
+  },
+  "UNPROFITABLE_TRADE": {
+    "description": "Indicates an unprofitable trade route.",
+    "message": "无利润贸易"
   },
   "UNRELIABLE": {
     "description": "",
@@ -1949,7 +2057,7 @@
   },
   "VIDEO_RESOLUTION": {
     "description": "",
-    "message": "视频分辨率"
+    "message": "屏幕分辨率"
   },
   "VIDEO_RESOLUTION_DESC": {
     "description": "Tooltip for video mode/resultion setting",

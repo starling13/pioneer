@@ -1,15 +1,16 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-local ui = require 'pigui'
-local InfoView = require 'pigui.views.info-view'
-local ModelSpinner = require 'PiGui.Modules.ModelSpinner'
-local Lang = require 'Lang'
-local Game = require 'Game'
-local ShipDef = require 'ShipDef'
 local Equipment = require 'Equipment'
+local Event = require 'Event'
+local Game = require 'Game'
+local Lang = require 'Lang'
+local ShipDef = require 'ShipDef'
+local ModelSpinner = require 'PiGui.Modules.ModelSpinner'
+local InfoView = require 'pigui.views.info-view'
 local Vector2 = _G.Vector2
 
+local ui = require 'pigui'
 local l = Lang.GetResource("ui-core")
 
 local fonts = ui.fonts
@@ -19,23 +20,21 @@ local textTable = require 'pigui.libs.text-table'
 -- use the old InfoView style layout instead of the new sidebar layout.
 local _OLD_LAYOUT = true
 
-local modelSpinner = ModelSpinner()
-local cachedShip = nil
-local cachedPattern = nil
+local modelSpinner
+
+local function resetModelSpinner()
+	modelSpinner = ModelSpinner()
+	local player = Game.player
+	local shipDef = ShipDef[player.shipId]
+	modelSpinner:setModel(shipDef.modelName, player:GetSkin(), player.model.pattern)
+end
 
 local function shipSpinner()
-	local spinnerWidth = _OLD_LAYOUT and ui.getColumnWidth() or ui.getContentRegion().x
+	local spinnerWidth = ui.getColumnWidth()
 	modelSpinner:setSize(Vector2(spinnerWidth, spinnerWidth / 1.5))
 
 	local player = Game.player
 	local shipDef = ShipDef[player.shipId]
-
-	if shipDef.modelName ~= cachedShip or player.model.pattern ~= cachedPattern then
-		cachedShip = shipDef.modelName
-		cachedPattern = player.model.pattern
-		modelSpinner:setModel(cachedShip, player:GetSkin(), cachedPattern)
-	end
-
 	ui.group(function ()
 		local font = ui.fonts.orbiteer.large
 		ui.withFont(font.name, font.size, function()
@@ -55,8 +54,8 @@ end
 local collapsingHeaderFlags = ui.TreeNodeFlags { "DefaultOpen" }
 
 local function shipStats()
-	local closed = ui.withFont(fonts.pionillium.medium, function()
-		return not ui.collapsingHeader("Ship Information", collapsingHeaderFlags)
+	local closed = ui.withFont(fonts.pionillium.medlarge, function()
+		return not ui.collapsingHeader(l.SHIP_INFORMATION, collapsingHeaderFlags)
 	end)
 
 	-- TODO: draw info ontop of the header
@@ -81,6 +80,12 @@ local function shipStats()
 	local fwd_acc = player:GetAcceleration("forward")
 	local bwd_acc = player:GetAcceleration("reverse")
 	local up_acc = player:GetAcceleration("up")
+
+	local atmo_shield = table.unpack(player:GetEquip("atmo_shield")) or nil
+	local atmo_shield_cap = 1
+	if atmo_shield then
+		atmo_shield_cap = atmo_shield.capabilities.atmo_shield
+	end
 
 	textTable.draw {
 		{ l.REGISTRATION_NUMBER..":",	shipLabel},
@@ -113,14 +118,16 @@ local function shipStats()
 		{ l.CREW_CABINS..":",  shipDef.maxCrew },
 		false,
 		{ l.MISSILE_MOUNTS..":",            shipDef.equipSlotCapacity.missile},
-		{ l.ATMOSPHERIC_SHIELDING..":",     shipDef.equipSlotCapacity.atmo_shield > 0 and l.YES or l.NO },
 		{ l.SCOOP_MOUNTS..":",              shipDef.equipSlotCapacity.scoop},
+		false,
+		{ l.ATMOSPHERIC_SHIELDING..":",     shipDef.equipSlotCapacity.atmo_shield > 0 and l.YES or l.NO },
+		{ l.ATMO_PRESS_LIMIT..":", string.format("%d atm", shipDef.atmosphericPressureLimit * atmo_shield_cap) },
 	}
 end
 
 local function equipmentList()
-	local closed = ui.withFont(fonts.pionillium.medium, function()
-		return not ui.collapsingHeader("Equipment", collapsingHeaderFlags)
+	local closed = ui.withFont(fonts.pionillium.medlarge, function()
+		return not ui.collapsingHeader(l.EQUIPMENT, collapsingHeaderFlags)
 	end)
 
 	if closed then return end
@@ -159,26 +166,27 @@ InfoView:registerView({
 	icon = ui.theme.icons.info,
 	showView = true,
 	draw = function()
-		ui.withStyleVars({ WindowPadding = Vector2(24, 24) }, function()
-			ui.child("", Vector2(0, 0), ui.WindowFlags {"AlwaysUseWindowPadding"}, function()
-				ui.withFont(fonts.pionillium.medium, function()
-					if _OLD_LAYOUT then
-						ui.columns(2, "shipInfo")
+		ui.withFont(fonts.pionillium.medlarge, function()
+			if _OLD_LAYOUT then
+				ui.columns(2, "shipInfo")
 
-						shipStats()
-						equipmentList()
-						ui.nextColumn()
+				shipStats()
+				equipmentList()
+				ui.nextColumn()
 
-						shipSpinner()
-						ui.columns(1, "")
-					else
-						shipSpinner()
-						shipStats()
-						equipmentList()
-					end
-				end)
-			end)
+				shipSpinner()
+				ui.columns(1, "")
+			else
+				shipSpinner()
+				shipStats()
+				equipmentList()
+			end
 		end)
 	end,
 	refresh = function() end,
 })
+
+Event.Register("onGameStart", resetModelSpinner)
+Event.Register("onShipTypeChanged", function(ship)
+	if ship == Game.player then resetModelSpinner() end
+end)

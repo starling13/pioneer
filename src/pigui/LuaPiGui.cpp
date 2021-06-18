@@ -1,10 +1,11 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "LuaPiGui.h"
 #include "Face.h"
 #include "Image.h"
 #include "ModelSpinner.h"
+#include "Radar.h"
 #include "lua/LuaPiGuiInternal.h"
 #include "lua/LuaTable.h"
 
@@ -14,6 +15,7 @@ static std::vector<std::pair<std::string, int>> m_keycodes = {
 	{ "up", SDLK_UP },
 	{ "down", SDLK_DOWN },
 	{ "escape", SDLK_ESCAPE },
+	{ "delete", SDLK_DELETE },
 	{ "f1", SDLK_F1 },
 	{ "f2", SDLK_F2 },
 	{ "f3", SDLK_F3 },
@@ -58,6 +60,7 @@ namespace PiGui {
 			LuaObject<PiGui::Image>::RegisterClass();
 			LuaObject<PiGui::Face>::RegisterClass();
 			LuaObject<PiGui::ModelSpinner>::RegisterClass();
+			LuaObject<PiGui::RadarWidget>::RegisterClass();
 			RegisterSandbox();
 		}
 

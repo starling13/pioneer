@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -18,13 +18,8 @@ local ShipDef = require 'ShipDef'
 local Ship = require 'Ship'
 local utils = require 'utils'
 
-local InfoFace = import("ui/InfoFace")
-local NavButton = import("ui/NavButton")
-
+local lc = Lang.GetResource 'core'
 local l = Lang.GetResource("module-assassination")
-
--- Get the UI class
-local ui = Engine.ui
 
 -- don't produce missions for further than this many light years away
 local max_ass_dist = 30
@@ -176,7 +171,7 @@ local makeAdvert = function (station)
 	local due = Game.time + dist / max_ass_dist * time * 22*60*60*24 + Engine.rand:Number(7*60*60*24, 31*60*60*24)
 	local danger = Engine.rand:Integer(1,4)
 	local reward = Engine.rand:Number(2100, 7000) * danger
-	reward = math.ceil(reward)
+	reward = utils.round(reward, 500)
 
 	-- XXX hull mass is a bad way to determine suitability for role
 	--local shipdefs = utils.build_array(utils.filter(function (k,def) return def.tag == 'SHIP' and def.hullMass >= (danger * 17) and def.equipSlotCapacity.ATMOSHIELD > 0 end, pairs(ShipDef)))
@@ -478,101 +473,35 @@ local onGameEnd = function ()
 	nearbysystems = nil
 end
 
-local onClick = function (mission)
+local function buildMissionDescription(mission)
+	local ui = require 'pigui'
+	local desc = {}
 	local dist = Game.system and string.format("%.2f", Game.system:DistanceTo(mission.location)) or "???"
-	return ui:Grid(2,1)
-		:SetColumn(0,{ui:VBox(10):PackEnd({ui:MultiLineText((flavours[mission.flavour].introtext):interp({
-														name   = mission.client.name,
-														target = mission.target,
-														system = mission.location:GetStarSystem().name,
-														cash   = Format.Money(mission.reward,false),
-														dist  = dist})
-										),
-										ui:Margin(10),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.TARGET_NAME)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.target)
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SPACEPORT)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.location:GetSystemBody().name)
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SYSTEM)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.location:GetStarSystem().name.." ("..mission.location.sectorX..","..mission.location.sectorY..","..mission.location.sectorZ..")")
-												})
-											}),
-										NavButton.New(l.SET_AS_TARGET, mission.location),
-										NavButton.New(l.SET_RETURN_ROUTE, mission.backstation),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SHIP)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(mission.shipname)
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.SHIP_ID)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(mission.shipregid),
-												})
-											}),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:MultiLineText(l.TARGET_WILL_BE_LEAVING_SPACEPORT_AT)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(Format.Date(mission.due))
-												})
-											}),
-										ui:Margin(5),
-										ui:Grid(2,1)
-											:SetColumn(0, {
-												ui:VBox():PackEnd({
-													ui:Label(l.DISTANCE)
-												})
-											})
-											:SetColumn(1, {
-												ui:VBox():PackEnd({
-													ui:Label(dist.." "..l.LY)
-												})
-											}),
-		})})
-		:SetColumn(1, {
-			ui:VBox(10):PackEnd(InfoFace.New(mission.client))
-		})
+
+	desc.description = flavours[mission.flavour].introtext:interp({
+		name   = mission.client.name,
+		target = mission.target,
+		system = mission.location:GetStarSystem().name,
+		cash   = ui.Format.Money(mission.reward,false),
+		dist  = dist
+	})
+
+	desc.details = {
+		{ l.TARGET_NAME, mission.target },
+		{ l.SPACEPORT, mission.location:GetSystemBody().name },
+		{ l.SYSTEM, ui.Format.SystemPath(mission.location) },
+		{ l.DISTANCE, dist.." "..lc.UNIT_LY },
+		false,
+		{ l.SHIP, mission.shipname },
+		{ l.SHIP_ID, mission.shipregid },
+		{ l.TARGET_WILL_BE_LEAVING_SPACEPORT_AT, ui.Format.Date(mission.due) }
+	}
+
+	desc.location = mission.location
+	desc.returnLocation = mission.backstation
+	desc.client = mission.client
+
+	return desc
 end
 
 local serialize = function ()
@@ -604,6 +533,6 @@ Event.Register("onUpdateBB", onUpdateBB)
 Event.Register("onGameEnd", onGameEnd)
 Event.Register("onReputationChanged", onReputationChanged)
 
-Mission.RegisterType('Assassination',l.ASSASSINATION,onClick)
+Mission.RegisterType('Assassination',l.ASSASSINATION, buildMissionDescription)
 
 Serializer:Register("Assassination", serialize, unserialize)

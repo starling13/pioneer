@@ -1,15 +1,15 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
 local Lang = require 'Lang'
 local Format = require 'Format'
-local PiImage = require 'ui.PiImage'
 local Equipment = require 'Equipment'
 
 local ui = require 'pigui'
 local pionillium = ui.fonts.pionillium
 local orbiteer = ui.fonts.orbiteer
+local PiImage = require 'pigui.libs.image'
 local MarketWidget = require 'pigui.libs.equipment-market'
 
 local l = Lang.GetResource("ui-core")
@@ -83,7 +83,7 @@ function CommodityMarketWidget.New(id, title, config)
 		end)
 		ui.nextColumn()
 	end
-	config.canDisplayItem = config.canDisplayItem or function (s, e) return e.purchasable and e:IsValidSlot("cargo") and Game.system:IsCommodityLegal(e) end
+	config.canDisplayItem = config.canDisplayItem or function (s, e) return e.purchasable and e:IsValidSlot("cargo") and Game.system:IsCommodityLegal(e.name) end
 	config.onClickItem = config.onClickItem or function(s,e,k)
 		s.selectedItem = e
 		s.tradeModeBuy = true
@@ -295,6 +295,16 @@ function CommodityMarketWidget:TradeMenu()
 				ui.columns(1, "", false)
 				ui.text('')
 
+				local pricemod = Game.system:GetCommodityBasePriceAlterations(self.selectedItem.name)
+				if pricemod > 10 then
+					ui.text(l.MAJOR_IMPORT)
+				elseif pricemod > 4 then
+					ui.text(l.MINOR_IMPORT)
+				elseif pricemod < -10 then
+					ui.text(l.MAJOR_EXPORT)
+				elseif pricemod < -4 then
+					ui.text(l.MINOR_EXPORT)
+				end
 				ui.textWrapped(self.selectedItem:GetDescription())
 
 				ui.setCursorPos(bottomHalf)

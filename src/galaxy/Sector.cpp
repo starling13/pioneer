@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Sector.h"
@@ -33,6 +33,14 @@ float Sector::DistanceBetween(RefCountedPtr<const Sector> a, int sysIdxA, RefCou
 	vector3f dv = a->m_systems[sysIdxA].GetPosition() - b->m_systems[sysIdxB].GetPosition();
 	dv += Sector::SIZE * vector3f(float(a->sx - b->sx), float(a->sy - b->sy), float(a->sz - b->sz));
 	return dv.Length();
+}
+
+float Sector::DistanceBetweenSqr(const RefCountedPtr<const Sector> a, const int sysIdxA, const RefCountedPtr<const Sector> b, const int sysIdxB)
+{
+	PROFILE_SCOPED()
+	vector3f dv = a->m_systems[sysIdxA].GetPosition() - b->m_systems[sysIdxB].GetPosition();
+	dv += Sector::SIZE * vector3f(float(a->sx - b->sx), float(a->sy - b->sy), float(a->sz - b->sz));
+	return dv.LengthSqr();
 }
 
 bool Sector::WithinBox(const int Xmin, const int Xmax, const int Ymin, const int Ymax, const int Zmin, const int Zmax) const
@@ -103,7 +111,6 @@ void Sector::Dump(FILE *file, const char *indent) const
 
 float Sector::System::DistanceBetween(const System *a, const System *b)
 {
-	PROFILE_SCOPED()
 	vector3f dv = a->GetPosition() - b->GetPosition();
 	dv += Sector::SIZE * vector3f(float(a->sx - b->sx), float(a->sy - b->sy), float(a->sz - b->sz));
 	return dv.Length();

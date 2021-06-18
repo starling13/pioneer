@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _GAME_H
@@ -30,12 +30,10 @@ struct InvalidGameStartLocation {
 
 class View;
 class SectorView;
-class UIView;
 class SystemInfoView;
 class SystemView;
 class WorldView;
 class DeathView;
-class ShipCpanel;
 class ObjectViewerView;
 
 class Game {
@@ -122,8 +120,7 @@ public:
 	WorldView *GetWorldView() const { return m_gameViews->m_worldView; }
 	DeathView *GetDeathView() const { return m_gameViews->m_deathView; }
 	View *GetSpaceStationView() const { return m_gameViews->m_spaceStationView; }
-	UIView *GetInfoView() const { return m_gameViews->m_infoView; }
-	ShipCpanel *GetCpan() const { return m_gameViews->m_cpan; }
+	View *GetInfoView() const { return m_gameViews->m_infoView; }
 
 	/* Only use #if WITH_OBJECTVIEWER */
 	ObjectViewerView *GetObjectViewerView() const;
@@ -146,8 +143,7 @@ private:
 		WorldView *m_worldView;
 		DeathView *m_deathView;
 		View *m_spaceStationView;
-		UIView *m_infoView;
-		ShipCpanel *m_cpan;
+		View *m_infoView;
 
 		/* Only use #if WITH_OBJECTVIEWER */
 		ObjectViewerView *m_objectViewerView;

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _BACKGROUND_H
@@ -108,6 +108,7 @@ namespace Background {
 
 		void SetIntensity(float intensity);
 		void SetDrawFlags(const Uint32 flags);
+		Uint32 GetDrawFlags() const { return m_drawFlags; }
 
 	private:
 		Graphics::Renderer *m_renderer;

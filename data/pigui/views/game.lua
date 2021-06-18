@@ -1,16 +1,13 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
 local Input = require 'Input'
 local Game = require 'Game'
-local utils = require 'utils'
-local Event = require 'Event'
 local Vector2 = _G.Vector2
 
 local Lang = require 'Lang'
 local lc = Lang.GetResource("core");
-local lui = Lang.GetResource("ui-core");
 
 local ui = require 'pigui'
 
@@ -18,9 +15,7 @@ local vutil = require 'pigui.libs.view-util'
 
 -- cache ui
 local pionillium = ui.fonts.pionillium
-local pionicons = ui.fonts.pionicons
 local colors = ui.theme.colors
-local icons = ui.theme.icons
 
 local reticuleCircleRadius = math.min(ui.screenWidth, ui.screenHeight) / 8
 local reticuleCircleThickness = 2.0
@@ -30,7 +25,6 @@ ui.reticuleCircleRadius = reticuleCircleRadius
 ui.reticuleCircleThickness = reticuleCircleThickness
 
 -- settings
-local ASTEROID_RADIUS = 1500000 -- rocky planets smaller than this (in meters) are considered an asteroid, not a planet
 local IN_SPACE_INDICATOR_SHIP_MAX_DISTANCE = 1000000 -- ships farther away than this don't show up on as in-space indicators
 -- center of screen, set each frame by the handler
 local center = nil
@@ -47,51 +41,7 @@ local gameView = {
 --import("pigui.libs.view-util").mixin_modules(gameView)
 vutil.mixin_modules(gameView)
 
-
-local function getBodyIcon(body)
-	local st = body.superType
-	local t = body.type
-	if st == "STARPORT" then
-		if t == "STARPORT_ORBITAL" then
-			return icons.spacestation
-		elseif body.type == "STARPORT_SURFACE" then
-			return icons.starport
-		end
-	elseif st == "GAS_GIANT" then
-		return icons.gas_giant
-	elseif st == "STAR" then
-		return icons.sun
-	elseif st == "ROCKY_PLANET" then
-		if body:IsMoon() then
-			return icons.moon
-		else
-			local sb = body:GetSystemBody()
-			if sb.radius < ASTEROID_RADIUS then
-				return icons.asteroid_hollow
-			else
-				return icons.rocky_planet
-			end
-		end
-	elseif body:IsShip() then
-		local shipClass = body:GetShipClass()
-		if icons[shipClass] then
-			return icons[shipClass]
-		else
-			print("data/pigui/game.lua: getBodyIcon unknown ship class " .. (shipClass and shipClass or "nil"))
-			return icons.ship -- TODO: better icon
-		end
-	elseif body:IsHyperspaceCloud() then
-		return icons.hyperspace -- TODO: better icon
-	elseif body:IsMissile() then
-		return icons.bullseye -- TODO: better icon
-	elseif body:IsCargoContainer() then
-		return icons.rocky_planet -- TODO: better icon
-	else
-		print("data/pigui/game.lua: getBodyIcon not sure how to process body, supertype: " .. (st and st or "nil") .. ", type: " .. (t and t or "nil"))
-		utils.print_r(body)
-		return icons.ship
-	end
-end
+local getBodyIcon = require 'pigui.modules.flight-ui.body-icons'
 
 local function setTarget(body)
 	if body:IsShip() or body:IsMissile() then
@@ -103,8 +53,8 @@ local function setTarget(body)
 end
 
 local function callModules(mode)
-	for k,v in pairs(ui.getModules(mode)) do
-		v.fun()
+	for k,v in ipairs(ui.getModules(mode)) do
+		v.draw()
 	end
 end
 
@@ -142,7 +92,8 @@ local function displayOnScreenObjects()
 	ui.radialMenu("onscreenobjects")
 
 	local should_show_label = ui.shouldShowLabels()
-	local iconsize = Vector2(18 , 18)
+	local iconsize = Vector2(20, 20)
+	local small_iconsize = Vector2(18,18)
 	local label_offset = 14 -- enough so that the target rectangle fits
 	local cluster_size = iconsize.x -- size of clusters to be collapsed into single bodies
 	local click_radius = cluster_size * 0.5
@@ -155,7 +106,7 @@ local function displayOnScreenObjects()
 		local mainBody = group.mainBody
 		local mainCoords = group.screenCoordinates
 
-		ui.addIcon(mainCoords, getBodyIcon(mainBody), colors.frame, iconsize, ui.anchor.center, ui.anchor.center)
+		ui.addIcon(mainCoords, getBodyIcon(mainBody, true), colors.frame, iconsize, ui.anchor.center, ui.anchor.center)
 
 		if should_show_label then
 			local label = mainBody:GetLabel()
@@ -205,10 +156,10 @@ local function displayOnScreenObjects()
 		end
 		-- popup content
 		ui.popup("navtarget" .. mainBody:GetLabel(), function()
-			local small_iconsize = Vector2(16,16)
 			for _,b in pairs(group.bodies) do
-				ui.icon(getBodyIcon(b), small_iconsize, colors.frame)
+				ui.icon(getBodyIcon(b, true), small_iconsize, colors.frame)
 				ui.sameLine()
+				ui.alignTextToLineHeight(small_iconsize.y)
 				if ui.selectable(b:GetLabel(), b == navTarget, {}) then
 					if b:IsShip() then
 						player:SetCombatTarget(b)
@@ -240,44 +191,47 @@ local function displayScreenshotInfo()
 	if not Engine.GetDisableScreenshotInfo() then
 		local current_system = Game.system
 		if current_system then
-			local current_path = current_system.path
 			local frame = player.frameBody
 			if frame then
-				local info = frame.label .. ", " .. current_system.name .. " (" .. current_path.sectorX .. ", " .. current_path.sectorY .. ", " .. current_path.sectorZ .. ")"
+				local info = frame.label .. ", " .. ui.Format.SystemPath(current_system.path)
 				ui.addStyledText(Vector2(20, 20), ui.anchor.left, ui.anchor.top, info , colors.white, pionillium.large)
 			end
 		end
 	end
 end
 
-local function drawGameModules()
+local function drawGameModules(delta_t)
 	for i, module in ipairs(gameView.modules) do
 		local shouldDraw = not Game.InHyperspace() or module.showInHyperspace
 		if (not module.disabled) and shouldDraw then
 			local ok, err = ui.pcall(module.draw, module, delta_t)
 			if not ok then
 				module.disabled = true
-				print(err)
+				logWarning(err)
 			end
 		end
 	end
 end
 
-local gameViewWindowFlags = ui.WindowFlags {"NoTitleBar", "NoResize", "NoMove", "NoInputs", "NoSavedSettings", "NoFocusOnAppearing", "NoBringToFrontOnFocus"}
 ui.registerHandler('game', function(delta_t)
 		-- delta_t is ignored for now
 		player = Game.player
 		gameView.player = player
-		colors = ui.theme.colors -- if the theme changes
-		icons = ui.theme.icons -- if the theme changes
+		-- TODO: add a handler mechanism for theme changes
+		-- colors = ui.theme.colors -- if the theme changes
+		-- icons = ui.theme.icons -- if the theme changes
+		-- keep a copy of the current view so modules can react to the escape key and change the view
+		-- without triggering the options dialog
+		local currentView = Game.CurrentView()
+
 		ui.setNextWindowPos(Vector2(0, 0), "Always")
 		ui.setNextWindowSize(Vector2(ui.screenWidth, ui.screenHeight), "Always")
 		ui.withStyleColors({ ["WindowBg"] = colors.transparent }, function()
-			ui.window("HUD", gameViewWindowFlags, function()
+			ui.window("HUD", ui.fullScreenWindowFlags, function()
 				gameView.center = Vector2(ui.screenWidth / 2, ui.screenHeight / 2)
 				if ui.shouldDrawUI() then
 					if Game.CurrentView() == "world" then
-						drawGameModules(gameView.modules)
+						drawGameModules(delta_t)
 						ui.radialMenu("worldloopworld")
 					else
 						ui.radialMenu("worldloopnotworld")
@@ -290,11 +244,11 @@ ui.registerHandler('game', function(delta_t)
 			end)
 		end)
 
-		if Game.CurrentView() == "world" and ui.noModifierHeld() and ui.isKeyReleased(ui.keys.escape) then
+		if currentView == "world" and ui.escapeKeyReleased() then
 			if not ui.optionsWindow.isOpen then
 				Game.SetTimeAcceleration("paused")
 				ui.optionsWindow:open()
-				Input.DisableBindings()
+				Input.EnableBindings(false)
 			else
 				ui.optionsWindow:close()
 				if not ui.optionsWindow.isOpen then

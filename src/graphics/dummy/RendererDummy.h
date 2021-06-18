@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #pragma once
@@ -38,6 +38,7 @@ namespace Graphics {
 		virtual bool SetRenderTarget(RenderTarget *) override final { return true; }
 
 		virtual bool SetDepthRange(double znear, double zfar) override final { return true; }
+		virtual bool ResetDepthRange() override final { return true; }
 
 		virtual bool ClearScreen() override final { return true; }
 		virtual bool ClearDepthBuffer() override final { return true; }

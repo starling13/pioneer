@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Lang = require 'Lang'
@@ -8,7 +8,7 @@ local ShipDef = require 'ShipDef'
 local Equipment = require 'Equipment'
 local StationView = require 'pigui.views.station-view'
 local Table = require 'pigui.libs.table'
-local PiImage = require 'ui/PiImage'
+local PiImage = require 'pigui.libs.image'
 local ModelSpinner = require 'PiGui.Modules.ModelSpinner'
 
 local ui = require 'pigui'
@@ -16,6 +16,7 @@ local pionillium = ui.fonts.pionillium
 local orbiteer = ui.fonts.orbiteer
 local l = Lang.GetResource("ui-core")
 local colors = ui.theme.colors
+local textTable = require 'pigui.libs.text-table'
 
 local vZero = Vector2(0,0)
 local rescaleVector = ui.rescaleUI(Vector2(1, 1), Vector2(1600, 900), true)
@@ -64,12 +65,20 @@ local shipClassString = {
 	unknown                    = "",
 }
 
+local function refreshModelSpinner()
+	if not selectedItem then return end
+	cachedShip = selectedItem.def.modelName
+	cachedPattern = selectedItem.pattern
+	modelSpinner:setModel(cachedShip, selectedItem.skin, cachedPattern)
+end
+
 local function refreshShipMarket()
 	widgetSizes.rowVerticalSpacing = Vector2(0, (widgetSizes.iconSize.y + widgetSizes.itemSpacing.y - pionillium.large.size)/2)
 
 	local station = Game.player:GetDockedWith()
 	shipMarket.items = station:GetShipsOnSale()
 	selectedItem = nil
+	shipMarket.selectedItem = nil
 end
 
 local function manufacturerIcon (manufacturer)
@@ -201,120 +210,68 @@ local tradeMenu = function()
 
 				local spinnerWidth = ui.getContentRegion().x
 				modelSpinner:setSize(Vector2(spinnerWidth, spinnerWidth / 2.5))
-				if selectedItem.def.modelName ~= cachedShip then
-					cachedShip = selectedItem.def.modelName
-					cachedPattern = selectedItem.pattern
-					modelSpinner:setModel(cachedShip, selectedItem.skin, cachedPattern)
-				end
-
 				modelSpinner:draw()
 
 				local hyperdrive_str = selectedItem.def.hyperdriveClass > 0 and
-						Equipment.hyperspace["hyperdrive_" .. selectedItem.def.hyperdriveClass]:GetName() or l.NONE
+					Equipment.hyperspace["hyperdrive_" .. selectedItem.def.hyperdriveClass]:GetName() or l.NONE
 
-				local forwardAccelEmpty =  def.linearThrust.FORWARD / (-9.81*1000*(def.hullMass+def.fuelTankMass))
-				local forwardAccelFull  =  def.linearThrust.FORWARD / (-9.81*1000*(def.hullMass+def.capacity+def.fuelTankMass))
-				local reverseAccelEmpty = -def.linearThrust.REVERSE / (-9.81*1000*(def.hullMass+def.fuelTankMass))
-				local reverseAccelFull  = -def.linearThrust.REVERSE / (-9.81*1000*(def.hullMass+def.capacity+def.fuelTankMass))
-				local deltav = def.effectiveExhaustVelocity * math.log((def.hullMass + def.fuelTankMass) / def.hullMass)
-				local deltav_f = def.effectiveExhaustVelocity * math.log((def.hullMass + def.fuelTankMass + def.capacity) / (def.hullMass + def.capacity))
-				local deltav_m = def.effectiveExhaustVelocity * math.log((def.hullMass + def.fuelTankMass + def.capacity) / def.hullMass)
+				local emptyMass = def.hullMass + def.fuelTankMass
+				local fullMass = def.hullMass + def.capacity + def.fuelTankMass
+				local forwardAccelEmpty =  def.linearThrust.FORWARD / (-9.81*1000*(emptyMass))
+				local forwardAccelFull  =  def.linearThrust.FORWARD / (-9.81*1000*(fullMass))
+				local reverseAccelEmpty = -def.linearThrust.REVERSE / (-9.81*1000*(emptyMass))
+				local reverseAccelFull  = -def.linearThrust.REVERSE / (-9.81*1000*(fullMass))
+				local deltav = def.effectiveExhaustVelocity * math.log((emptyMass) / def.hullMass)
+				local deltav_f = def.effectiveExhaustVelocity * math.log((fullMass) / (def.hullMass + def.capacity))
+				local deltav_m = def.effectiveExhaustVelocity * math.log((fullMass) / def.hullMass)
 
-				ui.withFont(pionillium.medlarge.name, pionillium.medlarge.size, function()
-					ui.child("ShipSpecs", ui.getContentRegion() - widgetSizes.itemSpacing, {"AlwaysUseWindowPadding"}, function()
-						local colSpecNameWidth = ui.getContentRegion().x / 3.5
-						local colSpecValWidth = (ui.getContentRegion().x - colSpecNameWidth*2) / 2
+				local atmoSlot
+				if def.equipSlotCapacity["atmo_shield"] > 0 then
+					atmoSlot = string.format("%d(+%d/+%d) atm", def.atmosphericPressureLimit,
+						def.atmosphericPressureLimit * (Equipment.misc.atmospheric_shielding.capabilities.atmo_shield - 1),
+						def.atmosphericPressureLimit * (Equipment.misc.heavy_atmospheric_shielding.capabilities.atmo_shield - 1) )
+				else
+					atmoSlot = string.format("%d atm", def.atmosphericPressureLimit)
+				end
 
-						ui.columns(4, "ShipSpecsTable")
-						ui.setColumnWidth(0, colSpecNameWidth)
-						ui.setColumnWidth(1, colSpecValWidth)
-						ui.setColumnWidth(2, colSpecNameWidth)
-						ui.setColumnWidth(3, colSpecValWidth)
+				local shipInfoTable = {
+					{
+						l.HYPERDRIVE_FITTED, hyperdrive_str,
+						l.CARGO_SPACE, Format.MassTonnes(def.equipSlotCapacity["cargo"])
+					}, {
+						l.FORWARD_ACCEL_FULL, Format.AccelG(forwardAccelFull),
+						l.WEIGHT_FULLY_LOADED, Format.MassTonnes(fullMass)
+					}, {
+						l.FORWARD_ACCEL_EMPTY, Format.AccelG(forwardAccelEmpty),
+						l.WEIGHT_EMPTY,  Format.MassTonnes(def.hullMass)
+					}, {
+						l.REVERSE_ACCEL_EMPTY, Format.AccelG(reverseAccelEmpty),
+						l.CAPACITY, Format.MassTonnes(def.capacity)
+					}, {
+						l.REVERSE_ACCEL_FULL, Format.AccelG(reverseAccelFull),
+						l.FUEL_WEIGHT, Format.MassTonnes(def.fuelTankMass)
+					}, {
+						l.DELTA_V_EMPTY, string.format("%d km/s", deltav / 1000),
+						l.MINIMUM_CREW, def.minCrew
+					}, {
+						l.DELTA_V_FULL, string.format("%d km/s", deltav_f / 1000),
+						l.MAXIMUM_CREW, def.maxCrew
+					}, {
+						l.DELTA_V_MAX, string.format("%d km/s", deltav_m / 1000),
+						l.MISSILE_MOUNTS, def.equipSlotCapacity["missile"]
+					}, {
+						l.ATMOSPHERIC_SHIELDING, yes_no(def.equipSlotCapacity["atmo_shield"]),
+						l.ATMO_PRESS_LIMIT, atmoSlot
+					}, {
+						l.SCOOP_MOUNTS, def.equipSlotCapacity["scoop"]
+					},
+				}
 
-						ui.text(l.HYPERDRIVE_FITTED)
-						ui.nextColumn()
-						ui.text(hyperdrive_str)
-						ui.nextColumn()
-						ui.text(l.CARGO_SPACE)
-						ui.nextColumn()
-						ui.text(Format.MassTonnes(def.equipSlotCapacity["cargo"]))
-						ui.nextColumn()
-
-						ui.text(l.WEIGHT_FULLY_LOADED)
-						ui.nextColumn()
-						ui.text(Format.MassTonnes(def.hullMass+def.capacity+def.fuelTankMass))
-						ui.nextColumn()
-						ui.text(l.WEIGHT_EMPTY)
-						ui.nextColumn()
-						ui.text(Format.MassTonnes(def.hullMass))
-						ui.nextColumn()
-
-						ui.text(l.FORWARD_ACCEL_FULL)
-						ui.nextColumn()
-						ui.text(Format.AccelG(forwardAccelFull))
-						ui.nextColumn()
-						ui.text(l.CAPACITY)
-						ui.nextColumn()
-						ui.text(Format.MassTonnes(def.capacity))
-						ui.nextColumn()
-
-						ui.text(l.FORWARD_ACCEL_EMPTY)
-						ui.nextColumn()
-						ui.text(Format.AccelG(forwardAccelEmpty))
-						ui.nextColumn()
-						ui.text(l.FUEL_WEIGHT)
-						ui.nextColumn()
-						ui.text(Format.MassTonnes(def.fuelTankMass))
-						ui.nextColumn()
-
-						ui.text(l.REVERSE_ACCEL_EMPTY)
-						ui.nextColumn()
-						ui.text(Format.AccelG(reverseAccelEmpty))
-						ui.nextColumn()
-						ui.text(l.MINIMUM_CREW)
-						ui.nextColumn()
-						ui.text(def.minCrew)
-						ui.nextColumn()
-
-						ui.text(l.REVERSE_ACCEL_FULL)
-						ui.nextColumn()
-						ui.text(Format.AccelG(reverseAccelFull))
-						ui.nextColumn()
-						ui.text(l.MAXIMUM_CREW)
-						ui.nextColumn()
-						ui.text(def.maxCrew)
-						ui.nextColumn()
-
-						ui.text(l.DELTA_V_EMPTY)
-						ui.nextColumn()
-						ui.text(string.format("%d km/s", deltav / 1000))
-						ui.nextColumn()
-						ui.text(l.MISSILE_MOUNTS)
-						ui.nextColumn()
-						ui.text(def.equipSlotCapacity["missile"])
-						ui.nextColumn()
-
-						ui.text(l.DELTA_V_FULL)
-						ui.nextColumn()
-						ui.text(string.format("%d km/s", deltav_f / 1000))
-						ui.nextColumn()
-						ui.text(l.ATMOSPHERIC_SHIELDING)
-						ui.nextColumn()
-						ui.text(yes_no(def.equipSlotCapacity["atmo_shield"]))
-						ui.nextColumn()
-
-						ui.text(l.DELTA_V_MAX)
-						ui.nextColumn()
-						ui.text(string.format("%d km/s", deltav_m / 1000))
-						ui.nextColumn()
-						ui.text(l.SCOOP_MOUNTS)
-						ui.nextColumn()
-						ui.text(def.equipSlotCapacity["scoop"])
-						ui.nextColumn()
-
-						ui.columns(1, "")
-					end)
-
+				ui.child("ShipSpecs", ui.getContentRegion() - widgetSizes.itemSpacing, {"AlwaysUseWindowPadding"}, function()
+					local colSpecNameWidth = ui.getContentRegion().x / 3.6
+					local colSpecValWidth = (ui.getContentRegion().x - colSpecNameWidth*2) / 2
+					local widths = { colSpecNameWidth, colSpecValWidth, colSpecNameWidth, colSpecValWidth }
+					textTable.drawTable(4, widths, shipInfoTable)
 				end)
 			end)
 		end)
@@ -348,7 +305,11 @@ shipMarket = Table.New("shipMarketWidget", false, {
 			icons[item.def.shipClass] = PiImage.New("icons/shipclass/".. item.def.shipClass ..".png")
 			currentIconSize = icons[item.def.shipClass].texture.size
 		end
-		if not selectedItem then selectedItem = item end
+		if not selectedItem then
+			selectedItem = item
+			shipMarket.selectedItem = item
+			refreshModelSpinner()
+		end
 		icons[item.def.shipClass]:Draw(widgetSizes.iconSize)
 		ui.nextColumn()
 		ui.withStyleVars({ItemSpacing = vZero}, function()
@@ -365,6 +326,8 @@ shipMarket = Table.New("shipMarketWidget", false, {
 	end,
 	onClickItem = function(s,e)
 		selectedItem = e
+		shipMarket.selectedItem = e
+		refreshModelSpinner()
 	end,
 	sortingFunction = function(s1,s2) return s1.def.name < s2.def.name end
 })

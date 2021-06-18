@@ -180,44 +180,46 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalOptions>-Zm137 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;shlwapi.lib;libogg_static_vc2015_debug.lib;libvorbis_static_v140_debug.lib;libvorbisfile_static_v140_debug.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib; collider.lib;galaxy.lib;graphics.lib;gui.lib;ui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2017;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;collider.lib;galaxy.lib;graphics.lib;gui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2019;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalOptions>-Zm137 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;shlwapi.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib;collider.lib;galaxy.lib;graphics.lib;gui.lib;ui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2017;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;collider.lib;galaxy.lib;graphics.lib;gui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2019;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -225,20 +227,21 @@
     <ClCompile />
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;shlwapi.lib;libogg_static_vc2015_debug.lib;libvorbis_static_v140_debug.lib;libvorbisfile_static_v140_debug.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib;collider.lib;galaxy.lib;graphics.lib;gui.lib;ui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2017;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;collider.lib;galaxy.lib;graphics.lib;gui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2019;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -246,21 +249,22 @@
     <ClCompile />
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;shlwapi.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib; collider.lib;galaxy.lib;graphics.lib;gui.lib;ui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2017;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;collider.lib;galaxy.lib;graphics.lib;gui.lib;jenkins.lib;lua.lib;terrain.lib;text.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2019;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -268,13 +272,13 @@
     <ClCompile />
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;libogg_static_vc2015_release.lib;libvorbis_static_v140_release.lib;libvorbisfile_static_v140_release.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib;text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;ui.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2017;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2019;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>false</SDLCheck>
@@ -282,9 +286,10 @@
       <OmitFramePointers>true</OmitFramePointers>
       <MinimalRebuild>false</MinimalRebuild>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -292,13 +297,13 @@
     <ClCompile />
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib;text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;ui.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2017;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2019;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>false</SDLCheck>
@@ -307,9 +312,10 @@
       <MinimalRebuild>false</MinimalRebuild>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -317,23 +323,24 @@
     <ClCompile />
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;libogg_static_vc2015_release.lib;libvorbis_static_v140_release.lib;libvorbisfile_static_v140_release.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib; text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;ui.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2017;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x86/vs2019;$(SolutionDir)$(Configuration)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;PIONEER_PROFILER;WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/Qpar-report:2 /Qvec-report:2 %(AdditionalOptions)</AdditionalOptions>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OmitFramePointers>true</OmitFramePointers>
       <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x86\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -341,14 +348,14 @@
     <ClCompile />
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc141-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype271MT.lib;sigcpp.lib; text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;ui.lib;scenegraph.lib;gameui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2017;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmt.lib;Psapi.lib;glew.lib;profiler.lib;assimp-vc142-mt.lib;lua.lib;jenkins.lib;shlwapi.lib;ogg.lib;vorbis.lib;vorbisfile.lib;sdl2.lib;sdl2main.lib;opengl32.lib;glu32.lib;SDL2_image.lib;freetype.lib;sigc-vc140-2_0.lib;text.lib;galaxy.lib;collider.lib;graphics.lib;terrain.lib;gui.lib;scenegraph.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../win32/lib;../../../pioneer-thirdparty/win32/lib/x64/vs2019;$(SolutionDir)\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../../../pioneer-thirdparty/source/libsigc++-2.10.2;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../contrib/fmt/include;../../../contrib/fmt/include;../../../src;../../src;../../../pioneer-thirdparty/win32/include;../../../../pioneer-thirdparty/win32/include;../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../../../pioneer-thirdparty/win32/include/sigc++-2.0;../../win32/include;../../include;../../../contrib;../../contrib;../../contrib/imgui;../../contrib/lua;../../src/win32</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PSAPI_VERSION=1;_ITERATOR_DEBUG_LEVEL=0;IMGUI_IMPL_OPENGL_LOADER_GLEW;GLEW_NO_GLU;GLEW_STATIC;_SCL_SECURE_NO_WARNINGS;HAVE_M_PI;PIONEER_PROFILER;WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/Qpar-report:2 /Qvec-report:2 %(AdditionalOptions)</AdditionalOptions>
       <SDLCheck>false</SDLCheck>
@@ -356,9 +363,10 @@
       <OmitFramePointers>true</OmitFramePointers>
       <MinimalRebuild>false</MinimalRebuild>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2017\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
+      <Command>xcopy "..\..\..\pioneer-thirdparty\win32\bin\x64\vs2019\*.dll" "$(TargetDir)\*.dll" /Y /C</Command>
       <Message>copy the dlls into the directory</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -366,6 +374,7 @@
     <ClCompile Include="..\..\contrib\imgui\examples\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\..\contrib\imgui\examples\imgui_impl_sdl.cpp" />
     <ClCompile Include="..\..\contrib\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\contrib\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\contrib\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\contrib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\contrib\lz4\lz4.c" />
@@ -413,10 +422,10 @@
     <ClCompile Include="..\..\src\HudTrail.cpp" />
     <ClCompile Include="..\..\src\HyperspaceCloud.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
+    <ClCompile Include="..\..\src\InputBindings.cpp" />
     <ClCompile Include="..\..\src\Intro.cpp" />
     <ClCompile Include="..\..\src\JobQueue.cpp" />
     <ClCompile Include="..\..\src\JsonUtils.cpp" />
-    <ClCompile Include="..\..\src\KeyBindings.cpp" />
     <ClCompile Include="..\..\src\Lang.cpp" />
     <ClCompile Include="..\..\src\lua\core\Import.cpp" />
     <ClCompile Include="..\..\src\lua\core\Sandbox.cpp" />
@@ -424,10 +433,10 @@
     <ClCompile Include="..\..\src\lua\LuaBody.cpp" />
     <ClCompile Include="..\..\src\lua\LuaCargoBody.cpp" />
     <ClCompile Include="..\..\src\lua\LuaColor.cpp" />
-    <ClCompile Include="..\..\src\lua\LuaComms.cpp" />
     <ClCompile Include="..\..\src\lua\LuaConsole.cpp" />
     <ClCompile Include="..\..\src\lua\LuaConstants.cpp" />
     <ClCompile Include="..\..\src\lua\LuaDev.cpp" />
+    <ClCompile Include="..\..\src\lua\LuaEconomy.cpp" />
     <ClCompile Include="..\..\src\lua\LuaEngine.cpp" />
     <ClCompile Include="..\..\src\lua\LuaEvent.cpp" />
     <ClCompile Include="..\..\src\lua\LuaFaction.cpp" />
@@ -496,15 +505,14 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)pigui\</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">$(IntDir)pigui\</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\..\src\pigui\LuaRadar.cpp" />
     <ClCompile Include="..\..\src\pigui\ModelSpinner.cpp" />
     <ClCompile Include="..\..\src\pigui\PerfInfo.cpp" />
     <ClCompile Include="..\..\src\pigui\PiGui.cpp" />
     <ClCompile Include="..\..\src\pigui\LuaFace.cpp" />
     <ClCompile Include="..\..\src\pigui\PiGuiSandbox.cpp" />
-    <ClCompile Include="..\..\src\pigui\View.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)pigui\</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)pigui\</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\src\pigui\PiGuiView.cpp" />
+    <ClCompile Include="..\..\src\pigui\Radar.cpp" />
     <ClCompile Include="..\..\src\pigui\Widgets.cpp" />
     <ClCompile Include="..\..\src\Plane.cpp" />
     <ClCompile Include="..\..\src\Planet.cpp" />
@@ -542,11 +550,10 @@
     <ClCompile Include="..\..\src\Ship.cpp" />
     <ClCompile Include="..\..\src\ShipAICmd.cpp" />
     <ClCompile Include="..\..\src\ShipCockpit.cpp" />
-    <ClCompile Include="..\..\src\ShipCpanel.cpp" />
-    <ClCompile Include="..\..\src\ShipCpanelMultiFuncDisplays.cpp" />
     <ClCompile Include="..\..\src\ShipType.cpp" />
     <ClCompile Include="..\..\src\ship\CameraController.cpp" />
     <ClCompile Include="..\..\src\ship\PlayerShipController.cpp" />
+    <ClCompile Include="..\..\src\ship\PrecalcPath.cpp" />
     <ClCompile Include="..\..\src\ship\Propulsion.cpp" />
     <ClCompile Include="..\..\src\ship\ShipController.cpp" />
     <ClCompile Include="..\..\src\ship\ShipViewController.cpp" />
@@ -564,7 +571,7 @@
     <ClCompile Include="..\..\src\SystemView.cpp" />
     <ClCompile Include="..\..\src\TerrainBody.cpp" />
     <ClCompile Include="..\..\src\Tombstone.cpp" />
-    <ClCompile Include="..\..\src\UIView.cpp" />
+    <ClCompile Include="..\..\src\TransferPlanner.cpp" />
     <ClCompile Include="..\..\src\utils.cpp" />
     <ClCompile Include="..\..\src\versioningInfo.cpp" />
     <ClCompile Include="..\..\src\View.cpp" />
@@ -640,18 +647,18 @@
     <ClInclude Include="..\..\src\HudTrail.h" />
     <ClInclude Include="..\..\src\HyperspaceCloud.h" />
     <ClInclude Include="..\..\src\Input.h" />
+    <ClInclude Include="..\..\src\InputBindings.h" />
     <ClInclude Include="..\..\src\Intro.h" />
     <ClInclude Include="..\..\src\JobQueue.h" />
     <ClInclude Include="..\..\src\JsonUtils.h" />
-    <ClInclude Include="..\..\src\KeyBindings.h" />
     <ClInclude Include="..\..\src\libs.h" />
     <ClInclude Include="..\..\src\lua\core\CoreFwdDecl.h" />
     <ClInclude Include="..\..\src\lua\Lua.h" />
     <ClInclude Include="..\..\src\lua\LuaColor.h" />
-    <ClInclude Include="..\..\src\lua\LuaComms.h" />
     <ClInclude Include="..\..\src\lua\LuaConsole.h" />
     <ClInclude Include="..\..\src\lua\LuaConstants.h" />
     <ClInclude Include="..\..\src\lua\LuaDev.h" />
+    <ClInclude Include="..\..\src\lua\LuaEconomy.h" />
     <ClInclude Include="..\..\src\lua\LuaEngine.h" />
     <ClInclude Include="..\..\src\lua\LuaEvent.h" />
     <ClInclude Include="..\..\src\lua\LuaFileSystem.h" />
@@ -705,7 +712,8 @@
     <ClInclude Include="..\..\src\pigui\ModelSpinner.h" />
     <ClInclude Include="..\..\src\pigui\PerfInfo.h" />
     <ClInclude Include="..\..\src\pigui\PiGui.h" />
-    <ClInclude Include="..\..\src\pigui\View.h" />
+    <ClInclude Include="..\..\src\pigui\PiGuiView.h" />
+    <ClInclude Include="..\..\src\pigui\Radar.h" />
     <ClInclude Include="..\..\src\Plane.h" />
     <ClInclude Include="..\..\src\Planet.h" />
     <ClInclude Include="..\..\src\Player.h" />
@@ -725,11 +733,10 @@
     <ClInclude Include="..\..\src\Ship.h" />
     <ClInclude Include="..\..\src\ShipAICmd.h" />
     <ClInclude Include="..\..\src\ShipCockpit.h" />
-    <ClInclude Include="..\..\src\ShipCpanel.h" />
-    <ClInclude Include="..\..\src\ShipCpanelMultiFuncDisplays.h" />
     <ClInclude Include="..\..\src\ShipType.h" />
     <ClInclude Include="..\..\src\ship\CameraController.h" />
     <ClInclude Include="..\..\src\ship\PlayerShipController.h" />
+    <ClInclude Include="..\..\src\ship\PrecalcPath.h" />
     <ClInclude Include="..\..\src\ship\Propulsion.h" />
     <ClInclude Include="..\..\src\ship\ShipController.h" />
     <ClInclude Include="..\..\src\ship\ShipViewController.h" />
@@ -749,7 +756,7 @@
     <ClInclude Include="..\..\src\SystemView.h" />
     <ClInclude Include="..\..\src\TerrainBody.h" />
     <ClInclude Include="..\..\src\Tombstone.h" />
-    <ClInclude Include="..\..\src\UIView.h" />
+    <ClInclude Include="..\..\src\TransferPlanner.h" />
     <ClInclude Include="..\..\src\utils.h" />
     <ClInclude Include="..\..\src\vector2.h" />
     <ClInclude Include="..\..\src\vector3.h" />

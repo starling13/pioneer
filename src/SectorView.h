@@ -1,16 +1,16 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SECTORVIEW_H
 #define _SECTORVIEW_H
 
-#include "UIView.h"
+#include "DeleteEmitter.h"
 #include "Input.h"
 #include "galaxy/Sector.h"
 #include "galaxy/SystemPath.h"
 #include "graphics/Drawables.h"
 #include "gui/Gui.h"
-#include "DeleteEmitter.h"
+#include "pigui/PiGuiView.h"
 #include <set>
 #include <string>
 #include <vector>
@@ -22,7 +22,7 @@ namespace Graphics {
 	class RenderState;
 }
 
-class SectorView : public UIView, public DeleteEmitter {
+class SectorView : public PiGuiView, public DeleteEmitter {
 public:
 	SectorView(Game *game);
 	SectorView(const Json &jsonObj, Game *game);
@@ -76,9 +76,12 @@ public:
 	const std::string AutoRoute(const SystemPath &start, const SystemPath &target, std::vector<SystemPath> &outRoute) const;
 	void SetDrawRouteLines(bool value) { m_drawRouteLines = value; }
 
-	static struct InputBinding : public Input::InputFrame {
-		using Action = KeyBindings::ActionBinding;
-		using Axis = KeyBindings::AxisBinding;
+protected:
+	void OnSwitchTo() override;
+	void OnSwitchFrom() override;
+
+	struct InputBinding : public Input::InputFrame {
+		using InputFrame::InputFrame;
 
 		Action *mapToggleSelectionFollowView;
 		Action *mapWarpToCurrent;
@@ -91,12 +94,9 @@ public:
 		Axis *mapViewYaw;
 		Axis *mapViewPitch;
 		Axis *mapViewZoom;
+
 		void RegisterBindings() override;
 	} InputBindings;
-
-protected:
-	void OnSwitchTo() override;
-	void OnSwitchFrom() override;
 
 private:
 	void InitDefaults();
@@ -135,7 +135,6 @@ private:
 	void SetSelected(const SystemPath &path);
 
 	void MouseWheel(bool up);
-	void OnKeyPressed(SDL_Keysym *keysym);
 
 	RefCountedPtr<Galaxy> m_galaxy;
 
@@ -194,8 +193,12 @@ private:
 
 	// HyperJump Route Planner Stuff
 	std::vector<SystemPath> m_route;
+	Graphics::Drawables::Lines m_routeLines;
 	bool m_drawRouteLines;
-	void DrawRouteLines(const vector3f &playerAbsPos, const matrix4x4f &trans);
+	bool m_setupRouteLines;
+	void DrawRouteLines(const matrix4x4f &trans);
+	void SetupRouteLines(const vector3f &playerAbsPos);
+	void GetPlayerPosAndStarSize(vector3f &playerPosOut, float &currentStarSizeOut);
 
 	Graphics::RenderState *m_solidState;
 	Graphics::RenderState *m_alphaBlendState;
@@ -226,7 +229,6 @@ private:
 	Graphics::Drawables::Lines m_lines;
 	Graphics::Drawables::Lines m_sectorlines;
 	Graphics::Drawables::Points m_farstarsPoints;
-
 };
 
 #endif /* _SECTORVIEW_H */

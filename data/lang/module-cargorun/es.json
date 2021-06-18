@@ -327,10 +327,6 @@
     "description": "",
     "message": "Estoy sufriendo daños. Necesito ayuda."
   },
-  "LY": {
-    "description": "",
-    "message": "AL"
-  },
   "MACHINE_TOOLS": {
     "description": "custom cargo",
     "message": "Herramientas de maquinaria"
@@ -502,6 +498,10 @@
   "TITANIUM": {
     "description": "custom cargo",
     "message": "Titanio"
+  },
+  "TOO_LATE_TO_PICK_UP": {
+    "description": "",
+    "message": "¡Es demasiado tarde! Tu desempeño es tan malo que voy a cancelar mi contrato contigo."
   },
   "TUNGSTEN": {
     "description": "custom cargo",

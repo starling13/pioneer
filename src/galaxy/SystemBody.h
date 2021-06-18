@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef SYSTEMBODY_H
@@ -85,6 +85,7 @@ public:
 	bool IsMoon() const { return GetSuperType() == SUPERTYPE_ROCKY_PLANET && !IsPlanet(); }
 	// We allow hyperjump to any star of the system
 	bool IsJumpable() const { return GetSuperType() == SUPERTYPE_STAR; }
+	SystemBody *GetNearestJumpable();
 
 	bool HasChildren() const { return !m_children.empty(); }
 	Uint32 GetNumChildren() const { return static_cast<Uint32>(m_children.size()); }

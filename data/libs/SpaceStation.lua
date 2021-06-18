@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local SpaceStation = package.core['SpaceStation']
@@ -41,23 +41,24 @@ local function updateEquipmentStock (station)
 	assert(station and station:exists())
 	if equipmentStock[station] then return end
 	equipmentStock[station] = {}
+
 	local hydrogen = Equipment.cargo.hydrogen
-	for _,e in pairs(Equipment.cargo) do
+	for key, e in pairs(Equipment.cargo) do
 		if e.purchasable then
 			local rn = 100000 / math.abs(e.price) --have about 100,000 worth of stock, per commodity
 			if e == hydrogen then
 				equipmentStock[station][e] = math.floor(rn/2 + Engine.rand:Integer(0,rn)) --always stock hydrogen
 			else
-				local pricemod = Game.system:GetCommodityBasePriceAlterations(e)
+				local pricemod = Game.system:GetCommodityBasePriceAlterations(key)
 				local stock =  (Engine.rand:Integer(0,rn) + Engine.rand:Integer(0,rn)) / 2 -- normal 0-100% stock
-				if pricemod > 10 then --major import, very low stock
-					stock = stock - (rn*0.6) -- 0-40% stock
-				elseif pricemod > 2 then --minor import
-					stock = stock - (rn*0.3) -- 0-70% stock
+				if pricemod > 10 then --major import, low stock
+					stock = stock - (rn*0.10)     -- shifting .10 = 2% chance of 0 stock
+				elseif pricemod > 4 then --minor import
+					stock = stock - (rn*0.07)     -- shifting .07 = 1% chance of 0 stock
 				elseif pricemod < -10 then --major export
-					stock = stock + (rn*0.8) -- 80-180% stock
-				elseif pricemod < -2 then --minor export
-					stock = stock + (rn*0.3) -- 30-130% stock
+					stock = stock + (rn*0.8)
+				elseif pricemod < -4 then --minor export
+					stock = stock + (rn*0.3)
 				end
 				equipmentStock[station][e] = math.floor(stock >=0 and stock or 0)
 			end
@@ -65,6 +66,7 @@ local function updateEquipmentStock (station)
 			equipmentStock[station][e] = 0 -- commodity that cant be bought
 		end
 	end
+
 	for _,slot in pairs{"laser", "hyperspace", "misc"} do
 		for key, e in pairs(Equipment[slot]) do
 			equipmentStock[station][e] = Engine.rand:Integer(0,100)
@@ -104,7 +106,7 @@ function SpaceStation:GetEquipmentPrice (e)
 	if equipmentPrice[self][e] then
 		return equipmentPrice[self][e]
 	end
-	local mul = e:IsValidSlot("cargo") and ((100 + Game.system:GetCommodityBasePriceAlterations(e)) / 100) or 1
+	local mul = e:IsValidSlot("cargo") and ((100 + Game.system:GetCommodityBasePriceAlterations(e.name)) / 100) or 1
 	return mul * e.price
 end
 
@@ -289,13 +291,6 @@ local function addRandomShipAdvert(station, num)
 	end
 end
 
-local function createShipMarket (station)
-	shipsOnSale[station] = {}
-
-	local shipAdsToSpawn = Engine.rand:Poisson(N_equilibrium(station))
-	addRandomShipAdvert(station, shipAdsToSpawn)
-end
-
 local function updateShipsOnSale (station)
 	if not shipsOnSale[station] then shipsOnSale[station] = {} end
 	local shipsOnSale = shipsOnSale[station]
@@ -326,7 +321,7 @@ end
 -- Attribute: lawEnforcedRange
 --
 --   The distance, in meters, at which a station upholds the law,
---   (is 100 km for all at the moment)
+--   (is 50 km for all at the moment)
 --
 -- Availability:
 --
@@ -336,7 +331,7 @@ end
 --
 --   experimental
 --
-SpaceStation.lawEnforcedRange = 100000
+SpaceStation.lawEnforcedRange = 50000
 
 
 local police = {}
@@ -612,11 +607,8 @@ function SpaceStation:LockAdvert (ref)
 end
 
 local function updateAdverts (station)
-	-- XXX this should really just be a single event
-	-- XXX don't create for stations we haven't visited
 	if not SpaceStation.adverts[station] then
-		SpaceStation.adverts[station] = {}
-		Event.Queue("onCreateBB", station)
+		logWarning("SpaceStation.lua: updateAdverts called for station that hasn't been visited")
 	else
 		Event.Queue("onUpdateBB", station)
 	end
@@ -662,18 +654,23 @@ end
 
 local function updateSystem ()
 	local stations = Space.GetBodies(function (b) return b.superType == "STARPORT" end)
-	for i=1,#stations do
-		updateEquipmentStock(stations[i])
-		updateShipsOnSale(stations[i])
-		updateAdverts(stations[i])
+	for i, station in ipairs(stations) do
+		if SpaceStation.adverts[station] then
+			updateEquipmentStock(station)
+			updateShipsOnSale(station)
+			updateAdverts(station)
+		end
 	end
 end
 
-local function createSystem()
-	local stations = Space.GetBodies(function (b) return b.superType == "STARPORT" end)
-	for i=1,#stations do
-		createShipMarket(stations[i])
-	end
+local function createStationMarket (station)
+	SpaceStation.adverts[station] = {}
+	shipsOnSale[station] = {}
+
+	updateEquipmentStock(station)
+	local shipAdsToSpawn = Engine.rand:Poisson(N_equilibrium(station))
+	addRandomShipAdvert(station, shipAdsToSpawn)
+	Event.Queue("onCreateBB", station)
 end
 
 local function destroySystem ()
@@ -717,14 +714,12 @@ Event.Register("onGameStart", function ()
 		loaded_data = nil
 	end
 
-	createSystem()
-	updateSystem()
 	Timer:CallEvery(3600, updateSystem)
 end)
-Event.Register("onEnterSystem", function (ship)
-	if ship ~= Game.player then return end
-	createSystem()
-	updateSystem()
+
+Event.Register("onShipDocked", function (ship, station)
+	if ship ~= Game.player or SpaceStation.adverts[station] then return end
+	createStationMarket(station)
 end)
 
 Event.Register("onLeaveSystem", function (ship)

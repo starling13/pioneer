@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "ObjectViewerView.h"
@@ -77,7 +77,7 @@ void ObjectViewerView::Draw3D()
 	}
 
 	if (m_targetBody) {
-		if (m_targetBody->IsType(Object::STAR))
+		if (m_targetBody->IsType(ObjectType::STAR))
 			light.SetPosition(vector3f(0.f));
 		else {
 			light.SetPosition(vector3f(0.577f));
@@ -106,9 +106,9 @@ void ObjectViewerView::OnSwitchTo()
 
 void ObjectViewerView::ReloadState()
 {
-	if (m_targetBody->IsType(Object::SPACESTATION)) {
+	if (m_targetBody->IsType(ObjectType::SPACESTATION)) {
 		m_systemBody = static_cast<SpaceStation *>(m_targetBody)->GetSystemBody();
-	} else if (m_targetBody->IsType(Object::TERRAINBODY)) {
+	} else if (m_targetBody->IsType(ObjectType::TERRAINBODY)) {
 		m_systemBody = static_cast<TerrainBody *>(m_targetBody)->GetSystemBody();
 		m_isTerrainBody = m_systemBody != nullptr;
 	}

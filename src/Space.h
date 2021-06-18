@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SPACE_H
@@ -7,15 +7,14 @@
 #include "Background.h"
 #include "FrameId.h"
 #include "IterationProxy.h"
-#include "Object.h"
 #include "RefCounted.h"
 #include "galaxy/StarSystem.h"
 #include "vector3.h"
-#include <list>
 
 class Body;
 class Frame;
 class Game;
+enum class ObjectType;
 
 class Space {
 public:
@@ -63,12 +62,12 @@ public:
 		return GetHyperspaceExitPoint(source, m_starSystem->GetPath());
 	}
 
-	Body *FindNearestTo(const Body *b, Object::Type t) const;
+	Body *FindNearestTo(const Body *b, ObjectType t) const;
 	Body *FindBodyForPath(const SystemPath *path) const;
 
 	Uint32 GetNumBodies() const { return static_cast<Uint32>(m_bodies.size()); }
-	IterationProxy<std::list<Body *>> GetBodies() { return MakeIterationProxy(m_bodies); }
-	const IterationProxy<const std::list<Body *>> GetBodies() const { return MakeIterationProxy(m_bodies); }
+	IterationProxy<std::vector<Body *>> GetBodies() { return MakeIterationProxy(m_bodies); }
+	const IterationProxy<const std::vector<Body *>> GetBodies() const { return MakeIterationProxy(m_bodies); }
 
 	Background::Container *GetBackground() { return m_background.get(); }
 	void RefreshBackground();
@@ -85,6 +84,7 @@ public:
 	}
 
 	void DebugDumpFrames(bool details);
+
 private:
 	void GenSectorCache(RefCountedPtr<Galaxy> galaxy, const SystemPath *here);
 	void UpdateStarSystemCache(const SystemPath *here);
@@ -106,11 +106,15 @@ private:
 	Game *m_game;
 
 	// all the bodies we know about
-	std::list<Body *> m_bodies;
+	std::vector<Body *> m_bodies;
 
 	// bodies that were removed/killed this timestep and need pruning at the end
-	std::list<Body *> m_removeBodies;
-	std::list<Body *> m_killBodies;
+	enum class BodyAssignation {
+		KILL = 0,
+		REMOVE = 1
+	};
+
+	std::vector<std::pair<Body *, BodyAssignation>> m_assignedBodies;
 
 	void RebuildBodyIndex();
 	void RebuildSystemBodyIndex();
@@ -160,7 +164,6 @@ private:
 	//the NotifyRemoved callback (#735)
 	bool m_processingFinalizationQueue;
 #endif
-
 };
 
 #endif /* _SPACE_H */

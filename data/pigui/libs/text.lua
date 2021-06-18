@@ -1,6 +1,7 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 local Engine = require 'Engine'
+local Format = require 'Format'
 local Lang = require 'Lang'
 local Game = require 'Game'
 local ui = require 'pigui.baseui'
@@ -12,31 +13,34 @@ local font_factor = ui.rescaleUI(1, Vector2(1920, 1200))
 
 local textBackgroundMarginPixels = 2
 
-
+-- apply a subtle bias to prevent fonts from becoming overly tiny at small resolutions
+local function fontScale(size)
+	return math.round(size * (font_factor * 0.9 + 0.1))
+end
 
 ui.fonts = {
 	-- dummy font, actually renders icons
 	pionicons = {
-		small = { name = "icons", size = 16 * font_factor, offset = 14 * font_factor},
-		medium = { name = "icons", size = 18 * font_factor, offset = 20 * font_factor},
-		large = { name = "icons", size = 22 * font_factor, offset = 28 * font_factor}
+		small	= { name = "icons", size = fontScale(16), offset = fontScale(14) },
+		medium	= { name = "icons", size = fontScale(18), offset = fontScale(20) },
+		large	= { name = "icons", size = fontScale(22), offset = fontScale(28) }
 	},
 	pionillium = {
-		xlarge = { name = "pionillium", size = 36 * font_factor, offset = 24 * font_factor },
-		large = { name = "pionillium", size = 30 * font_factor, offset = 24 * font_factor},
-		medlarge = { name = "pionillium", size = 24 * font_factor, offset = 18 * font_factor},
-		medium = { name = "pionillium", size = 18 * font_factor, offset = 14 * font_factor},
+		xlarge	= { name = "pionillium", size = fontScale(36), offset = fontScale(24) },
+		large	= { name = "pionillium", size = fontScale(30), offset = fontScale(24) },
+		medlarge = { name = "pionillium", size = fontScale(24), offset = fontScale(18) },
+		medium	= { name = "pionillium", size = fontScale(18), offset = fontScale(14) },
 		-- 		medsmall = { name = "pionillium", size = 15, offset = 12 },
-		small = { name = "pionillium", size = 14 * font_factor, offset = 11 * font_factor},
-		tiny = { name = "pionillium", size = 8 * font_factor, offset = 7 * font_factor},
+		small	= { name = "pionillium", size = fontScale(14), offset = fontScale(11) },
+		tiny	= { name = "pionillium", size = fontScale(8), offset = fontScale(7) },
 	},
 	orbiteer = {
-		xlarge = { name = "orbiteer", size = 36 * font_factor, offset = 24 * font_factor },
-		large = { name = "orbiteer", size = 30 * font_factor, offset = 24 * font_factor },
-		medlarge = { name = "orbiteer", size = 24 * font_factor, offset = 20 * font_factor},
-		medium = { name = "orbiteer", size = 20 * font_factor, offset = 16 * font_factor},
-		small = { name = "orbiteer", size = 14 * font_factor, offset = 11 * font_factor},
-		tiny = { name = "orbiteer", size = 8 * font_factor, offset = 7 * font_factor},
+		xlarge	= { name = "orbiteer", size = fontScale(36), offset = fontScale(24) },
+		large	= { name = "orbiteer", size = fontScale(30), offset = fontScale(24) },
+		medlarge = { name = "orbiteer", size = fontScale(24), offset = fontScale(20) },
+		medium	= { name = "orbiteer", size = fontScale(20), offset = fontScale(16) },
+		small	= { name = "orbiteer", size = fontScale(14), offset = fontScale(11) },
+		tiny	= { name = "orbiteer", size = fontScale(8), offset = fontScale(7) },
 	},
 }
 
@@ -155,9 +159,30 @@ ui.Format = {
 		return string.format("%0.2f", distance / 1000 / 1000), lc.UNIT_MILLION_METERS_PER_SECOND
 		-- no need for au/s
 	end,
+	Money = Format.Money,
+	Date = Format.Date,
 	Datetime = function(date)
 		local second, minute, hour, day, month, year = Game.GetPartsFromDateTime(date)
 		return string.format("%4i-%02i-%02i %02i:%02i:%02i", year, month, day, hour, minute, second)
+	end,
+	Gravity = function(grav)
+		return string.format("%0.2f", grav) .. lc.UNIT_EARTH_GRAVITY
+	end,
+	Pressure = function(pres)
+		return string.format("%0.2f", pres) .. lc.UNIT_PRESSURE_ATMOSPHERES
+	end,
+	Number = function(number, places)
+		local s = number < 0.0 and "-" or ""
+		number = math.abs(number)
+		local fmt = "%." .. (places or '2') .. "f%s"
+		if number < 1e3 then return s .. fmt:format(number, "")
+		elseif number < 1e6 then return s .. math.floor(number / 1e3) .. "," .. number % 1e3
+		elseif number < 1e9 then return s .. fmt:format(number / 1e6, "mil")
+		elseif number < 1e12 then return s .. fmt:format(number / 1e9, "bil")
+		else return s .. fmt:format(number / 1e12, "trn") end
+	end,
+	SystemPath = function(path)
+		return path:GetStarSystem().name.." ("..path.sectorX..", "..path.sectorY..", "..path.sectorZ..")"
 	end
 }
 
@@ -253,5 +278,3 @@ ui.addStyledText = function(position, anchor_horizontal, anchor_vertical, text, 
 	end
 	return size
 end
-
-

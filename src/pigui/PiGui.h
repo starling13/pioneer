@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #pragma once
@@ -97,6 +97,12 @@ namespace PiGui {
 		// Calls ImGui::EndFrame() internally and does book-keeping before rendering.
 		void Render();
 
+		// Sets the ImGui Style object to use the predefined development tooling style
+		void SetDebugStyle();
+
+		// Sets the ImGui Style object to use the game UI style object as modified by Lua
+		void SetNormalStyle();
+
 		ImFont *AddFont(const std::string &name, int size);
 		ImFont *GetFont(const std::string &name, int size);
 
@@ -116,6 +122,9 @@ namespace PiGui {
 
 		std::map<std::string, PiFont> m_font_definitions;
 
+		ImGuiStyle m_debugStyle;
+		bool m_debugStyleActive;
+
 		void BakeFonts();
 		void BakeFont(PiFont &font);
 		void AddFontDefinition(const PiFont &font) { m_font_definitions[font.name()] = font; }
@@ -129,6 +138,8 @@ namespace PiGui {
 	bool ButtonImageSized(ImTextureID user_texture_id, const ImVec2 &size, const ImVec2 &imgSize, const ImVec2 &uv0, const ImVec2 &uv1, int frame_padding, const ImVec4 &bg_col, const ImVec4 &tint_col);
 
 	void ThrustIndicator(const std::string &id_string, const ImVec2 &size, const ImVec4 &thrust, const ImVec4 &velocity, const ImVec4 &bg_col, int frame_padding, ImColor vel_fg, ImColor vel_bg, ImColor thrust_fg, ImColor thrust_bg);
+
+	void IncrementDrag(const std::string &label, int &v, const int v_min, const int v_max, const std::string &format);
 
 	inline bool WantCaptureMouse()
 	{

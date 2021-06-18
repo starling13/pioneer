@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Model.h"
@@ -457,14 +457,45 @@ namespace SceneGraph {
 		for (AnimationContainer::const_iterator anim = m_animations.begin(); anim != m_animations.end(); ++anim) {
 			if ((*anim)->GetName() == name) return (*anim);
 		}
-		return 0;
+		return nullptr;
+	}
+
+	void Model::InitAnimations()
+	{
+		for (AnimationContainer::iterator anim = m_animations.begin(); anim != m_animations.end(); ++anim)
+			(*anim)->Interpolate();
 	}
 
 	void Model::UpdateAnimations()
 	{
-		// XXX WIP. Assuming animations are controlled manually by SetProgress.
-		for (AnimationContainer::iterator anim = m_animations.begin(); anim != m_animations.end(); ++anim)
-			(*anim)->Interpolate();
+		for (size_t i = 0; i < m_animations.size(); i++) {
+			if (m_activeAnimations & (1 << i))
+				m_animations[i]->Interpolate();
+		}
+	}
+
+	uint32_t Model::FindAnimationIndex(Animation *anim) const
+	{
+		for (size_t i = 0; i < m_animations.size(); i++) {
+			if (anim == m_animations[i]) return uint32_t(i);
+		}
+
+		return UINT32_MAX;
+	}
+
+	void Model::SetAnimationActive(uint32_t index, bool active)
+	{
+		if (index >= m_animations.size()) return;
+		if (active)
+			m_activeAnimations |= (1 << index);
+		else
+			m_activeAnimations &= ~(1 << index);
+	}
+
+	bool Model::GetAnimationActive(uint32_t index) const
+	{
+		if (index >= m_animations.size()) return false;
+		return m_activeAnimations & (1 << index);
 	}
 
 	void Model::SetThrust(const vector3f &lin, const vector3f &ang)
@@ -526,73 +557,44 @@ namespace SceneGraph {
 		}
 	}
 
-	class SaveVisitorJson : public NodeVisitor {
-	public:
-		SaveVisitorJson(Json &jsonObj) :
-			m_jsonArray(jsonObj) {}
-
-		void ApplyMatrixTransform(MatrixTransform &node)
-		{
-			const matrix4x4f &m = node.GetTransform();
-			Json matrixTransformObj({}); // Create JSON object to contain matrix transform data.
-			matrixTransformObj["m"] = m;
-			m_jsonArray.push_back(matrixTransformObj); // Append matrix transform object to array.
-		}
-
-	private:
-		Json &m_jsonArray;
-	};
-
 	void Model::SaveToJson(Json &jsonObj) const
 	{
 		Json modelObj({}); // Create JSON object to contain model data.
 
-		Json visitorArray = Json::array(); // Create JSON array to contain visitor data.
-		SaveVisitorJson sv(visitorArray);
-		m_root->Accept(sv);
-		modelObj["visitor"] = visitorArray; // Add visitor array to model object.
-
 		Json animationArray = Json::array(); // Create JSON array to contain animation data.
-		for (auto i : m_animations)
-			animationArray.push_back(i->GetProgress());
+		Json activeArray = Json::array();	 // Create JSON array to contain animation data.
+		for (size_t i = 0; i < m_animations.size(); i++) {
+			animationArray.push_back(m_animations[i]->GetProgress());
+			activeArray.push_back(GetAnimationActive(i));
+		}
 		modelObj["animations"] = animationArray; // Add animation array to model object.
+		modelObj["activeAnimations"] = activeArray;
 
 		modelObj["cur_pattern_index"] = m_curPatternIndex;
 
 		jsonObj["model"] = modelObj; // Add model object to supplied object.
 	}
 
-	class LoadVisitorJson : public NodeVisitor {
-	public:
-		LoadVisitorJson(const Json &jsonObj) :
-			m_jsonArray(jsonObj),
-			m_arrayIndex(0) {}
-
-		void ApplyMatrixTransform(MatrixTransform &node)
-		{
-			node.SetTransform(m_jsonArray[m_arrayIndex++]["m"]);
-		}
-
-	private:
-		const Json &m_jsonArray;
-		unsigned int m_arrayIndex;
-	};
-
 	void Model::LoadFromJson(const Json &jsonObj)
 	{
 		try {
 			Json modelObj = jsonObj["model"];
 
-			Json visitorArray = modelObj["visitor"].get<Json::array_t>();
-			LoadVisitorJson lv(visitorArray);
-			m_root->Accept(lv);
-
 			Json animationArray = modelObj["animations"].get<Json::array_t>();
-			assert(m_animations.size() == animationArray.size());
-			unsigned int arrayIndex = 0;
-			for (auto i : m_animations)
-				i->SetProgress(animationArray[arrayIndex++]);
-			UpdateAnimations();
+			Json activeArray = modelObj["activeAnimations"];
+			if (m_animations.size() == animationArray.size()) {
+				unsigned int arrayIndex = 0;
+				bool hasActive = activeArray.is_array();
+				for (auto i : m_animations) {
+					i->SetProgress(animationArray[arrayIndex]);
+					SetAnimationActive(arrayIndex, hasActive ? activeArray[arrayIndex].get<bool>() : true);
+					++arrayIndex;
+				}
+
+			} else {
+				Log::Info("Saved model '{}' has invalid animation data. The model file may have changed on disk.\n", m_name);
+			}
+			InitAnimations();
 
 			SetPattern(modelObj["cur_pattern_index"]);
 		} catch (Json::type_error &) {

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _OS_H
@@ -33,6 +33,9 @@ namespace OS {
 	// Open the Explorer/Finder/etc
 	bool SupportsFolderBrowser();
 	void OpenUserFolderBrowser();
+
+	// Mark application as DPI-aware
+	void SetDPIAware();
 } // namespace OS
 
 #endif

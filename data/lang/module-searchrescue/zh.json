@@ -433,11 +433,7 @@
   },
   "LON": {
     "description": "",
-    "message": "伦敦:"
-  },
-  "LY": {
-    "description": "",
-    "message": "光年"
+    "message": "经度:"
   },
   "MISSING_COMM": {
     "description": "",

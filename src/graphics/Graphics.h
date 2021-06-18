@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _GRAPHICS_H
@@ -80,6 +80,12 @@ namespace Graphics {
 	float GetFov();
 	void SetFov(float);
 	float GetFovFactor(); //cached 2*tan(fov/2) for LOD
+
+	// Project a point in the renderer's current coordinate system to screenspace
+	// as defined by Renderer::GetViewport.
+	// TODO: find a better place to hang this off of; this is too useful to be tied to a renderer object
+	vector3d ProjectToScreen(const Renderer *r, const vector3d &in);
+	vector3f ProjectToScreen(const Renderer *r, const vector3f &in);
 
 	// does SDL video init, constructs appropriate Renderer
 	Renderer *Init(Settings);

@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local ui = require 'pigui'
@@ -21,18 +21,6 @@ local buttonSpaceSize = iconSize
 -- Sometimes date is empty, e.g. departure date prior to departure
 local function formatDate(date)
 	return date and Format.Date(date) or nil
-end
-
-
-local function formatCoordinates(sysp)
-	return sysp.sectorX ..", "
-		.. sysp.sectorY ..", "
-		.. sysp.sectorZ
-end
-
--- Format system to be of form: "Sol (0,0,0)"
-local function formatsystem(sysp)
-	return sysp:GetStarSystem().name .. " (" .. formatCoordinates(sysp) .. ")"
 end
 
 -- Title text is gray, followed by the variable text:
@@ -90,7 +78,7 @@ local function renderCustomLog()
 
 		headerText(l.DATE, formatDate(time))
 		headerText(l.LOCATION, composeLocationString(location))
-		headerText(l.IN_SYSTEM, formatsystem(systemp))
+		headerText(l.IN_SYSTEM, ui.Format.SystemPath(systemp))
 		headerText(l.ALLEGIANCE, systemp:GetStarSystem().faction.name)
 		headerText(l.CASH, Format.Money(money))
 
@@ -133,7 +121,7 @@ local function renderStationLog()
 		headerText(l.STATION, string.interp(l[station_type],
 			{ primary_info = systemp:GetSystemBody().name, secondary_info = systemp:GetSystemBody().parent.name }))
 		-- headerText(l.LOCATION, systemp:GetSystemBody().parent.name)
-		headerText(l.IN_SYSTEM, formatsystem(systemp))
+		headerText(l.IN_SYSTEM, ui.Format.SystemPath(systemp))
 		headerText(l.ALLEGIANCE, systemp:GetStarSystem().faction.name)
 		headerText(l.CASH, Format.Money(money))
 
@@ -164,7 +152,7 @@ local function renderSystemLog()
 
 		headerText(l.ARRIVAL_DATE, formatDate(arrtime))
 		headerText(l.DEPARTURE_DATE, formatDate(deptime))
-		headerText(l.IN_SYSTEM, formatsystem(systemp))
+		headerText(l.IN_SYSTEM, ui.Format.SystemPath(systemp))
 		headerText(l.ALLEGIANCE, systemp:GetStarSystem().faction.name)
 
 		::input::
@@ -189,7 +177,7 @@ local function getFlightHistory()
 			-- input field for custom log:
 			headerText(l.LOG_NEW, "")
 			ui.sameLine()
-			text, changed = ui.inputText("##inputfield", "", {"EnterReturnsTrue"})
+			local text, changed = ui.inputText("##inputfield", "", {"EnterReturnsTrue"})
 			if changed then
 				FlightLog.MakeCustomEntry(text)
 			end

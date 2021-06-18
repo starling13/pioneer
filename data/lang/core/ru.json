@@ -57,11 +57,11 @@
   },
   "AUTOPILOT_ENTER_HIGH_ORBIT_AROUND": {
     "description": "",
-    "message": "Автопилот: Выйти на орбиту выше {target}"
+    "message": "Автопилот: Выйти на высокую орбиту {target}"
   },
   "AUTOPILOT_ENTER_LOW_ORBIT_AROUND": {
     "description": "",
-    "message": "Автопилот: Выйти на орбиту ниже {target}"
+    "message": "Автопилот: Выйти на низкую орбиту {target}"
   },
   "AUTOPILOT_ENTER_MEDIUM_ORBIT_AROUND": {
     "description": "",
@@ -69,7 +69,7 @@
   },
   "AUTOPILOT_FLY_TO_VICINITY_OF": {
     "description": "",
-    "message": "Автопилот: Подлететь ближе к {target}"
+    "message": "Автопилот: Лететь к {target}"
   },
   "AUTOPILOT_ON": {
     "description": "",
@@ -102,10 +102,6 @@
   "BROWN_DWARF": {
     "description": "",
     "message": "Коричневый карлик - субзвёздный объект"
-  },
-  "BUTTON": {
-    "description": "",
-    "message": "\" Кнопка \""
   },
   "CAMERA_BOTTOM_VIEW": {
     "description": "",
@@ -169,27 +165,11 @@
   },
   "CENTER": {
     "description": "",
-    "message": "Center"
+    "message": "Центр"
   },
   "CH4_ATMOSPHERE": {
     "description": "",
     "message": "\" метановой атмосферой\""
-  },
-  "CLEARANCE_ALREADY_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Ваше разрешение на посадку всё ещё действительно. Ваша площадка номер %bay."
-  },
-  "CLEARANCE_DENIED_NO_BAYS": {
-    "description": "",
-    "message": "Посадка запрещена. Нет свободных парковочных площадок."
-  },
-  "CLEARANCE_DENIED_TOO_FAR": {
-    "description": "Shown if player requests docking too far away from station",
-    "message": "Разрешение отклонено. Ваш корабль слишком далеко для проверки личности."
-  },
-  "CLEARANCE_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Разрешение на посадку предоставлено. Парковочная площадка номер %bay."
   },
   "CO2_ATMOSPHERE": {
     "description": "",
@@ -327,10 +307,6 @@
     "description": "",
     "message": "Пункт назначения"
   },
-  "DIRECTION": {
-    "description": "Direction",
-    "message": "\" Напр. \""
-  },
   "DISTANCE_LY": {
     "description": "",
     "message": "Расстояние: %distance{f.2} СвЛ"
@@ -342,10 +318,6 @@
   "DOCKING": {
     "description": "",
     "message": "Парковочная зона"
-  },
-  "DOCKING_CLEARANCE_EXPIRED": {
-    "description": "",
-    "message": "Время разрешения на стыковку истекло. Повторите запрос."
   },
   "DOWNGRADING_ALERT_STATUS": {
     "description": "",
@@ -362,10 +334,6 @@
   "DRAW_VERTICAL_LINES": {
     "description": "",
     "message": "Вертикальные линии"
-  },
-  "EARTH": {
-    "description": "",
-    "message": "земн."
   },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
@@ -485,7 +453,7 @@
   },
   "GRID_DISPLAY_MODE_TOGGLE": {
     "description": "Switch show no grid",
-    "message": "Switch between grid display modes."
+    "message": "Переключение между режимами отображения сетки."
   },
   "HAND_WEAPONS": {
     "description": "",
@@ -494,10 +462,6 @@
   "HARD_CAPITALIST": {
     "description": "",
     "message": "Ультракапитализм - отсутствие соцгарантий."
-  },
-  "HAT": {
-    "description": "Hat switch: Is the top button on a joystick",
-    "message": "\" Hat\""
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
@@ -573,7 +537,7 @@
   },
   "HYPERSPACE_JUMP_ABORT": {
     "description": "Mouse over text for hyperdrive button on ship control panel",
-    "message": "Деактивировать гипердвигатель"
+    "message": "Отключить гиперпривод"
   },
   "HYPERSPACE_JUMP_ABORTED": {
     "description": "",
@@ -581,11 +545,11 @@
   },
   "HYPERSPACE_JUMP_DISABLED": {
     "description": "Mouse over text for hyperdrive button on ship control panel",
-    "message": "Гипердвигатель выключен"
+    "message": "Гиперпривод выключен"
   },
   "HYPERSPACE_JUMP_ENGAGE": {
     "description": "Mouse over text for hyperdrive button on ship control panel",
-    "message": "Активировать гипердвигатель"
+    "message": "Включить гиперпривод"
   },
   "HYPERSPACE_JUMP_FORBIDDEN": {
     "description": "Mouse over text for hyperdrive button on ship control panel",
@@ -650,10 +614,6 @@
   "JOYSTICK_INPUT": {
     "description": "",
     "message": "Настройки джойстика:"
-  },
-  "JOY_AXIS": {
-    "description": "Regarding joystick",
-    "message": "%{sign}%joyname %axis Ось"
   },
   "L4L5_DISPLAY_MODE_TOGGLE": {
     "description": "Either show L4/L5 points or don't",
@@ -729,19 +689,19 @@
   },
   "MAJOR_EXPORTS": {
     "description": "",
-    "message": "Основной экспорт:"
+    "message": "Основные товары для продажи:"
   },
   "MAJOR_EXPORT_CURRENT_SYSTEM": {
     "description": "Short (tooltip) description of how much one commodity trades in the system the player is currently in",
-    "message": "Основной экспорт (текущая система)"
+    "message": "Основной товар для продажи (текущая система)"
   },
   "MAJOR_IMPORTS": {
     "description": "",
-    "message": "Основной импорт:"
+    "message": "Основные товары для ввоза:"
   },
   "MAJOR_IMPORT_CURRENT_SYSTEM": {
     "description": "Short (tooltip) description of how much one commodity trades in the system the player is currently in",
-    "message": "Основной импорт (текущая система)"
+    "message": "Основной товар для ввоза (текущая система)"
   },
   "MANUAL_CONTROL": {
     "description": "",
@@ -750,70 +710,6 @@
   "MANUAL_CONTROL_MODE": {
     "description": "",
     "message": "Ручное управление"
-  },
-  "MAP_LOCK_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Зафиксировать цель гиперпрыжка"
-  },
-  "MAP_TOGGLE_INFO_PANEL": {
-    "description": "",
-    "message": "Переключение панели информации"
-  },
-  "MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
-    "description": "",
-    "message": "Переключение экрана слежения за целью"
-  },
-  "MAP_VIEW_ROTATE_DOWN": {
-    "description": "",
-    "message": "Вращение камеры вниз"
-  },
-  "MAP_VIEW_ROTATE_LEFT": {
-    "description": "",
-    "message": "Вращение камеры влево"
-  },
-  "MAP_VIEW_ROTATE_RIGHT": {
-    "description": "",
-    "message": "Вращение камеры вправо"
-  },
-  "MAP_VIEW_ROTATE_UP": {
-    "description": "",
-    "message": "Вращение камеры вверх"
-  },
-  "MAP_VIEW_SHIFT_BACKWARD": {
-    "description": "",
-    "message": "Отдалить камеру"
-  },
-  "MAP_VIEW_SHIFT_DOWN": {
-    "description": "",
-    "message": "Смещение камеры вниз"
-  },
-  "MAP_VIEW_SHIFT_FORWARD": {
-    "description": "",
-    "message": "Приблизить камеру"
-  },
-  "MAP_VIEW_SHIFT_LEFT": {
-    "description": "",
-    "message": "Смещение камеры влево"
-  },
-  "MAP_VIEW_SHIFT_RIGHT": {
-    "description": "",
-    "message": "Смещение камеры вправо"
-  },
-  "MAP_VIEW_SHIFT_UP": {
-    "description": "",
-    "message": "Смещение камеры вверх"
-  },
-  "MAP_WARP_TO_CURRENT_SYSTEM": {
-    "description": "",
-    "message": "Гиперпрыжок к текущей системе"
-  },
-  "MAP_WARP_TO_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Гиперпрыжок к цели в гиперпространстве"
-  },
-  "MAP_WARP_TO_SELECTED_SYSTEM": {
-    "description": "",
-    "message": "Гиперпрыжок в выбранную систему"
   },
   "MASS": {
     "description": "",
@@ -869,19 +765,19 @@
   },
   "MINOR_EXPORTS": {
     "description": "",
-    "message": "Вторичный экспорт:"
+    "message": "Второстепенные товары для продажи:"
   },
   "MINOR_EXPORT_CURRENT_SYSTEM": {
     "description": "Short (tooltip) description of how much one commodity trades in the system the player is currently in",
-    "message": "Вторичный экспорт (текущая система)"
+    "message": "Второстепенный товар для продажи (текущая система)"
   },
   "MINOR_IMPORTS": {
     "description": "",
-    "message": "Вторичный импорт:"
+    "message": "Второстепенные товары для ввоза:"
   },
   "MINOR_IMPORT_CURRENT_SYSTEM": {
     "description": "Short (tooltip) description of how much one commodity trades in the system the player is currently in",
-    "message": "Вторичный импорт (текущая система)"
+    "message": "Второстепенный товар для ввоза (текущая система)"
   },
   "MISCELLANEOUS": {
     "description": "",
@@ -893,7 +789,7 @@
   },
   "MISSILE_DETECTED": {
     "description": "",
-    "message": "Missile launch detected."
+    "message": "Обнаружен пуск ракеты."
   },
   "MIXED_ECONOMY": {
     "description": "",
@@ -989,7 +885,7 @@
   },
   "NO_AUTOPILOT_INSTALLED": {
     "description": "",
-    "message": "Автопилот не установлен на корабле, нельзя включить автопилот"
+    "message": "Автопилот на корабле не установлен, нельзя включить"
   },
   "NO_CENTRAL_GOVERNANCE": {
     "description": "",
@@ -1001,7 +897,7 @@
   },
   "NO_HYPERDRIVE": {
     "description": "",
-    "message": "Межпланетный двигатель"
+    "message": "Гиперпривод отсутствует"
   },
   "NO_REGISTERED_INHABITANTS": {
     "description": "",
@@ -1065,15 +961,23 @@
   },
   "N_EARTH_DAYS": {
     "description": "",
-    "message": "%days{f.1} земн. дн."
+    "message": "%days{f.1} земных дней"
   },
-  "N_WHATEVER_MASSES": {
+  "N_EARTH_MASSES": {
     "description": "",
-    "message": "%mass{f.3} %units массы"
+    "message": "%mass{f.3} масс Земли"
   },
-  "N_WHATEVER_RADII": {
+  "N_EARTH_RADII": {
+    "description": "Used in system info view. E.g.: \"0.17 Earth radii (118235 km)\"",
+    "message": "%radius{f.3} радиусов Земли (%radkm{f.0} км)"
+  },
+  "N_SOLAR_MASSES": {
+    "description": "",
+    "message": "%mass{f.3} масс Солнца"
+  },
+  "N_SOLAR_RADII": {
     "description": "Used in system info view. E.g. for Barnard's star: \"0.17 Solar radii (118235 km)\"",
-    "message": "%radius{f.3} %units радиуса (%radkm{f.0} км)"
+    "message": "%radius{f.3} радиуса Солнца (%radkm{f.0} км)"
   },
   "N_YEARS": {
     "description": "",
@@ -1085,7 +989,7 @@
   },
   "OBJECT_INFO": {
     "description": "Originally for use as a window title and a button tooltip in the system map",
-    "message": "Object info"
+    "message": "Информация об объекте"
   },
   "OCEANICWORLD": {
     "description": "",
@@ -1101,7 +1005,7 @@
   },
   "ORBIT_PLANNER": {
     "description": "",
-    "message": "Orbit planner"
+    "message": "Планировщик орбиты"
   },
   "OUTDOOR_AGRICULTURAL_WORLD": {
     "description": "",
@@ -1201,7 +1105,7 @@
   },
   "PRESSURE_N_ATMOSPHERES": {
     "description": "",
-    "message": "p: %pressure{f.2} атм"
+    "message": "P: %pressure{f.2} атм"
   },
   "QUADRUPLE_SYSTEM": {
     "description": "",
@@ -1230,10 +1134,6 @@
   "RESET": {
     "description": "",
     "message": "Сброс"
-  },
-  "RESET_ORIENTATION_AND_ZOOM": {
-    "description": "",
-    "message": "Камера по умолчанию"
   },
   "ROBOTS": {
     "description": "",
@@ -1337,7 +1237,7 @@
   },
   "SET_AS_COMBAT_TARGET": {
     "description": "",
-    "message": "Set as combat target"
+    "message": "Установить в качестве боевой цели"
   },
   "SET_AS_TARGET": {
     "description": "",
@@ -1438,10 +1338,6 @@
   "SOCIAL_DEMOCRACY": {
     "description": "",
     "message": "Социал-демократия"
-  },
-  "SOLAR": {
-    "description": "",
-    "message": "солнечн."
   },
   "SOME_ESTABLISHED_MINING": {
     "description": "",
@@ -1707,10 +1603,6 @@
     "description": "",
     "message": "Переключение режима ИЛС"
   },
-  "TOGGLE_LUA_CONSOLE": {
-    "description": "",
-    "message": "Переключение Lua-консоли"
-  },
   "TOGGLE_RADAR_MODE": {
     "description": "",
     "message": "Переключение режима радара"
@@ -1759,6 +1651,10 @@
     "description": "Duration unit: one 24-hour day",
     "message": "дн"
   },
+  "UNIT_EARTH_GRAVITY": {
+    "description": "Acceleration unit: one earth gravity (g)",
+    "message": "g"
+  },
   "UNIT_HOURS": {
     "description": "Duration unit: one 60-minute hour",
     "message": "ч"
@@ -1794,6 +1690,10 @@
   "UNIT_MINUTES": {
     "description": "Duration unit: one 60-second minute",
     "message": "м"
+  },
+  "UNIT_PRESSURE_ATMOSPHERES": {
+    "description": "Pressure unit: one earth atmosphere (atm)",
+    "message": "атм"
   },
   "UNIT_SECONDS": {
     "description": "Duration unit: one second",
@@ -1871,14 +1771,6 @@
     "description": "",
     "message": "\" с разрежённой атмосферой\""
   },
-  "X": {
-    "description": "keybinding: x axis",
-    "message": "X"
-  },
-  "Y": {
-    "description": "keybinding: y axis",
-    "message": "Y"
-  },
   "YAW": {
     "description": "",
     "message": "Управление рысканьем"
@@ -1894,10 +1786,6 @@
   "YOUNG_FARMING_COLONY": {
     "description": "",
     "message": "Молодая сельскохозяйственная колония."
-  },
-  "Z": {
-    "description": "keybinding: z axis",
-    "message": "Z"
   },
   "ZOOM_IN": {
     "description": "",

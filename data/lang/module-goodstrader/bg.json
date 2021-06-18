@@ -1,7 +1,7 @@
 {
   "GOODS_TRADER_0": {
     "description": "",
-    "message": "Универмаг на {name}"
+    "message": "Универсален Магазин на {name}"
   },
   "GOODS_TRADER_1": {
     "description": "",
@@ -21,7 +21,7 @@
   },
   "GOODS_TRADER_5": {
     "description": "",
-    "message": "{name} & Синове"
+    "message": "{name} и Синове"
   },
   "SLOGAN_0": {
     "description": "",
@@ -41,11 +41,11 @@
   },
   "SLOGAN_4": {
     "description": "",
-    "message": "Пазар без граници, за Вашата свобода на действие."
+    "message": "Пазарът без граници, който гарантира Вашата свобода."
   },
   "SLOGAN_5": {
     "description": "",
-    "message": "Честния търговец."
+    "message": "Честният търговец."
   },
   "SLOGAN_6": {
     "description": "",

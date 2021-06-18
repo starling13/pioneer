@@ -43,6 +43,10 @@
     "description": "Used in ShipInfo view, followed by a yes/no depending on if the ship can carry atmospheric shields",
     "message": "Atmoszférapajzs"
   },
+  "ATMO_PRESS_LIMIT": {
+    "description": "Base external pressure limit of a ship (without atmo shield)",
+    "message": "Légköri nyomás tűrés"
+  },
   "ATTEMPT_TO_REPAIR_HULL": {
     "description": "",
     "message": "Kíséreld meg a hajótest javítását"
@@ -187,6 +191,10 @@
     "description": "",
     "message": "Árupiac"
   },
+  "COMMODITY_TRADE_ANALYSIS": {
+    "description": "",
+    "message": "Kereskedelmi elemzés: "
+  },
   "COMPACT_RADAR": {
     "description": "Game settings option",
     "message": "Kompakt radar"
@@ -219,6 +227,10 @@
     "description": "",
     "message": "Játék folytatása"
   },
+  "CONTRACT_FRAUD": {
+    "description": "Crime committed by intentionally breaking a contract",
+    "message": "Csalás, szerződésszegés"
+  },
   "CONTROLS": {
     "description": "",
     "message": "Irányítás"
@@ -246,6 +258,10 @@
   "CREW_ROSTER": {
     "description": "",
     "message": "Legénység:"
+  },
+  "CRIMINAL": {
+    "description": "Legal status of player",
+    "message": "Bűnöző"
   },
   "CRIMINAL_RECORD": {
     "description": "Past crimes / crime history of character",
@@ -515,6 +531,10 @@
     "description": "Hyperjump planner, referring to star system target",
     "message": "Végső cél:"
   },
+  "FINANCE": {
+    "description": "Financial statement of player, e.g. cash",
+    "message": "Pénzügy"
+  },
   "FLIGHTLOG_DOCKING": {
     "description": "Used in Flight Log, to indicate player's position. 'primary_info' is a station name",
     "message": "Dokkolva: "
@@ -595,6 +615,10 @@
     "description": "",
     "message": "Hajtóanyag tömeg"
   },
+  "FUGITIVE": {
+    "description": "Legal status of player",
+    "message": "Szökevény"
+  },
   "FULL_SCREEN": {
     "description": "",
     "message": "Teljes képernyő"
@@ -614,6 +638,10 @@
   "GOOD_RIDDANCE_TO_YOU_TOO": {
     "description": "",
     "message": "Jó szerencsét neked is!"
+  },
+  "GO_BACK": {
+    "description": "",
+    "message": "Vissza"
   },
   "GPU_JOBS": {
     "description": "",
@@ -977,15 +1005,15 @@
   },
   "HUD_WARNING_DESCENT_RATE": {
     "description": "Shown on HUD as a warning flasher",
-    "message": "DESCENT RATE"
+    "message": "ERESZKEDÉSI RÁTA"
   },
   "HUD_WARNING_IMPACT": {
     "description": "Alert tooltip",
-    "message": "Impact warning"
+    "message": "Figyelem! Becsapódás"
   },
   "HUD_WARNING_IMPACT_IMMINENT": {
     "description": "Alert tooltip",
-    "message": "Impact imminent"
+    "message": "Becsapódás fenyeget!"
   },
   "HULL_DOES_NOT_REQUIRE_REPAIR": {
     "description": "",
@@ -1018,6 +1046,10 @@
   "HYPERSPACE_RANGE": {
     "description": "",
     "message": "Hiperűr hatótáv"
+  },
+  "ILLEGAL_IN_SYSTEM": {
+    "description": "An illegal action or commodity",
+    "message": "Illegális a rendszerben"
   },
   "ILLEGAL_JUMP": {
     "description": "A finable crime",
@@ -1111,6 +1143,18 @@
     "description": "",
     "message": "Kifizetetlen bírságai vannak, a felszállási engedélyt nem adom meg."
   },
+  "LAUNCH_PERMISSION_GRANTED": {
+    "description": "",
+    "message": "Indítási engedélyt megadom"
+  },
+  "LAUNCH_PERMISSION_GRANTED_DEPART_QUICK": {
+    "description": "",
+    "message": "Engedély megadva. Kérem távozzon minél gyorsabban, ne akadályozza a forgalmat!"
+  },
+  "LAUNCH_PERMISSION_GRANTED_WATCH_TRAFFIC": {
+    "description": "",
+    "message": "Engedélyt megadom. Távozáskor figyeljen a forgalomra!"
+  },
   "LEGAL_STATUS": {
     "description": "",
     "message": "Törvényesség"
@@ -1187,9 +1231,17 @@
     "description": "Light year",
     "message": "fé"
   },
+  "MAJOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "Fő export"
+  },
   "MAJOR_EXPORTS_ITEM": {
     "description": "",
     "message": "Főbb export"
+  },
+  "MAJOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "Fő import"
   },
   "MAJOR_IMPORTS_ITEM": {
     "description": "",
@@ -1267,13 +1319,25 @@
     "description": "",
     "message": "Hadi"
   },
+  "MINIMAL_TRADE": {
+    "description": "Indicates a system does not have a significant amount of trade in a commodity.",
+    "message": "Minimális kereskedelem"
+  },
   "MINIMUM_CREW": {
     "description": "",
     "message": "Minimális legénység"
   },
+  "MINOR_EXPORT": {
+    "description": "For displaying commodity information",
+    "message": "Egyéb export"
+  },
   "MINOR_EXPORTS_ITEM": {
     "description": "",
     "message": "További export"
+  },
+  "MINOR_IMPORT": {
+    "description": "For displaying commodity information",
+    "message": "Egyéb import"
   },
   "MINOR_IMPORTS_ITEM": {
     "description": "",
@@ -1423,6 +1487,10 @@
     "description": "",
     "message": "Ki"
   },
+  "OFFENDER": {
+    "description": "Legal status of player",
+    "message": "Szabálysértő"
+  },
   "OK": {
     "description": "",
     "message": "Ok"
@@ -1450,6 +1518,10 @@
   "OUTER_ARM": {
     "description": "Arm of the Milky Way galaxy",
     "message": "Külső kar"
+  },
+  "OUTLAW": {
+    "description": "Legal status of player",
+    "message": "Betyár"
   },
   "OUTSTANDING_FINES": {
     "description": "Unpaid fines for crimes committed",
@@ -1535,6 +1607,10 @@
     "description": "For player reputation",
     "message": "Szakértő"
   },
+  "PROFITABLE_TRADE": {
+    "description": "Indicates a profitable trade route.",
+    "message": "Nyereséges"
+  },
   "PUMP_DOWN": {
     "description": "Drain the fuel tank",
     "message": "Raktérbe szivatás"
@@ -1615,6 +1691,10 @@
     "description": "",
     "message": "Alaphelyzet"
   },
+  "RESET_ORIENTATION_AND_ZOOM": {
+    "description": "",
+    "message": "Nézet alaphelyzetbe"
+  },
   "RETURN_TO_GAME": {
     "description": "",
     "message": "Vissza"
@@ -1636,8 +1716,8 @@
     "message": "Jutalom"
   },
   "ROTATE_VIEW": {
-    "description": "",
-    "message": "Nézet forgatása"
+    "description": "Indicates that the button must be kept pressed down, to rotate camera view with mouse",
+    "message": "Lenyomva tartva forgatja a nézetet"
   },
   "ROUTE_INFO": {
     "description": "For hyperjump planner",
@@ -1702,6 +1782,10 @@
   "SET_AS_TARGET": {
     "description": "",
     "message": "Cél megjelőlése uticélnak."
+  },
+  "SET_RETURN_ROUTE": {
+    "description": "",
+    "message": "Visszaút"
   },
   "SHIP": {
     "description": "",
@@ -1807,6 +1891,14 @@
     "description": "Information shown in the station lobby, for total number of docking pads",
     "message": "Kapacitásunk {total_docking_pads} dokk."
   },
+  "STATION_LOCAL_GRAVITY": {
+    "description": "",
+    "message": "A helyi gravitáció %.2f g."
+  },
+  "STATION_LOCAL_GRAVITY_PRESSURE": {
+    "description": "",
+    "message": "Helyi gravitáció %.2f g, légnyomás %.2f atm."
+  },
   "STATION_MANAGER": {
     "description": "",
     "message": "Diszpécser"
@@ -1855,6 +1947,10 @@
     "description": "Arm of the Milky Way galaxy",
     "message": "3kpsz kar"
   },
+  "TOGGLE_FULL_COMMS_WINDOW": {
+    "description": "on world view / main screen",
+    "message": "Toggle full comms window"
+  },
   "TOGGLE_MALE_FEMALE": {
     "description": "player gender",
     "message": "Férfi/Nő"
@@ -1899,9 +1995,17 @@
     "description": "",
     "message": "Teljes tömeg"
   },
+  "TRADING_FROM": {
+    "description": "Indicates the source system of a commodity trade.",
+    "message": "{system} rendszerből:"
+  },
   "TRADING_ILLEGAL_GOODS": {
     "description": "",
     "message": "Illegális termékek kereskedelme"
+  },
+  "TRADING_TO": {
+    "description": "Indicates the destination system of a commodity trade.",
+    "message": "{system} rendszerbe:"
   },
   "TRUSTWORTHY": {
     "description": "For player reputation",
@@ -1914,6 +2018,10 @@
   "UNLAWFUL_WEAPONS_DISCHARGE": {
     "description": "",
     "message": "Törvénytelen fegyverhasználat"
+  },
+  "UNPROFITABLE_TRADE": {
+    "description": "Indicates an unprofitable trade route.",
+    "message": "Veszteséges"
   },
   "UNRELIABLE": {
     "description": "",

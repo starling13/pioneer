@@ -1,10 +1,11 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "ShipViewController.h"
 
 #include "CameraController.h"
 #include "GameSaveError.h"
+#include "Input.h"
 #include "WorldView.h"
 
 #include "Pi.h"
@@ -17,48 +18,59 @@ namespace {
 	static const float WHEEL_SENSITIVITY = .05f; // Should be a variable in user settings.
 } // namespace
 
-ShipViewController::InputBinding ShipViewController::InputBindings;
+REGISTER_INPUT_BINDING(ShipViewController)
+{
+	using namespace InputBindings;
+
+	Input::BindingGroup *group = input->GetBindingPage("ShipView")->GetBindingGroup("GeneralViewControls");
+
+	input->AddAxisBinding("BindCameraRoll", group, Axis({}, { SDLK_KP_1 }, { SDLK_KP_3 }));
+	input->AddAxisBinding("BindCameraPitch", group, Axis({}, { SDLK_KP_2 }, { SDLK_KP_8 }));
+	input->AddAxisBinding("BindCameraYaw", group, Axis({}, { SDLK_KP_4 }, { SDLK_KP_6 }));
+	input->AddAxisBinding("BindViewZoom", group, Axis({}, { SDLK_EQUALS }, { SDLK_MINUS }));
+
+	input->AddAxisBinding("BindLookYaw", group, Axis());
+	input->AddAxisBinding("BindLookPitch", group, Axis());
+
+	input->AddActionBinding("BindFrontCamera", group, Action({ SDLK_KP_8 }, { SDLK_UP }));
+	input->AddActionBinding("BindRearCamera", group, Action({ SDLK_KP_2 }, { SDLK_DOWN }));
+	input->AddActionBinding("BindLeftCamera", group, Action({ SDLK_KP_4 }, { SDLK_LEFT }));
+	input->AddActionBinding("BindRightCamera", group, Action({ SDLK_KP_6 }, { SDLK_RIGHT }));
+	input->AddActionBinding("BindTopCamera", group, Action({ SDLK_KP_9 }));
+	input->AddActionBinding("BindBottomCamera", group, Action({ SDLK_KP_3 }));
+
+	input->AddActionBinding("BindCycleCameraMode", group, Action({ SDLK_F1, SDLK_LCTRL }));
+	input->AddActionBinding("BindResetCamera", group, Action({ SDLK_HOME }));
+}
 
 void ShipViewController::InputBinding::RegisterBindings()
 {
-	using namespace KeyBindings;
+	cameraRoll = AddAxis("BindCameraRoll");
+	cameraPitch = AddAxis("BindCameraPitch");
+	cameraYaw = AddAxis("BindCameraYaw");
+	cameraZoom = AddAxis("BindViewZoom");
 
-	Input::BindingPage *page = Pi::input->GetBindingPage("ShipView");
-	Input::BindingGroup *group;
+	lookYaw = AddAxis("BindLookYaw");
+	lookPitch = AddAxis("BindLookPitch");
 
-#define BINDING_GROUP(n) group = page->GetBindingGroup(#n);
-#define KEY_BINDING(n, id, k1, k2)                                     \
-	n =                                                                \
-		Pi::input->AddActionBinding(id, group, ActionBinding(k1, k2)); \
-	actions.push_back(n);
-#define AXIS_BINDING(n, id, k1, k2)                                \
-	n =                                                            \
-		Pi::input->AddAxisBinding(id, group, AxisBinding(k1, k2)); \
-	axes.push_back(n);
+	frontCamera = AddAction("BindFrontCamera");
+	rearCamera = AddAction("BindRearCamera");
+	leftCamera = AddAction("BindLeftCamera");
+	rightCamera = AddAction("BindRightCamera");
+	topCamera = AddAction("BindTopCamera");
+	bottomCamera = AddAction("BindBottomCamera");
 
-	BINDING_GROUP(GeneralViewControls)
-	KEY_BINDING(cycleCameraMode, "BindCycleCameraMode", SDLK_F1, 0)
+	cycleCameraMode = AddAction("BindCycleCameraMode");
+	resetCamera = AddAction("BindResetCamera");
+}
 
-	AXIS_BINDING(cameraRoll, "BindCameraRoll", SDLK_KP_1, SDLK_KP_3)
-	AXIS_BINDING(cameraPitch, "BindCameraPitch", SDLK_KP_2, SDLK_KP_8)
-	AXIS_BINDING(cameraYaw, "BindCameraYaw", SDLK_KP_4, SDLK_KP_6)
-	AXIS_BINDING(cameraZoom, "BindViewZoom", SDLK_EQUALS, SDLK_MINUS)
-
-	AXIS_BINDING(lookYaw, "BindLookYaw", 0, 0);
-	AXIS_BINDING(lookPitch, "BindLookPitch", 0, 0);
-
-	KEY_BINDING(frontCamera, "BindFrontCamera", SDLK_KP_8, SDLK_UP)
-	KEY_BINDING(rearCamera, "BindRearCamera", SDLK_KP_2, SDLK_DOWN)
-	KEY_BINDING(leftCamera, "BindLeftCamera", SDLK_KP_4, SDLK_LEFT)
-	KEY_BINDING(rightCamera, "BindRightCamera", SDLK_KP_6, SDLK_RIGHT)
-	KEY_BINDING(topCamera, "BindTopCamera", SDLK_KP_9, 0)
-	KEY_BINDING(bottomCamera, "BindBottomCamera", SDLK_KP_3, 0)
-
-	KEY_BINDING(resetCamera, "BindResetCamera", SDLK_HOME, 0)
-
-#undef BINDING_GROUP
-#undef KEY_BINDING
-#undef AXIS_BINDING
+ShipViewController::ShipViewController(WorldView *v) :
+	ViewController(v),
+	m_camType(CAM_INTERNAL),
+	headtracker_input_priority(false),
+	InputBindings(Pi::input)
+{
+	InputBindings.RegisterBindings();
 }
 
 void ShipViewController::LoadFromJson(const Json &jsonObj)
@@ -66,7 +78,7 @@ void ShipViewController::LoadFromJson(const Json &jsonObj)
 	if (!jsonObj["cam_type"].is_number_integer())
 		throw SavedGameCorruptException();
 
-	m_camType = jsonObj["cam_type"];
+	SetCamType(jsonObj["cam_type"]);
 
 	m_internalCameraController->LoadFromJson(jsonObj);
 	m_externalCameraController->LoadFromJson(jsonObj);
@@ -95,7 +107,7 @@ void ShipViewController::Init()
 
 void ShipViewController::Activated()
 {
-	Pi::input->PushInputFrame(&InputBindings);
+	Pi::input->AddInputFrame(&InputBindings);
 
 	m_onMouseWheelCon =
 		Pi::input->onMouseWheel.connect(sigc::mem_fun(this, &ShipViewController::MouseWheel));
@@ -166,8 +178,16 @@ void ShipViewController::Update()
 	auto *cam = static_cast<MoveableCameraController *>(m_activeCameraController);
 	auto frameTime = Pi::GetFrameTime();
 
-	// XXX ugly hack checking for console here
-	if (!InputBindings.active || Pi::IsConsoleActive()) return;
+	if (!InputBindings.active) {
+		m_activeCameraController->Update();
+
+		if (m_mouseActive) {
+			m_mouseActive = false;
+			Pi::input->SetCapturingMouse(false);
+		}
+
+		return;
+	}
 
 	if (GetCamType() == CAM_INTERNAL) {
 		if (InputBindings.frontCamera->IsActive())

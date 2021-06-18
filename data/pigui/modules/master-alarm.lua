@@ -1,8 +1,8 @@
--- Copyright � 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
-local Engine = require 'Engine'
 local Game = require 'Game'
+local gameView = require 'pigui.views.game'
 
 local ui = require 'pigui'
 local pionillium = ui.fonts.pionillium
@@ -46,7 +46,7 @@ local function alarm ()
 	--check atmospheric pressure
 	local frame = Game.player.frameBody
 	if frame then
-		local pressure = frame:GetAtmosphericState()
+		local pressure = frame:GetAtmosphericState(Game.player)
 		if pressure and pressure > 9 and not alreadyAlertedPres then
 			ui.playSfx("alarm_generic1", 1.0, 1.0)
 			alreadyAlertedPres = true
@@ -66,7 +66,7 @@ local function alarm ()
 
 		local reticuleCircleRadius = math.min(ui.screenWidth, ui.screenHeight) / 8 -- required for icon placement
 		local uiTextPos = Vector2(ui.screenWidth / 2, ui.screenHeight / 3 - 10) --sits just above HUD circle
-		local uiPos = ui.pointOnClock(center, reticuleCircleRadius * 1.2 , 10) --left side of the reticule, above frame info
+		local uiPos = ui.pointOnClock(gameView.center, reticuleCircleRadius * 1.2 , 10) --left side of the reticule, above frame info
 		local iconSize = Vector2(24, 24)
 
 		local max_accel = Game.player:GetAcceleration("forward") --max acceleration axis of the ship, which is always forward with all Pioneer ships
@@ -118,7 +118,7 @@ local function alarm ()
 				ui.playSfx("impact_chime", 1.0, 1.0)
 				alreadyAlertedImpact = true
 			end
-			
+
 		--with the following formula, alert triggers if
 		--player ship's acceleration rate would not allow them to avoid a collision by simply accelerating sideways
 		--exact calculations require complex integrals, this alert is accurate enough but just a tiny bit on the pessimistic side for extra safety measures
@@ -135,4 +135,3 @@ end
 ui.registerModule("game", alarm)
 
 return {}
-

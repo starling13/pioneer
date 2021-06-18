@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local ui = require 'pigui'
@@ -32,14 +32,14 @@ local function displayDirectionalMarkers()
 	local function displayDirectionalMarker(ship_space, icon, showDirection, angle)
 		local screen = Engine.ShipSpaceToScreenSpace(ship_space)
 		local coord = Vector2(screen.x, screen.y)
-		if screen.z <= 1 then
+		if screen.z <= 0 then
 			ui.addIcon(coord, icon, colors.reticuleCircle, Vector2(32, 32), ui.anchor.center, ui.anchor.center, nil, angle)
 		end
 		return showDirection and (coord - center):length() > reticuleCircleRadius
 	end
 	local function angle(forward, adjust)
 		local aux2 = Vector2(forward.x, forward.y)
-		if forward.z >= 1 then
+		if forward.z >= 0 then
 			return aux2:angle() + adjust - ui.pi
 		else
 			return aux2:angle() + adjust
@@ -86,12 +86,12 @@ gameView.displayIndicator = displayIndicator
 local function displayCombatTargetIndicator(combatTarget)
 	local pos = combatTarget:GetPositionRelTo(player)
 	local vel = -combatTarget:GetVelocityRelTo(player)
-	local onscreen,position,direction = Engine.RelSpaceToScreenSpace(pos)
+	local onscreen,position,direction = Engine.ProjectRelPosition(pos)
 
 	displayIndicator(onscreen, position, direction, icons.square, colors.combatTarget, true)
-	onscreen,position,direction = Engine.RelSpaceToScreenSpace(vel)
+	onscreen,position,direction = Engine.ProjectRelDirection(vel)
 	displayIndicator(onscreen, position, direction, icons.prograde, colors.combatTarget, true, lui.HUD_INDICATOR_COMBAT_TARGET_PROGRADE)
-	onscreen,position,direction = Engine.RelSpaceToScreenSpace(-vel)
+	onscreen,position,direction = Engine.ProjectRelDirection(-vel)
 	displayIndicator(onscreen, position, direction, icons.retrograde, colors.combatTarget, false, lui.HUD_INDICATOR_COMBAT_TARGET_RETROGRADE)
 end
 
@@ -99,27 +99,63 @@ end
 local function displayFrameIndicators(frame, navTarget)
 	local frameVelocity = -frame:GetVelocityRelTo(player)
 	if frameVelocity:length() > 1 and frame ~= navTarget then
-		local onscreen,position,direction = Engine.RelSpaceToScreenSpace(frameVelocity)
+		local onscreen,position,direction = Engine.ProjectRelDirection(frameVelocity)
 		displayIndicator(onscreen, position, direction, icons.prograde, colors.frame, true, lui.HUD_INDICATOR_FRAME_PROGRADE)
-		onscreen,position,direction = Engine.RelSpaceToScreenSpace(-frameVelocity)
+		onscreen,position,direction = Engine.ProjectRelDirection(-frameVelocity)
 		displayIndicator(onscreen, position, direction, icons.retrograde, colors.frame, false, lui.HUD_INDICATOR_FRAME_RETROGRADE)
 	end
 
-	local awayFromFrame = player:GetPositionRelTo(frame) * 1.01
-	local onscreen,position,direction = Engine.RelSpaceToScreenSpace(awayFromFrame)
+	local awayFromFrame = -frame:GetPositionRelTo(player)
+	local onscreen,position,direction = Engine.ProjectRelDirection(awayFromFrame)
 	displayIndicator(onscreen, position, direction, icons.frame_away, colors.frame, false, lui.HUD_INDICATOR_AWAY_FROM_FRAME)
 end
 
 -- display the indicator pointing at the nav target, and pro- and retrograde
 local function displayNavTargetIndicator(navTarget)
-	local onscreen,position,direction = navTarget:GetTargetIndicatorScreenPosition()
+	local onscreen,position,direction = Engine.GetTargetIndicatorScreenPosition(navTarget)
 	displayIndicator(onscreen, position, direction, icons.square, colors.navTarget, true)
-	local navVelocity = -navTarget:GetVelocityRelTo(Game.player)
+	local navVelocity = -navTarget:GetVelocityRelTo(player)
 	if navVelocity:length() > 1 then
-		onscreen,position,direction = Engine.RelSpaceToScreenSpace(navVelocity)
+		onscreen,position,direction = Engine.ProjectRelDirection(navVelocity)
 		displayIndicator(onscreen, position, direction, icons.prograde, colors.navTarget, true, lui.HUD_INDICATOR_NAV_TARGET_PROGRADE)
-		onscreen,position,direction = Engine.RelSpaceToScreenSpace(-navVelocity)
+		onscreen,position,direction = Engine.ProjectRelDirection(-navVelocity)
 		displayIndicator(onscreen, position, direction, icons.retrograde, colors.navTarget, false, lui.HUD_INDICATOR_NAV_TARGET_RETROGRADE)
+	end
+end
+
+-- Returns the minimum distance (in meters) from the target that the given navtunnel frame should display at
+local function squareDist(scalingFactor, num)
+	return math.pow(scalingFactor, num - 1) * num * 10.0 -- first square at ten meters
+end
+
+-- Given a navtunnel frame's distance from the target and the distance of the target from the camera,
+-- return the screen height of the corresponding navtunnel frame
+local function squareHeight(distance, distToDest)
+	return distance * (ui.screenHeight / distToDest)
+end
+
+local function displayNavTunnels(navTarget)
+	local _, position, _, behindCamera = Engine.GetTargetIndicatorScreenPosition(navTarget)
+	if behindCamera then return end
+
+	local targetDist = player:GetPositionRelTo(navTarget):length()
+	local screenDiff = position - Vector2(ui.screenWidth / 2, ui.screenHeight / 2)
+
+	-- exponential distribution of navtunnel frames
+	-- the closer to 1.0, the more frames are drawn for a large distance
+	local scalingFactor = 1.6
+	local size = Vector2(0.9, ui.screenHeight / ui.screenWidth)
+	-- TODO: a lot of iterations are wasted on very tiny frames, could be improved
+	for i = 1, 100 do
+		local dist = squareDist(scalingFactor, i)
+		if (dist > targetDist) then break end
+
+		local scrHeight = squareHeight(dist, targetDist)
+		if scrHeight > 10.0 then
+			-- as the frame gets further away from the target, bring it closer to the center of the screen
+			local rectCenter = position - screenDiff * (dist / targetDist)
+			ui.addRect(rectCenter - size * scrHeight, rectCenter + size * scrHeight, colors.navTargetDark, 0, 0, 1.0)
+		end
 	end
 end
 
@@ -148,6 +184,9 @@ gameView.registerModule("indicators", {
 
 		if navTarget then
 			displayNavTargetIndicator(navTarget)
+			if Engine.GetDisplayNavTunnels() then
+				displayNavTunnels(navTarget)
+			end
 		end
 		if combatTarget then
 			displayCombatTargetIndicator(combatTarget)

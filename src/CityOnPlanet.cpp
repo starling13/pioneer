@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "CityOnPlanet.h"
@@ -17,8 +17,8 @@
 #include "scenegraph/SceneGraph.h"
 
 static const unsigned int DEFAULT_NUM_BUILDINGS = 1000;
-static const double START_SEG_SIZE = CITY_ON_PLANET_RADIUS;
-static const double START_SEG_SIZE_NO_ATMO = CITY_ON_PLANET_RADIUS / 5.0f;
+static const double START_SEG_SIZE = CityOnPlanet::RADIUS;
+static const double START_SEG_SIZE_NO_ATMO = CityOnPlanet::RADIUS / 5.0f;
 
 using SceneGraph::Model;
 
@@ -164,6 +164,7 @@ struct ModelNameComparator {
 //static
 void CityOnPlanet::SetCityModelPatterns(const SystemPath &path)
 {
+	PROFILE_SCOPED()
 	Uint32 _init[5] = { path.systemIndex, Uint32(path.sectorX), Uint32(path.sectorY), Uint32(path.sectorZ), UNIVERSE_SEED };
 	Random rand(_init, 5);
 
@@ -232,7 +233,7 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, const Uint32 s
 	citybuildinglist_t *buildings = &s_buildingList;
 	vector3d cent = p;
 	const int cellsize_i = 80;
-	const double cellsize = double(cellsize_i); // current widest building = 92
+	const double cellsize = double(cellsize_i);						// current widest building = 92
 	const double bodyradius = planet->GetSystemBody()->GetRadius(); // cache for bodyradius value
 
 	static const int gmid = (cityradius / cellsize_i);
@@ -297,7 +298,10 @@ CityOnPlanet::CityOnPlanet(Planet *planet, SpaceStation *station, const Uint32 s
 
 			// rotate the building to face a random direction
 			const int32_t orient = rand.Int32(4);
-			Geom *geom = new Geom(cmesh->GetGeomTree(), orientcalc[orient], cent, this);
+			// FIXME: geoms need a userdata to tell gameplay code what we actually hit.
+			// We don't want to create a separate Body for each instance of the buildings, so we
+			// scam the code by pretending we're part of the host planet.
+			Geom *geom = new Geom(cmesh->GetGeomTree(), orientcalc[orient], cent, GetPlanet());
 
 			// add it to the list of buildings to render
 			m_buildings.push_back({ bt.instIndex, float(cmesh->GetRadius()), orient, cent, geom });

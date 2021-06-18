@@ -1,5 +1,5 @@
 clone_depth: 1
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 environment:
   matrix:
@@ -12,4 +12,17 @@ install:
     - C:\msys64\usr\bin\bash -l /c/projects/pioneer/CI/appveyor/%TARGET%/prepare.sh
 
 build_script:
-    - C:\msys64\usr\bin\bash -l /c/projects/pioneer/CI/appveyor/%TARGET%/build.sh
+    # - C:\msys64\usr\bin\bash -l /c/projects/pioneer/CI/appveyor/%TARGET%/build.sh
+    - C:\projects\pioneer\CI\appveyor\%TARGET%\build.cmd
+
+# Create a draft release with the installer on new tags in master
+deploy:
+    release: Pioneer $(APPVEYOR_REPO_TAG_NAME)
+    description: 'New Pioneer release'
+    provider: GitHub
+    auth_token:
+        secure: smikwozIgIcE3OfE/LMdzXnJY6CyX3i1k34OkPLk3/MF0mBeHyX4uQNbbb9Ucaip
+    artifact: /.*\.exe
+    draft: true
+    on:
+        APPVEYOR_REPO_TAG: true

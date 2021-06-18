@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _FRAME_H
@@ -82,8 +82,8 @@ public:
 	bool HasRotFrame() const { return m_flags & FLAG_HAS_ROT; }
 
 	FrameId GetParent() const { return m_parent; }
-	FrameId GetNonRotFrame() { return IsRotFrame() ? m_parent : m_thisId; }
-	FrameId GetRotFrame() { return HasRotFrame() ? m_children.front() : m_thisId; }
+	FrameId GetNonRotFrame() const { return IsRotFrame() ? m_parent : m_thisId; }
+	FrameId GetRotFrame() const { return HasRotFrame() ? m_children.front() : m_thisId; }
 
 	void SetBodies(SystemBody *s, Body *b)
 	{

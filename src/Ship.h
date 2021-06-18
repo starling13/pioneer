@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _SHIP_H
@@ -39,13 +39,20 @@ struct shipstats_t {
 	int used_capacity;
 	int used_cargo;
 	int free_capacity;
-	int static_mass; // cargo, equipment + hull
+	int static_mass;	  // cargo, equipment + hull
 	float hull_mass_left; // effectively hitpoints
 	float hyperspace_range;
 	float hyperspace_range_max;
 	float shield_mass;
 	float shield_mass_left;
 	float fuel_tank_mass_left;
+
+	// cached equipment information to avoid costly Lua lookups
+	int atmo_shield_cap;
+	int radar_cap;
+	int fuel_scoop_cap;
+	int cargo_bay_life_support_cap;
+	int hull_autorepair_cap;
 };
 
 struct HyperdriveSoundsTable {
@@ -108,17 +115,17 @@ public:
 	bool IsDecelerating() const { return m_decelerating; }
 
 	virtual void NotifyRemoved(const Body *const removedBody) override;
-	virtual bool OnCollision(Object *o, Uint32 flags, double relVel) override;
-	virtual bool OnDamage(Object *attacker, float kgDamage, const CollisionContact &contactData) override;
+	virtual bool OnCollision(Body *o, Uint32 flags, double relVel) override;
+	virtual bool OnDamage(Body *attacker, float kgDamage, const CollisionContact &contactData) override;
 
 	enum FlightState { // <enum scope='Ship' name=ShipFlightState public>
-		FLYING, // open flight (includes autopilot)
-		DOCKING, // in docking animation
-		UNDOCKING, // in docking animation
-		DOCKED, // docked with station
-		LANDED, // rough landed (not docked)
-		JUMPING, // between space and hyperspace ;)
-		HYPERSPACE, // in hyperspace
+		FLYING,		   // open flight (includes autopilot)
+		DOCKING,	   // in docking animation
+		UNDOCKING,	   // in docking animation
+		DOCKED,		   // docked with station
+		LANDED,		   // rough landed (not docked)
+		JUMPING,	   // between space and hyperspace ;)
+		HYPERSPACE,	   // in hyperspace
 	};
 
 	// vector3d CalcAtmoPassiveControl() const;
@@ -182,12 +189,12 @@ public:
 	void AIGetStatusText(char *str); // Note: defined in Ship-AI.cpp
 
 	void AIKamikaze(Body *target); // Note: defined in Ship-AI.cpp
-	void AIKill(Ship *target); // Note: defined in Ship-AI.cpp
+	void AIKill(Ship *target);	   // Note: defined in Ship-AI.cpp
 	//void AIJourney(SystemBodyPath &dest);
-	void AIDock(SpaceStation *target); // Note: defined in Ship-AI.cpp
-	void AIFlyTo(Body *target); // Note: defined in Ship-AI.cpp
+	void AIDock(SpaceStation *target);		// Note: defined in Ship-AI.cpp
+	void AIFlyTo(Body *target);				// Note: defined in Ship-AI.cpp
 	void AIOrbit(Body *target, double alt); // Note: defined in Ship-AI.cpp
-	void AIHoldPosition(); // Note: defined in Ship-AI.cpp
+	void AIHoldPosition();					// Note: defined in Ship-AI.cpp
 
 	void AIBodyDeleted(const Body *const body){}; // Note: defined in Ship-AI.cpp // todo: signals
 
@@ -206,6 +213,7 @@ public:
 	void SetLabel(const std::string &label) override;
 	void SetShipName(const std::string &shipName);
 
+	float GetAtmosphericPressureLimit() const;
 	float GetPercentShields() const;
 	float GetPercentHull() const;
 	void SetPercentHull(float);
@@ -233,7 +241,6 @@ public:
 	double GetLandingPosOffset() const { return m_landingMinOffset; }
 
 protected:
-
 	vector3d CalcAtmosphericForce() const override;
 
 	virtual void SaveToJson(Json &jsonObj, Space *space) override;
@@ -290,6 +297,7 @@ private:
 
 	FlightState m_flightState;
 	bool m_testLanded;
+	bool m_forceWheelUpdate;
 	float m_launchLockTimeout;
 	float m_wheelState;
 	int m_wheelTransition;

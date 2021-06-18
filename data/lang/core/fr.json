@@ -49,7 +49,7 @@
   },
   "AUTOPILOT_CONTROL": {
     "description": "Indicating that ship is flying under autopilot control",
-    "message": "Autopilot control"
+    "message": "Pilote automatique"
   },
   "AUTOPILOT_DOCK_WITH_STATION": {
     "description": "",
@@ -102,10 +102,6 @@
   "BROWN_DWARF": {
     "description": "",
     "message": "Naine brune sous-stellaire."
-  },
-  "BUTTON": {
-    "description": "",
-    "message": "\"bouton\""
   },
   "CAMERA_BOTTOM_VIEW": {
     "description": "",
@@ -174,22 +170,6 @@
   "CH4_ATMOSPHERE": {
     "description": "",
     "message": "\" atmosphère méthanique\""
-  },
-  "CLEARANCE_ALREADY_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Vous avez déjà l'autorisation. Atterrissez sur le dock %bay."
-  },
-  "CLEARANCE_DENIED_NO_BAYS": {
-    "description": "",
-    "message": "Autorisation refusée. Tous les docks sont occupés."
-  },
-  "CLEARANCE_DENIED_TOO_FAR": {
-    "description": "Shown if player requests docking too far away from station",
-    "message": "Autorisation refusée. Votre vaisseau est trop éloigné pour un contrôle d'identité."
-  },
-  "CLEARANCE_GRANTED_BAY_N": {
-    "description": "",
-    "message": "Autorisation accordée. Atterrissez sur le dock %bay."
   },
   "CO2_ATMOSPHERE": {
     "description": "",
@@ -269,7 +249,7 @@
   },
   "CONTROLS": {
     "description": "",
-    "message": "Controles"
+    "message": "Contrôles"
   },
   "CORPORATE_SYSTEM": {
     "description": "",
@@ -327,10 +307,6 @@
     "description": "",
     "message": "Destination"
   },
-  "DIRECTION": {
-    "description": "Direction",
-    "message": "\" Doc \""
-  },
   "DISTANCE_LY": {
     "description": "",
     "message": "Distance: %distance{f.2} al"
@@ -342,10 +318,6 @@
   "DOCKING": {
     "description": "",
     "message": "Arrimage"
-  },
-  "DOCKING_CLEARANCE_EXPIRED": {
-    "description": "",
-    "message": "Autorisation d'atterrissage expirée. Pour atterrir, veuillez refaire une demande."
   },
   "DOWNGRADING_ALERT_STATUS": {
     "description": "",
@@ -362,10 +334,6 @@
   "DRAW_VERTICAL_LINES": {
     "description": "",
     "message": "Montrer les tiges verticales"
-  },
-  "EARTH": {
-    "description": "",
-    "message": "Terriennes"
   },
   "EARTH_FEDERATION_COLONIAL_RULE": {
     "description": "",
@@ -461,7 +429,7 @@
   },
   "GAME_LOAD_WRONG_VERSION": {
     "description": "",
-    "message": "Cette sauvegarde ne peut etre chargée : elle vient d'une autre  version de Pioneer"
+    "message": "Cette sauvegarde ne peut être chargée : elle vient d'une autre  version de Pioneer"
   },
   "GAME_SAVED_TO": {
     "description": "",
@@ -494,10 +462,6 @@
   "HARD_CAPITALIST": {
     "description": "",
     "message": "Entièrement capitaliste - pas de gouvernement réel"
-  },
-  "HAT": {
-    "description": "Hat switch: Is the top button on a joystick",
-    "message": "\"Couv\""
   },
   "HEADING_LOCK_ANTINORMAL": {
     "description": "Autopilot direction (perpendicular, down), relative to plane of orbit",
@@ -651,10 +615,6 @@
     "description": "",
     "message": "Joystick"
   },
-  "JOY_AXIS": {
-    "description": "Regarding joystick",
-    "message": "%{sign}%joyname Axe %axis"
-  },
   "L4L5_DISPLAY_MODE_TOGGLE": {
     "description": "Either show L4/L5 points or don't",
     "message": "Afficher/Cacher les points Lagrange L4/L5."
@@ -750,70 +710,6 @@
   "MANUAL_CONTROL_MODE": {
     "description": "",
     "message": "Mode contrôle manuel"
-  },
-  "MAP_LOCK_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Verrouille  la cible d'hyperespace"
-  },
-  "MAP_TOGGLE_INFO_PANEL": {
-    "description": "",
-    "message": "Bascule vers le panneau d'information"
-  },
-  "MAP_TOGGLE_SELECTION_FOLLOW_VIEW": {
-    "description": "",
-    "message": "Bascule vers la vue de sélection"
-  },
-  "MAP_VIEW_ROTATE_DOWN": {
-    "description": "",
-    "message": "Rotation vue vers le bas"
-  },
-  "MAP_VIEW_ROTATE_LEFT": {
-    "description": "",
-    "message": "Rotation vue vers la gauche"
-  },
-  "MAP_VIEW_ROTATE_RIGHT": {
-    "description": "",
-    "message": "Rotation vue vers la droite"
-  },
-  "MAP_VIEW_ROTATE_UP": {
-    "description": "",
-    "message": "Rotation vue vers le haut"
-  },
-  "MAP_VIEW_SHIFT_BACKWARD": {
-    "description": "",
-    "message": "Change la vue vers l'arrière"
-  },
-  "MAP_VIEW_SHIFT_DOWN": {
-    "description": "",
-    "message": "Change la vue vers le bas"
-  },
-  "MAP_VIEW_SHIFT_FORWARD": {
-    "description": "",
-    "message": "Change la vue vers l'avant"
-  },
-  "MAP_VIEW_SHIFT_LEFT": {
-    "description": "",
-    "message": "Change la vue à gauche"
-  },
-  "MAP_VIEW_SHIFT_RIGHT": {
-    "description": "",
-    "message": "Change la vue à droite"
-  },
-  "MAP_VIEW_SHIFT_UP": {
-    "description": "",
-    "message": "Change la vue en haut"
-  },
-  "MAP_WARP_TO_CURRENT_SYSTEM": {
-    "description": "",
-    "message": "Saute au système en cours"
-  },
-  "MAP_WARP_TO_HYPERSPACE_TARGET": {
-    "description": "",
-    "message": "Saute vers la cible d'hyperespace"
-  },
-  "MAP_WARP_TO_SELECTED_SYSTEM": {
-    "description": "",
-    "message": "Saute vers le système sélectionné"
   },
   "MASS": {
     "description": "",
@@ -1067,13 +963,21 @@
     "description": "",
     "message": "%days{f.1} jours terrestres"
   },
-  "N_WHATEVER_MASSES": {
+  "N_EARTH_MASSES": {
     "description": "",
-    "message": "%mass{f.3} masses %units"
+    "message": "%mass{f.3} masses terrestres"
   },
-  "N_WHATEVER_RADII": {
+  "N_EARTH_RADII": {
+    "description": "Used in system info view. E.g.: \"0.17 Earth radii (118235 km)\"",
+    "message": "%radius{f.3} rayon terrestre (%radkm{f.0} km)"
+  },
+  "N_SOLAR_MASSES": {
+    "description": "",
+    "message": "%mass{f.3} masses solaires"
+  },
+  "N_SOLAR_RADII": {
     "description": "Used in system info view. E.g. for Barnard's star: \"0.17 Solar radii (118235 km)\"",
-    "message": "%radius{f.3} %unités radiale (%radkm{f.0} km)"
+    "message": "%radius{f.3} rayon solaire (%radkm{f.0} km)"
   },
   "N_YEARS": {
     "description": "",
@@ -1230,10 +1134,6 @@
   "RESET": {
     "description": "",
     "message": "Reset"
-  },
-  "RESET_ORIENTATION_AND_ZOOM": {
-    "description": "",
-    "message": "Réinitialise l'orientation et le zoom"
   },
   "ROBOTS": {
     "description": "",
@@ -1438,10 +1338,6 @@
   "SOCIAL_DEMOCRACY": {
     "description": "",
     "message": "Démocratie sociale"
-  },
-  "SOLAR": {
-    "description": "",
-    "message": "Solaires"
   },
   "SOME_ESTABLISHED_MINING": {
     "description": "",
@@ -1707,10 +1603,6 @@
     "description": "",
     "message": "regl mode HUD"
   },
-  "TOGGLE_LUA_CONSOLE": {
-    "description": "",
-    "message": "Console LUA on/off"
-  },
   "TOGGLE_RADAR_MODE": {
     "description": "",
     "message": "Activer/désactiver le mode Radar"
@@ -1759,6 +1651,10 @@
     "description": "Duration unit: one 24-hour day",
     "message": "j"
   },
+  "UNIT_EARTH_GRAVITY": {
+    "description": "Acceleration unit: one earth gravity (g)",
+    "message": "g"
+  },
   "UNIT_HOURS": {
     "description": "Duration unit: one 60-minute hour",
     "message": "h"
@@ -1794,6 +1690,10 @@
   "UNIT_MINUTES": {
     "description": "Duration unit: one 60-second minute",
     "message": "m"
+  },
+  "UNIT_PRESSURE_ATMOSPHERES": {
+    "description": "Pressure unit: one earth atmosphere (atm)",
+    "message": "atm"
   },
   "UNIT_SECONDS": {
     "description": "Duration unit: one second",
@@ -1871,14 +1771,6 @@
     "description": "",
     "message": "\" sans atmosphère significative\""
   },
-  "X": {
-    "description": "keybinding: x axis",
-    "message": "X"
-  },
-  "Y": {
-    "description": "keybinding: y axis",
-    "message": "Y"
-  },
   "YAW": {
     "description": "",
     "message": "Lacets"
@@ -1894,10 +1786,6 @@
   "YOUNG_FARMING_COLONY": {
     "description": "",
     "message": "Jeune colonie agricole."
-  },
-  "Z": {
-    "description": "keybinding: z axis",
-    "message": "Z"
   },
   "ZOOM_IN": {
     "description": "",

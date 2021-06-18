@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = require 'Engine'
@@ -37,7 +37,7 @@ local function displayTimeWindow()
 	local current = Game.GetTimeAcceleration()
 	local requested = Game.GetRequestedTimeAcceleration()
 
-	function accelButton(name, key)
+	local function accelButton(name, key)
 		local color = bg_color
 		if requested == name and current ~= name then
 			color = colors.white
@@ -47,8 +47,8 @@ local function displayTimeWindow()
 		if time == "paused" then
 			time = lc.PAUSED
 		end
-		tooltip = string.interp(lui.HUD_REQUEST_TIME_ACCEL, { time = time })
-		if ui.coloredSelectedIconButton(icons['time_accel_' .. name], button_size, current == name, frame_padding, color, fg_color, tooltip)
+		local tooltip = string.interp(lui.HUD_REQUEST_TIME_ACCEL, { time = time })
+		if ui.coloredSelectedIconButton(icons['time_accel_' .. name], button_size, current == name, frame_padding, color, fg_color, tooltip .. "##time_accel_"..name)
 		or (ui.shiftHeld() and ui.isKeyReleased(key)) then
 			Game.SetTimeAcceleration(name, ui.ctrlHeld() or ui.isMouseDown(1))
 		end

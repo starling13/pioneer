@@ -1,11 +1,11 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _WORLDVIEW_H
 #define _WORLDVIEW_H
 
 #include "gui/GuiWidget.h"
-#include "pigui/View.h"
+#include "pigui/PiGuiView.h"
 #include "ship/ShipViewController.h"
 
 class Body;
@@ -30,17 +30,6 @@ namespace Gui {
 	class TexturedQuad;
 }
 
-namespace KeyBindings {
-	struct ActionBinding;
-	struct AxisBinding;
-} // namespace KeyBindings
-
-namespace UI {
-	class Widget;
-	class Single;
-	class Label;
-} // namespace UI
-
 class WorldView : public PiGuiView {
 public:
 	static void RegisterInputBindings();
@@ -53,7 +42,6 @@ public:
 	void Draw3D() override;
 	void Draw() override;
 	void SaveToJson(Json &jsonObj) override;
-	void HandleSDLEvent(SDL_Event &event) override;
 
 	RefCountedPtr<CameraContext> GetCameraContext() const { return m_cameraContext; }
 
@@ -68,8 +56,7 @@ public:
 
 	vector3d WorldSpaceToScreenSpace(const Body *body) const;
 	vector3d WorldSpaceToScreenSpace(const vector3d &position) const;
-	vector3d RelSpaceToScreenSpace(const vector3d &position) const;
-	vector3d ShipSpaceToScreenSpace(const vector3d &position) const;
+	vector3d WorldDirToScreenSpace(const vector3d &direction) const;
 	vector3d GetTargetIndicatorScreenPosition(const Body *body) const;
 	vector3d CameraSpaceToScreenSpace(const vector3d &pos) const;
 
@@ -123,7 +110,6 @@ private:
 	Game *m_game;
 	ViewController *m_viewController;
 
-	NavTunnelWidget *m_navTunnel;
 	std::unique_ptr<SpeedLines> m_speedLines;
 
 	bool m_labelsOn;
@@ -143,13 +129,14 @@ private:
 	Graphics::Drawables::Line3D m_edgeMarker;
 	Graphics::Drawables::Lines m_indicator;
 
-	static struct InputBinding {
-		typedef KeyBindings::ActionBinding ActionBinding;
-		typedef KeyBindings::AxisBinding AxisBinding;
+	struct InputBinding : public Input::InputFrame {
+		using InputFrame::InputFrame;
 
-		ActionBinding *toggleHudMode;
-		ActionBinding *increaseTimeAcceleration;
-		ActionBinding *decreaseTimeAcceleration;
+		Action *toggleHudMode;
+		Action *increaseTimeAcceleration;
+		Action *decreaseTimeAcceleration;
+
+		void RegisterBindings() override;
 	} InputBindings;
 };
 

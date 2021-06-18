@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Sfx.h"
@@ -180,7 +180,7 @@ void SfxManager::AddExplosion(Body *b)
 	if (!sfxman) return;
 
 	float speed = 200.0f;
-	if (b->IsType(Object::SHIP)) {
+	if (b->IsType(ObjectType::SHIP)) {
 		ModelBody *mb = static_cast<ModelBody *>(b);
 		speed = mb->GetAabb().radius * 8.0;
 	}

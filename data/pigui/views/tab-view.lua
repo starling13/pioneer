@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Game = require 'Game'
@@ -14,7 +14,6 @@ local mainButtonWindowPadding = Vector2(math.ceil(6 * (ui.screenHeight / 1200)),
 local mainButtonItemSpacing = Vector2(math.ceil(6 * (ui.screenHeight / 1200)), math.ceil(6 * (ui.screenHeight / 1200)))
 local bottomUiMargin = math.ceil(160 * (ui.screenHeight / 1200))
 local buttonWindowPos = Vector2(0, 0)
-local tabViewPadding = Vector2(0,0)
 local viewWindowPadding = Vector2(4, 8)
 
 local PiGuiTabView = {}
@@ -26,13 +25,14 @@ local function infoButton(icon, selected, tooltip, color)
     return ui.coloredSelectedIconButton(icon, mainButtonSize, selected, mainButtonFramePadding, colors.buttonBlue, color, tooltip)
 end
 
-function PiGuiTabView.New(viewName, legacyTabView)
+function PiGuiTabView.New(viewName)
     local self = {
         name = viewName,
-        legacyTabView = legacyTabView,
-        currentTab = 0,
-        viewCount = 0,
-        tabs = {},
+        currentTab = 1,
+		viewCount = 0,
+		isActive = false,
+		tabs = {},
+		windowPadding = Vector2(0)
     }
 
     setmetatable(self, {
@@ -58,20 +58,19 @@ function PiGuiTabView.resize(self)
 end
 
 function PiGuiTabView.registerView(self, view)
+	local idx = self.tabs[view.id]
+	if idx then self.tabs[idx] = view; return end
+
     table.insert(self.tabs, view)
-    self.viewCount = self.viewCount + 1
+	self.viewCount = self.viewCount + 1
+	self.tabs[view.id] = self.viewCount
     self:resize()
 end
 
 function PiGuiTabView:SwitchTo(id)
     for i, v in ipairs(self.tabs) do
         if v.id == id then
-            if self.legacyTabView then
-                self.legacyTabView:SwitchTo(v.id)
-                self.legacyTabView.outerBody:Hide()
-            end
-
-            if(self.currentTab ~= i) then self.tabs[i].refresh() end
+            if self.currentTab ~= i then self.tabs[i].refresh() end
             self.currentTab = i
             return
         end
@@ -79,15 +78,18 @@ function PiGuiTabView:SwitchTo(id)
     print("View not found:", id)
 end
 
-function PiGuiTabView.renderTabView(self)
-    if Game.CurrentView() ~= self.name then
-        self.currentTab = 1
-        self.tabs[1].refresh()
-        return
-    end
+local staticButtonFlags = ui.WindowFlags {"NoResize", "NoTitleBar", "NoMove", "NoFocusOnAppearing", "NoScrollbar"}
 
-    local tab = self.tabs[self.currentTab] or self.tabs[1]
-    if not tab then return end
+function PiGuiTabView.renderTabView(self)
+	local wasActive = self.isActive
+	self.isActive = Game.CurrentView() == self.name
+    if not self.isActive then return end
+
+	local tab = self.tabs[self.currentTab] or self.tabs[1]
+	if not tab then return end
+
+	-- refresh the tab since we're swapping back to the view
+	if self.isActive and not wasActive then tab.refresh() end
 
     if(tab.showView) then
         ui.withStyleColors({
@@ -97,19 +99,16 @@ function PiGuiTabView.renderTabView(self)
             ui.withStyleVars({
                 WindowRounding = 0,
                 WindowBorderSize = 1.0,
-                WindowPadding = tabViewPadding,
+                WindowPadding = self.windowPadding,
             }, function()
                 ui.setNextWindowPos(self.viewWindowPos, "Always")
                 ui.setNextWindowSize(self.viewWindowSize, "Always")
-                ui.window("StationView", {"NoResize", "NoTitleBar"}, tab.draw)
+				ui.window("StationView", {"NoResize", "NoTitleBar"}, function()
+					local ok, err = ui.pcall(tab.draw, tab)
+					if not ok then logWarning(err); tab.showView = false end
+				end)
             end)
         end)
-    end
-
-    if self.legacyTabView and tab.showView then
-        self.legacyTabView.outerBody:Hide()
-    elseif self.legacyTabView then
-        self.legacyTabView.outerBody:Enable()
     end
 
     ui.withFont(orbiteer.large.name, orbiteer.large.size * 1.5, function()
@@ -121,7 +120,7 @@ function PiGuiTabView.renderTabView(self)
 
         ui.setNextWindowPos(text_window_pos, "Always")
         ui.setNextWindowSize(text_window_size, "Always")
-        ui.window("StationViewName", {"NoResize", "NoTitleBar", "NoMove", "NoFocusOnAppearing"}, function()
+        ui.window("StationViewName", staticButtonFlags, function()
             ui.text(tab.name)
         end)
     end)
@@ -129,7 +128,7 @@ function PiGuiTabView.renderTabView(self)
     ui.setNextWindowSize(self.buttonWindowSize, "Always")
     ui.setNextWindowPos(buttonWindowPos, "Always")
     ui.withStyleVars({WindowPadding = mainButtonWindowPadding, ItemSpacing = mainButtonItemSpacing}, function()
-        ui.window("StationViewButtons", {"NoResize", "NoTitleBar", "NoMove", "NoFocusOnAppearing", "NoScrollbar"}, function()
+        ui.window("StationViewButtons", staticButtonFlags, function()
             for i, v in ipairs(self.tabs) do
                 if infoButton(v.icon, i == self.currentTab, v.name) then
                     self:SwitchTo(v.id)
@@ -137,7 +136,13 @@ function PiGuiTabView.renderTabView(self)
                 ui.sameLine()
             end
         end)
-    end)
+	end)
+
+	if ui.ctrlHeld() and ui.isKeyReleased(ui.keys.delete) then
+		if tab.debugReload then tab:debugReload() end
+		-- refresh the (possibly) new tab
+		self.tabs[self.currentTab]:refresh()
+	end
 end
 
 return PiGuiTabView

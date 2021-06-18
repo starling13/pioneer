@@ -1,4 +1,4 @@
--- Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 -- Convenience wrappers for the C++ UI functions and general functions
@@ -67,12 +67,12 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
 --   fun -
---   ... - 
+--   ... -
 --
 -- Returns:
 --
@@ -81,7 +81,7 @@ end
 function ui.pcall(fun, ...)
 	local stack = pigui.GetImguiStack()
 	return xpcall(fun, function(msg)
-		return msg .. pigui.CleanupImguiStack(stack)
+		return debug.traceback(msg, 2) .. "\n" .. pigui.CleanupImguiStack(stack)
 	end, ...)
 end
 
@@ -95,7 +95,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -149,7 +149,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -175,7 +175,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -195,6 +195,32 @@ function ui.popup(name, fun)
 end
 
 --
+-- Function: ui.customTooltip
+--
+-- ui.customTooltip(fun)
+--
+-- Display a tooltip window
+--
+--
+-- Example:
+--
+-- >
+--
+-- Parameters:
+--
+--   fun  - Function, a function that is called to define the tooltip contents
+--
+-- Returns:
+--
+--   nil
+--
+function ui.customTooltip(fun)
+	pigui.BeginTooltip()
+	fun()
+	pigui.EndTooltip()
+end
+
+--
 -- Function: ui.child
 --
 -- ui.child(id, size, flags, fun)
@@ -204,7 +230,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -268,7 +294,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -282,14 +308,11 @@ end
 --
 function ui.withTooltip(tooltip, fun)
 	local startPos = pigui.GetCursorPos()
+	pigui.BeginGroup()
 	fun()
-	if string.len(tooltip) > 0 then
-		local endPos = pigui.GetCursorPos()
-		local offset = pigui.GetWindowPos()
-		offset.y = offset.y - pigui.GetScrollY()
-		if pigui.IsMouseHoveringRect(offset + startPos, offset + endPos, false) then
-			pigui.SetTooltip(tooltip)
-		end
+	pigui.EndGroup()
+	if string.len(tooltip) > 0 and pigui.IsItemHovered() then
+		pigui.SetTooltip(tooltip)
 	end
 end
 
@@ -322,7 +345,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -343,7 +366,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -364,7 +387,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -382,7 +405,7 @@ function ui.ctrlHeld() return pigui.key_ctrl end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -400,7 +423,7 @@ function ui.altHeld() return pigui.key_alt end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -418,7 +441,7 @@ function ui.shiftHeld() return pigui.key_shift end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -429,6 +452,25 @@ function ui.shiftHeld() return pigui.key_shift end
 function ui.noModifierHeld() return pigui.key_none end
 
 --
+-- Function: ui.escapeKeyReleased
+--
+-- Performs some sanity checks and returns true if the user has pressed escape
+-- and the escape key is not currently being consumed.
+--
+--
+-- Parameters:
+--
+--   ignorePopup - if true, skip checking for open popups.
+--
+-- Returns:
+--
+--   boolean - true if the escape key is pressed and not being consumed
+--
+function ui.escapeKeyReleased(ignorePopup)
+	return (ignorePopup or not ui.isAnyPopupOpen()) and ui.noModifierHeld() and ui.isKeyReleased(ui.keys.escape)
+end
+
+--
 -- Function: ui.tabBar
 --
 -- ui.tabBar(id, items)
@@ -436,7 +478,7 @@ function ui.noModifierHeld() return pigui.key_none end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   id    - String, unique id to identify the group of tabs by
@@ -472,7 +514,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   name    - Table|String, a table defining the font name and size or
@@ -507,7 +549,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   styles - table, table of style elements with the desired colors:
@@ -545,7 +587,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   vars - table, table of style elements with the desired values:
@@ -578,7 +620,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   styles - table, table of style elements with the desired colors (see ui.withStyleColors)
@@ -611,7 +653,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --
@@ -632,7 +674,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   cond - table, condition flags: Always, Once, FirstUseEver, Appearing
@@ -654,7 +696,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   pos_x     - (Optional) number, X position for next draw command, default 0
@@ -679,7 +721,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   id  - string, the desired ID
@@ -704,7 +746,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   filename - string, svg path
@@ -728,7 +770,7 @@ end
 --
 -- Example:
 --
--- > 
+-- >
 --
 -- Parameters:
 --   filename - string, texture file path

@@ -1,4 +1,4 @@
-// Copyright © 2008-2020 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2021 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "RendererGL.h"
@@ -39,44 +39,55 @@
 
 namespace Graphics {
 
-	static bool CreateWindowAndContext(const char *name, const Graphics::Settings &vs, int samples, int depth_bits, SDL_Window **window, SDL_GLContext *context)
+	static bool CreateWindowAndContext(const char *name, const Graphics::Settings &vs, SDL_Window *&window, SDL_GLContext &context)
 	{
+		PROFILE_SCOPED()
 		Uint32 winFlags = 0;
 
-		assert(vs.rendererType == Graphics::RendererType::RENDERER_OPENGL_3x);
-
 		winFlags |= SDL_WINDOW_OPENGL;
+		// We'd like a context that implements OpenGL 3.2 to allow creation of multisampled textures
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-		// cannot initialise 3.x content on OSX with anything but CORE profile
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+		// Request core profile as we're uninterested in old fixed-function API
+		// also cannot initialise 3.x context on OSX with anything but CORE profile
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		// OSX also forces us to use this for 3.2 onwards
+		// OSX doesn't care about forward-compatible flag, but it's good practice.
 		if (vs.gl3ForwardCompatible) SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, depth_bits);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
+		// Don't request a depth/stencil/multisample buffer.
+		// We'll render to an offscreen buffer supporting these features and blit to the OS window from there.
+		// This is for multiple reasons:
+		// - we need a 32-bit float depth buffer
+		// - we'd like to be able to render at e.g. 1600x900 and display on a 3200x1800 screen for laptops
+		// - changing graphics settings like antialiasing or resolution doesn't require restarting the game (or recreating the window)
+		// - we need to MSAA resolve before running post-processing
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 
-		// need full 32-bit color
-		// (need an alpha channel because of the way progress bars are drawn)
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		// TODO: verify and enable sRGB-correct rendering through the entire pipeline
+		// SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
+
+		// need at least 24-bit color
+		// alpha channel will be present on main render target instead of window surface
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
 		winFlags |= (vs.hidden ? SDL_WINDOW_HIDDEN : SDL_WINDOW_SHOWN);
-		if (!vs.hidden && vs.fullscreen)
+		if (!vs.hidden && vs.fullscreen) // TODO: support for borderless fullscreen and changing window size
 			winFlags |= SDL_WINDOW_FULLSCREEN;
 
-		(*window) = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, vs.width, vs.height, winFlags);
-		if (!(*window))
+		window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, vs.width, vs.height, winFlags);
+		if (!window)
 			return false;
 
-		(*context) = SDL_GL_CreateContext((*window));
-		if (!(*context)) {
-			SDL_DestroyWindow((*window));
-			(*window) = nullptr;
+		context = SDL_GL_CreateContext(window);
+		if (!context) {
+			SDL_DestroyWindow(window);
+			window = nullptr;
 			return false;
 		}
 
@@ -85,39 +96,16 @@ namespace Graphics {
 
 	static Renderer *CreateRenderer(const Settings &vs)
 	{
-		bool ok;
+		PROFILE_SCOPED()
+		assert(vs.rendererType == Graphics::RendererType::RENDERER_OPENGL_3x);
 
 		const std::string name("Pioneer");
 		SDL_Window *window = nullptr;
 		SDL_GLContext glContext = nullptr;
 
-		// attempt sequence is:
-		// 1- requested mode
-		ok = CreateWindowAndContext(name.c_str(), vs, vs.requestedSamples, 24, &window, &glContext);
-
-		// 2- requested mode with no anti-aliasing (skipped if no AA was requested anyway)
-		//    (skipped if no AA was requested anyway)
-		if (!ok && vs.requestedSamples) {
-			Output("Failed to set video mode. (%s). Re-trying without multisampling.\n", SDL_GetError());
-			ok = CreateWindowAndContext(name.c_str(), vs, 0, 24, &window, &glContext);
-		}
-
-		// 3- requested mode with 16 bit depth buffer
+		bool ok = CreateWindowAndContext(name.c_str(), vs, window, glContext);
 		if (!ok) {
-			Output("Failed to set video mode. (%s). Re-trying with 16-bit depth buffer\n", SDL_GetError());
-			ok = CreateWindowAndContext(name.c_str(), vs, vs.requestedSamples, 16, &window, &glContext);
-		}
-
-		// 4- requested mode with 16-bit depth buffer and no anti-aliasing
-		//    (skipped if no AA was requested anyway)
-		if (!ok && vs.requestedSamples) {
-			Output("Failed to set video mode. (%s). Re-trying with 16-bit depth buffer and no multisampling\n", SDL_GetError());
-			ok = CreateWindowAndContext(name.c_str(), vs, 0, 16, &window, &glContext);
-		}
-
-		// 5- abort!
-		if (!ok) {
-			Warning("Failed to set video mode: %s", SDL_GetError());
+			Error("Failed to set video mode: %s", SDL_GetError());
 			return nullptr;
 		}
 
@@ -163,6 +151,7 @@ namespace Graphics {
 		m_activeRenderState(nullptr),
 		m_glContext(glContext)
 	{
+		PROFILE_SCOPED()
 		glewExperimental = true;
 		GLenum glew_err;
 		if ((glew_err = glewInit()) != GLEW_OK)
@@ -191,6 +180,21 @@ namespace Graphics {
 			}
 		}
 
+		// use floating-point reverse-Z depth buffer to remove the need for depth buffer hacks
+		m_useNVDepthRanged = false;
+		if (glewIsSupported("GL_ARB_clip_control")) {
+			glDepthRange(0.0, 1.0);
+			glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+		} else if (glewIsSupported("GL_NV_depth_buffer_float")) {
+			m_useNVDepthRanged = true;
+			glDepthRangedNV(-1, 1);
+		} else {
+			Error(
+				"Pioneer requires the GL_ARB_clip_control or GL_NV_depth_buffer_float OpenGL extensions.\n"
+				"These extensions are not supported by your graphics card or graphics driver version.\n"
+				"Please check to see if your GPU driver vendor has an updated driver - or that drivers are installed correctly.");
+		}
+
 		const char *ver = reinterpret_cast<const char *>(glGetString(GL_VERSION));
 		if (vs.gl3ForwardCompatible && strstr(ver, "9.17.10.4229")) {
 			Warning("Driver needs GL3ForwardCompatible=0 in config.ini to display billboards (stars, navlights etc.)");
@@ -209,8 +213,8 @@ namespace Graphics {
 		glFrontFace(GL_CCW);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		glDepthRange(0.0, 1.0);
+		// use floating-point reverse-Z depth buffer to remove the need for depth buffer hacks
+		glDepthFunc(GL_GREATER);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -220,6 +224,7 @@ namespace Graphics {
 		glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
 		glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_NICEST);
 
+		glClearDepth(0.0); // clear to 0.0 for use with reverse-Z
 		SetClearColor(Color4f(0.f, 0.f, 0.f, 0.f));
 		SetViewport(Viewport(0, 0, m_width, m_height));
 
@@ -234,6 +239,20 @@ namespace Graphics {
 		assert(TRIANGLES == GL_TRIANGLES);
 		assert(TRIANGLE_STRIP == GL_TRIANGLE_STRIP);
 		assert(TRIANGLE_FAN == GL_TRIANGLE_FAN);
+
+		RenderTargetDesc windowTargetDesc(
+			m_width, m_height,
+			// TODO: sRGB format for render target?
+			TextureFormat::TEXTURE_RGBA_8888,
+			TextureFormat::TEXTURE_DEPTH,
+			false, vs.requestedSamples);
+
+		m_windowRenderTarget = static_cast<OGL::RenderTarget *>(CreateRenderTarget(windowTargetDesc));
+		SetRenderTarget(nullptr);
+
+		if (!m_windowRenderTarget->CheckStatus())
+			Error("Pioneer window render target is invalid.\n"
+				  "Does your graphics driver support multisample anti-aliasing?");
 	}
 
 	RendererOGL::~RendererOGL()
@@ -242,6 +261,10 @@ namespace Graphics {
 		//while (!m_programs.empty()) delete m_programs.back().second, m_programs.pop_back();
 		for (auto state : m_renderStates)
 			delete state.second;
+
+		if (m_windowRenderTarget->m_active)
+			m_windowRenderTarget->Unbind();
+		delete m_windowRenderTarget;
 
 		SDL_GL_DeleteContext(m_glContext);
 	}
@@ -408,6 +431,7 @@ namespace Graphics {
 
 	bool RendererOGL::EndFrame()
 	{
+		PROFILE_SCOPED()
 		uint32_t used_tex2d = 0;
 		uint32_t used_texCube = 0;
 		uint32_t used_texArray2d = 0;
@@ -508,6 +532,15 @@ namespace Graphics {
 		PROFILE_SCOPED()
 		CheckRenderErrors(__FUNCTION__, __LINE__);
 
+		// Make sure we set the active FBO to our "default" window target
+		SetRenderTarget(nullptr);
+
+		// TODO(sturnclaw): handle upscaling to higher-resolution screens
+		// we'll need an intermediate target to resolve to, resolve and rescale are mutually exclusive
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_windowRenderTarget->m_fbo);
+
 		SDL_GL_SwapWindow(m_window);
 		m_stats.NextFrame();
 		return true;
@@ -526,10 +559,19 @@ namespace Graphics {
 	bool RendererOGL::SetRenderTarget(RenderTarget *rt)
 	{
 		PROFILE_SCOPED()
-		if (rt)
+		if (rt) {
+			if (m_activeRenderTarget)
+				m_activeRenderTarget->Unbind();
+			else
+				m_windowRenderTarget->Unbind();
+
 			static_cast<OGL::RenderTarget *>(rt)->Bind();
-		else if (m_activeRenderTarget)
-			m_activeRenderTarget->Unbind();
+		} else {
+			if (m_activeRenderTarget)
+				m_activeRenderTarget->Unbind();
+
+			m_windowRenderTarget->Bind();
+		}
 
 		m_activeRenderTarget = static_cast<OGL::RenderTarget *>(rt);
 		CheckRenderErrors(__FUNCTION__, __LINE__);
@@ -539,7 +581,18 @@ namespace Graphics {
 
 	bool RendererOGL::SetDepthRange(double znear, double zfar)
 	{
-		glDepthRange(znear, zfar);
+		// XXX since we're using reverse-Z, flip the inputs to this function to avoid breaking old code.
+		glDepthRange(1.0 - zfar, 1.0 - znear);
+		return true;
+	}
+
+	bool RendererOGL::ResetDepthRange()
+	{
+		if (m_useNVDepthRanged)
+			glDepthRangedNV(-1.0, 1.0);
+		else
+			glDepthRange(0.0, 1.0);
+
 		return true;
 	}
 
@@ -585,7 +638,6 @@ namespace Graphics {
 
 	bool RendererOGL::SetTransform(const matrix4x4f &m)
 	{
-		PROFILE_SCOPED()
 		m_modelViewMat = m;
 		return true;
 	}
@@ -603,14 +655,7 @@ namespace Graphics {
 		m_invLogZfarPlus1 = 1.0f / (log1p(far_) / log(2.0f));
 
 		Graphics::SetFov(fov);
-
-		float ymax = near_ * tan(fov * M_PI / 360.0);
-		float ymin = -ymax;
-		float xmin = ymin * aspect;
-		float xmax = ymax * aspect;
-
-		const matrix4x4f frustrumMat = matrix4x4f::FrustumMatrix(xmin, xmax, ymin, ymax, near_, far_);
-		SetProjection(frustrumMat);
+		SetProjection(matrix4x4f::PerspectiveMatrix(DEG2RAD(fov), aspect, near_, far_));
 		return true;
 	}
 
@@ -624,7 +669,6 @@ namespace Graphics {
 
 	bool RendererOGL::SetProjection(const matrix4x4f &m)
 	{
-		PROFILE_SCOPED()
 		m_projectionMat = m;
 		return true;
 	}
@@ -1077,7 +1121,6 @@ namespace Graphics {
 
 	RenderState *RendererOGL::CreateRenderState(const RenderStateDesc &desc)
 	{
-		PROFILE_SCOPED()
 		const uint32_t hash = HashRenderStateDesc(desc);
 		auto it = m_renderStates.find(hash);
 		if (it != m_renderStates.end()) {
@@ -1107,7 +1150,7 @@ namespace Graphics {
 				false,
 				false,
 				0, Graphics::TEXTURE_2D);
-			OGL::TextureGL *colorTex = new OGL::TextureGL(cdesc, false, false);
+			OGL::TextureGL *colorTex = new OGL::TextureGL(cdesc, false, false, desc.numSamples);
 			rt->SetColorTexture(colorTex);
 		}
 		if (desc.depthFormat != TEXTURE_NONE) {
@@ -1130,6 +1173,14 @@ namespace Graphics {
 		rt->CheckStatus();
 		rt->Unbind();
 		CheckRenderErrors(__FUNCTION__, __LINE__);
+
+		// Rebind the active render target
+		if (m_activeRenderTarget)
+			m_activeRenderTarget->Bind();
+		// we can't assume the window render target exists yet because we might be creating it
+		else if (m_windowRenderTarget)
+			m_windowRenderTarget->Bind();
+
 		return rt;
 	}
 
